@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QSR Database Maintenance Report — 12/06/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:   #e30613;
+  --black: #000000;
+  --white: #ffffff;
+  --gray:  #727171;
+  --bg:    #f0f2f5;
+  --dark:  #1a1f2e;
+  --tabs:  #131722;
+  --amber: #d97706;
+  --green: #16a34a;
+  --blue:  #2563eb;
+  --radius: 10px;
+  --shadow: 0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:var(--dark);padding:10px 24px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px}
+.header-logo{width:38px;height:38px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff;letter-spacing:0.5px;text-align:center;line-height:1.2}
+.header-center{}
+.header-title{font-size:11px;font-weight:800;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.header-sub{font-size:9px;color:#8b92a5;margin-top:2px;font-weight:500}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.badge-date{background:#2a3045;color:#a0aabf;font-size:9px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:4px;font-weight:500}
+.badge-version{background:var(--red);color:#fff;font-size:8px;font-weight:800;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px}
+
+/* TABS */
+.tabs{position:sticky;top:62px;z-index:99;background:var(--tabs);display:flex;gap:0;padding:0 24px;border-bottom:1px solid #232838}
+.nav-tab{padding:10px 16px;font-size:10px;font-weight:700;color:#8b92a5;cursor:pointer;border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:0.5px;transition:all .2s}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* LAYOUT */
+.container{max-width:1200px;margin:0 auto;padding:20px 24px}
+.section-label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e2e5eb}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-top:3px solid var(--red);position:relative;overflow:hidden}
+.kpi-card.amber{border-top-color:var(--amber)}
+.kpi-card.blue{border-top-color:var(--blue)}
+.kpi-card.green{border-top-color:var(--green)}
+.kpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:6px}
+.kpi-value{font-family:'DM Mono',monospace;font-size:30px;font-weight:900;line-height:1;margin-bottom:4px}
+.kpi-sub{font-size:9px;color:var(--gray);font-weight:500}
+
+/* HIGHLIGHT BANNERS */
+.hl-banner{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;border-left:3px solid var(--green)}
+.hl-banner.warn{border-left-color:var(--amber)}
+.hl-banner.danger{border-left-color:var(--red)}
+.hl-banner.info{border-left-color:var(--blue)}
+.hl-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.hl-title{font-size:11px;font-weight:800;margin-bottom:3px;color:var(--black)}
+.hl-body{font-size:11px;color:#444;font-weight:500;line-height:1.5}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.panel{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.panel-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #f0f2f5}
+
+/* ITEMS */
+.item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f5f5f5}
+.item:last-child{border-bottom:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot.green{background:var(--green)}
+.dot.amber{background:var(--amber)}
+.dot.red{background:var(--red)}
+.dot.blue{background:var(--blue)}
+.dot.gray{background:#ccc}
+.item-body{flex:1;min-width:0}
+.item-name{font-size:11px;font-weight:700;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-meta{font-size:9px;color:var(--gray);font-weight:500;margin-top:1px;font-family:'DM Mono',monospace}
+
+/* TAGS */
+.tag{font-size:8px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0}
+.tag-done{background:#dbeafe;color:#1d4ed8}
+.tag-warn{background:#fef3c7;color:#92400e}
+.tag-block{background:#fee2e2;color:#991b1b}
+.tag-ok{background:#dcfce7;color:#166534}
+.tag-ip{background:#e0f2fe;color:#0369a1}
+.tag-defer{background:#f3f4f6;color:#6b7280}
+.tag-new{background:#ede9fe;color:#6d28d9}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:11px}
+.data-table th{text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);padding:6px 10px;border-bottom:2px solid #e2e5eb;background:#fafafa}
+.data-table td{padding:7px 10px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:#fafafa}
+.mono{font-family:'DM Mono',monospace;font-size:10px}
+.frag-ok{color:var(--green);font-weight:700;font-family:'DM Mono',monospace}
+.frag-bad{color:var(--red);font-weight:700;font-family:'DM Mono',monospace}
+.frag-warn{color:var(--amber);font-weight:700;font-family:'DM Mono',monospace}
+.arrow{color:var(--gray);margin:0 4px}
+
+/* PLAN */
+.plan-item{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f2f5}
+.plan-item:last-child{border-bottom:none}
+.plan-num{width:22px;height:22px;border-radius:50%;background:var(--dark);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.plan-body{flex:1;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.plan-text{font-size:11px;font-weight:700;margin-bottom:2px}
+.plan-sub{font-size:9px;color:var(--gray);font-weight:500;font-family:'DM Mono',monospace}
+
+/* SB TABLE */
+.sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+
+/* RISK CARDS */
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.risk-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.risk-card.high{border-top:3px solid var(--red)}
+.risk-card.med{border-top:3px solid var(--amber)}
+.risk-card.low{border-top:3px solid var(--green)}
+.risk-level{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.risk-level.high{color:var(--red)}
+.risk-level.med{color:var(--amber)}
+.risk-level.low{color:var(--green)}
+.risk-title{font-size:11px;font-weight:800;margin-bottom:6px}
+.risk-body{font-size:10px;color:#555;font-weight:500;line-height:1.5}
+.risk-action{margin-top:8px;padding-top:8px;border-top:1px solid #f0f2f5;font-size:9px;font-weight:700;color:var(--blue)}
+
+/* FOOTER */
+.footer{background:var(--dark);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;margin-top:32px}
+.footer-l{font-size:10px;font-weight:700;color:#fff}
+.footer-r{font-size:9px;color:#8b92a5;font-family:'DM Mono',monospace}
+
+/* SUMMARY BOX */
+.summary-box{background:var(--dark);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.sum-item{text-align:center}
+.sum-value{font-family:'DM Mono',monospace;font-size:24px;font-weight:900;color:#fff}
+.sum-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b92a5;margin-top:4px}
+
+.full-table-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.table-header{padding:12px 16px;background:#fafafa;border-bottom:1px solid #e2e5eb;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gray)}
+.mb-16{margin-bottom:16px}
+.mb-20{margin-bottom:20px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">DB<br>OPS</div>
+  <div class="header-center">
+    <div class="header-title">Database Maintenance Report — QSR RK7 Systems</div>
+    <div class="header-sub">Dcorp Technology Corporation · Platform. Empowering Growth. &nbsp;|&nbsp; Engineer: Pham (DBA) → Management</div>
+  </div>
+  <div class="header-right">
+    <div class="badge-date">12/06/2026 · Server: RK7-89-NEW</div>
+    <div class="badge-version">db_maintenance_report v1</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="nav-tab active" onclick="switchTab('overview',this)">📊 Overview</div>
+  <div class="nav-tab" onclick="switchTab('indexes',this)">🔧 Index Rebuild</div>
+  <div class="nav-tab" onclick="switchTab('deadlock',this)">🔴 Deadlock Analysis</div>
+  <div class="nav-tab" onclick="switchTab('pending',this)">⏳ Việc còn tồn</div>
+</div>
+
+<!-- TAB: OVERVIEW -->
+<div id="tab-overview" class="tab-content active">
+<div class="container">
+
+  <!-- KPI -->
+  <div class="section-label" style="margin-top:4px">Kết quả trong ngày</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Indexes Rebuilt</div>
+      <div class="kpi-value" style="color:var(--green)">18</div>
+      <div class="kpi-sub">Trên 2 databases · 0 lỗi</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Disk thu hồi</div>
+      <div class="kpi-value" style="color:var(--amber)">~20<span style="font-size:16px"> GB</span></div>
+      <div class="kpi-sub">Page compaction sau rebuild</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Config Fixed</div>
+      <div class="kpi-value" style="color:var(--blue)">4</div>
+      <div class="kpi-sub">AutoGrowth files — % growth eliminated</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">SB Cleanup</div>
+      <div class="kpi-value" style="color:var(--green)">13</div>
+      <div class="kpi-sub">DISCONNECTED conversations ended</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY BOX -->
+  <div class="summary-box">
+    <div class="sum-item">
+      <div class="sum-value">29h</div>
+      <div class="sum-label">Server Uptime</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-value">80GB</div>
+      <div class="sum-label">RAM In Use / 98GB</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-value" style="color:#f87171">2012</div>
+      <div class="sum-label">SQL Version (EOL)</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-value" style="color:#4ade80">0.08%</div>
+      <div class="sum-label">OPERATIONLOG Frag</div>
+    </div>
+    <div class="sum-item">
+      <div class="sum-value" style="color:#fb923c">2</div>
+      <div class="sum-label">Open SB Conversations</div>
+    </div>
+  </div>
+
+  <!-- HIGHLIGHTS -->
+  <div class="section-label">Highlights</div>
+  <div class="mb-16">
+    <div class="hl-banner">
+      <div class="hl-icon">✅</div>
+      <div>
+        <div class="hl-title">RK7_INT_PROD — 11 indexes rebuilt hoàn toàn</div>
+        <div class="hl-body">Toàn bộ indexes trên RK7_DISHES, RK7_TAXES, RK7_CHECKS, RK7_DISCS, RK7_PAYMENTS, RK7_SHIFTS, RK7_CASHINOUT được rebuild từ mức 95–99% fragmentation xuống dưới 0.1%. Page count giảm trung bình <strong>43–45%</strong> do page compaction — thu hồi ~15 GB disk space.</div>
+      </div>
+    </div>
+    <div class="hl-banner">
+      <div class="hl-icon">✅</div>
+      <div>
+        <div class="hl-title">QSR_RK7_DB — 7 indexes rebuilt + AutoGrowth fixed</div>
+        <div class="hl-body">OPERATIONLOG PK (79.5%→0.08%), EXTERNALIDS, SESSIONDISHES, DISHVOIDS, DISCPARTS, DISHDISCOUNTS, VISITGUESTS, PAYBINDINGS, DISHMODIFIERS, TAXPARTS đều dưới 0.5%. AutoGrowth đã đổi từ <strong>1 MB / 10%</strong> sang <strong>2048 MB fixed</strong> cho MDF và <strong>1024 MB fixed</strong> cho LDF — loại bỏ rủi ro autogrowth storm.</div>
+      </div>
+    </div>
+    <div class="hl-banner warn">
+      <div class="hl-icon">⚠️</div>
+      <div>
+        <div class="hl-title">Deadlock Service Broker — Root cause identified, chưa fix hoàn toàn</div>
+        <div class="hl-body">Deadlock xảy ra lúc 04:46–04:47 sáng do app <strong>dcorpmasterdata@RK7-88-NEW</strong> teardown/recreate Service Broker objects đồng thời trong SERIALIZABLE transaction. 13 DISCONNECTED conversations đã được cleanup. <strong>2 CONVERSING conversations</strong> (SPID 79/84) vẫn active — cần confirm app team trước khi end.</div>
+      </div>
+    </div>
+    <div class="hl-banner danger">
+      <div class="hl-icon">🚨</div>
+      <div>
+        <div class="hl-title">SQL Server 2012 SP1 — End of Life từ 07/2022</div>
+        <div class="hl-body">Version 12.0.4100.1 không còn nhận security patches. Không có Query Store. Cần lên kế hoạch migrate lên <strong>SQL Server 2019/2022</strong>. Đây là rủi ro bảo mật và vận hành dài hạn.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKS -->
+  <div class="section-label">Trạng thái công việc hôm nay</div>
+  <div class="two-col mb-20">
+    <div class="panel">
+      <div class="panel-title">✅ Hoàn thành</div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">18 Indexes rebuilt — 2 databases</div><div class="item-meta">QSR_RK7_DB · RK7_INT_PROD · 0 lỗi</div></div><span class="tag tag-done">DONE</span></div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">AutoGrowth fixed — 4 files</div><div class="item-meta">MDF: 2048 MB · LDF: 1024/512 MB</div></div><span class="tag tag-done">DONE</span></div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">13 DISCONNECTED SB conversations ended</div><div class="item-meta">sys.conversation_endpoints cleanup</div></div><span class="tag tag-done">DONE</span></div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">Deadlock root cause identified</div><div class="item-meta">Service Broker Sch-M / Sch-S conflict</div></div><span class="tag tag-done">DONE</span></div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">Health check toàn diện 2 databases</div><div class="item-meta">Wait stats · VLF · Fragmentation · Slow queries</div></div><span class="tag tag-done">DONE</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">⏳ Còn tồn / Theo dõi</div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">2 CONVERSING SB conversations</div><div class="item-meta">SPID 79/84 · Cần confirm app team</div></div><span class="tag tag-warn">TOMORROW</span></div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">~40 orphaned Sender queues cleanup</div><div class="item-meta">Sau khi end CONVERSING conversations</div></div><span class="tag tag-warn">THIS WEEK</span></div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">VISITS PK rebuild (OFFLINE required)</div><div class="item-meta">38.6% frag · Column text/ntext · Lock table</div></div><span class="tag tag-warn">THIS WEEK</span></div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">HEAP tables strategy</div><div class="item-meta">STAT_RK7_SHIFTS_CECKSUM 99.7% · DATA_RK7_AG_SERVICE_LOG 96%</div></div><span class="tag tag-warn">THIS WEEK</span></div>
+      <div class="item"><div class="dot blue"></div><div class="item-body"><div class="item-name">RESTAURANTS query 24s optimization</div><div class="item-meta">1.5M logical reads · Cần index + query review</div></div><span class="tag tag-ip">IN REVIEW</span></div>
+      <div class="item"><div class="dot gray"></div><div class="item-body"><div class="item-name">SESSIONDISHES PK 17.5% — monitor</div><div class="item-meta">4.4M pages · Dưới ngưỡng · Theo dõi</div></div><span class="tag tag-defer">MONITOR</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- TAB: INDEX REBUILD -->
+<div id="tab-indexes" class="tab-content">
+<div class="container">
+
+  <div class="section-label" style="margin-top:4px">RK7_INT_PROD — Index Rebuild Results</div>
+  <div class="full-table-wrap mb-20">
+    <div class="table-header">RK7_INT_PROD · Tất cả indexes đã rebuild</div>
+    <table class="data-table">
+      <thead><tr><th>Table</th><th>Index</th><th>Type</th><th>Frag Trước</th><th>Frag Sau</th><th>Pages Trước</th><th>Pages Sau</th><th>Tiết kiệm</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RK7_DISHES</strong></td><td class="mono">PK_RK7_DISHES</td><td>CLUSTERED</td><td class="frag-bad">96.39%</td><td class="frag-ok">0.03%</td><td class="mono">4,865,873</td><td class="mono">2,717,826</td><td class="mono" style="color:var(--green)">-44%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_DISHES</strong></td><td class="mono">RK7_DISHES_ISCOMBOCOMP</td><td>NONCLUSTERED</td><td class="frag-bad">99.10%</td><td class="frag-ok">0.07%</td><td class="mono">1,897,245</td><td class="mono">1,046,650</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_DISHES</strong></td><td class="mono">RK7_DISHES_CHECKGUID</td><td>NONCLUSTERED</td><td class="frag-bad">76.98%</td><td class="frag-ok">0.01%</td><td class="mono">2,241,479</td><td class="mono">1,492,034</td><td class="mono" style="color:var(--green)">-33%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_TAXES</strong></td><td class="mono">PK_RK7_TAXES</td><td>CLUSTERED</td><td class="frag-bad">98.50%</td><td class="frag-ok">0.02%</td><td class="mono">2,421,541</td><td class="mono">1,329,965</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_TAXES</strong></td><td class="mono">RK7_TAXES_CHECKGUID_DISHUNI</td><td>NONCLUSTERED</td><td class="frag-bad">87.28%</td><td class="frag-ok">0.01%</td><td class="mono">1,558,412</td><td class="mono">971,900</td><td class="mono" style="color:var(--green)">-38%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_TAXES</strong></td><td class="mono">RK7_TAXES_TAXCODE</td><td>NONCLUSTERED</td><td class="frag-bad">97.15%</td><td class="frag-ok">0.08%</td><td class="mono">1,191,076</td><td class="mono">673,849</td><td class="mono" style="color:var(--green)">-43%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_CHECKS</strong></td><td class="mono">PK_RK7_CHECKS</td><td>CLUSTERED</td><td class="frag-bad">95.48%</td><td class="frag-ok">0.02%</td><td class="mono">1,213,737</td><td class="mono">683,501</td><td class="mono" style="color:var(--green)">-44%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_DISCS</strong></td><td class="mono">PK_RK7_DISCS</td><td>CLUSTERED</td><td class="frag-bad">95.99%</td><td class="frag-ok">0.03%</td><td class="mono">528,683</td><td class="mono">292,125</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_PAYMENTS</strong></td><td class="mono">PK_RK7_PAYMENTS</td><td>CLUSTERED</td><td class="frag-bad">98.62%</td><td class="frag-ok">0.04%</td><td class="mono">670,009</td><td class="mono">366,891</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_SHIFTS</strong></td><td class="mono">PK_RK7_SHIFTS</td><td>CLUSTERED</td><td class="frag-bad">99.10%</td><td class="frag-ok">0.00%</td><td class="mono">2,680</td><td class="mono">1,466</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr><td><strong>RK7_CASHINOUT</strong></td><td class="mono">PK_RK7_CASHINOUT</td><td>CLUSTERED</td><td class="frag-bad">99.04%</td><td class="frag-ok">0.07%</td><td class="mono">2,704</td><td class="mono">1,490</td><td class="mono" style="color:var(--green)">-45%</td><td><span class="tag tag-done">✅ DONE</span></td></tr>
+        <tr style="background:#fffbeb"><td><strong>RK7_CHECKS</strong></td><td class="mono">4 NCI indexes</td><td>NONCLUSTERED</td><td class="frag-warn">14%</td><td class="frag-warn">14%</td><td class="mono">240K–272K</td><td>—</td><td>—</td><td><span class="tag tag-defer">MONITOR</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">QSR_RK7_DB — Index Rebuild Results</div>
+  <div class="full-table-wrap mb-20">
+    <div class="table-header">QSR_RK7_DB · Indexes đã rebuild và còn tồn</div>
+    <table class="data-table">
+      <thead><tr><th>Table</th><th>Index</th><th>Type</th><th>Frag Trước</th><th>Frag Sau</th><th>Status</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td><strong>OPERATIONLOG</strong></td><td class="mono">PK_OPERATIONLOG</td><td>CLUSTERED</td><td class="frag-bad">79.53%</td><td class="frag-ok">0.08%</td><td><span class="tag tag-done">✅ DONE</span></td><td>3.6M pages · 28 GB</td></tr>
+        <tr><td><strong>EXTERNALIDS</strong></td><td class="mono">MissingIndex_8844</td><td>NONCLUSTERED</td><td class="frag-bad">63.22%</td><td class="frag-ok">0.04%</td><td><span class="tag tag-done">✅ DONE</span></td><td>1M pages</td></tr>
+        <tr><td><strong>EXTERNALIDS</strong></td><td class="mono">PK_EXTERNALIDS</td><td>CLUSTERED</td><td class="frag-warn">25.91%</td><td class="frag-ok">0.05%</td><td><span class="tag tag-done">✅ DONE</span></td><td>1.2M pages</td></tr>
+        <tr><td><strong>SESSIONDISHES</strong></td><td class="mono">SessionDish_Combouni_uni</td><td>NONCLUSTERED</td><td class="frag-bad">63.98%</td><td class="frag-ok">0.32%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr><td><strong>DISHVOIDS</strong></td><td class="mono">PK_DISHVOIDS</td><td>CLUSTERED</td><td class="frag-bad">59.90%</td><td class="frag-ok">0.04%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr><td><strong>DISCPARTS</strong></td><td class="mono">PK_DISCPARTS</td><td>CLUSTERED</td><td class="frag-bad">56.41%</td><td class="frag-ok">0.11%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr><td><strong>DISHDISCOUNTS</strong></td><td class="mono">PK_DISHDISCOUNTS</td><td>CLUSTERED</td><td class="frag-bad">53.51%</td><td class="frag-ok">0.03%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr><td><strong>VISITGUESTS</strong></td><td class="mono">PK_VISITGUESTS</td><td>CLUSTERED</td><td class="frag-bad">51.25%</td><td class="frag-ok">0.11%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr><td><strong>PAYBINDINGS</strong></td><td class="mono">PK + 2 NCI</td><td>CLUSTERED/NCI</td><td class="frag-bad">29–42%</td><td class="frag-ok">0.07–0.36%</td><td><span class="tag tag-done">✅ DONE</span></td><td>1.3M pages</td></tr>
+        <tr><td><strong>DISHMODIFIERS</strong></td><td class="mono">PK_DISHMODIFIERS</td><td>CLUSTERED</td><td class="frag-bad">36.20%</td><td class="frag-ok">0.03%</td><td><span class="tag tag-done">✅ DONE</span></td><td>1.4M pages</td></tr>
+        <tr><td><strong>TAXPARTS</strong></td><td class="mono">PK_TAXPARTS</td><td>CLUSTERED</td><td class="frag-bad">35.75%</td><td class="frag-ok">0.07%</td><td><span class="tag tag-done">✅ DONE</span></td><td></td></tr>
+        <tr style="background:#fff7ed"><td><strong>VISITS</strong></td><td class="mono">PK_VISITS</td><td>CLUSTERED</td><td class="frag-bad">38.66%</td><td class="frag-warn">38.66%</td><td><span class="tag tag-warn">OFFLINE REQ.</span></td><td>Column text/ntext — lock table ~10 phút</td></tr>
+        <tr style="background:#fffbeb"><td><strong>SESSIONDISHES</strong></td><td class="mono">PK_SESSIONDISHES</td><td>CLUSTERED</td><td class="frag-warn">17.48%</td><td class="frag-warn">17.48%</td><td><span class="tag tag-defer">MONITOR</span></td><td>4.4M pages · Dưới ngưỡng 30%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">AutoGrowth Configuration — Trước & Sau</div>
+  <div class="full-table-wrap">
+    <div class="table-header">File Growth Settings</div>
+    <table class="data-table">
+      <thead><tr><th>Database</th><th>File</th><th>Type</th><th>Size Hiện tại</th><th>Trước</th><th>Sau</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>QSR_RK7_DB</strong></td><td class="mono">QSR_RK7_DB.mdf</td><td>DATA</td><td class="mono">218,433 MB</td><td class="frag-bad">1 MB ❌</td><td class="frag-ok">2,048 MB ✅</td><td><span class="tag tag-done">FIXED</span></td></tr>
+        <tr><td><strong>QSR_RK7_DB</strong></td><td class="mono">QSR_RK7_DB_log.ldf</td><td>LOG</td><td class="mono">27,670 MB</td><td class="frag-bad">10% ❌</td><td class="frag-ok">1,024 MB ✅</td><td><span class="tag tag-done">FIXED</span></td></tr>
+        <tr><td><strong>RK7_INT_PROD</strong></td><td class="mono">RK7_INT_PROD.mdf</td><td>DATA</td><td class="mono">162,774 MB</td><td class="frag-bad">1 MB ❌</td><td class="frag-ok">2,048 MB ✅</td><td><span class="tag tag-done">FIXED</span></td></tr>
+        <tr><td><strong>RK7_INT_PROD</strong></td><td class="mono">RK7_INT_PROD_log.ldf</td><td>LOG</td><td class="mono">3,121 MB</td><td class="frag-bad">10% ❌</td><td class="frag-ok">512 MB ✅</td><td><span class="tag tag-done">FIXED</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- TAB: DEADLOCK -->
+<div id="tab-deadlock" class="tab-content">
+<div class="container">
+
+  <div class="section-label" style="margin-top:4px">Deadlock Analysis — Service Broker</div>
+
+  <div class="hl-banner danger mb-16" style="margin-bottom:16px">
+    <div class="hl-icon">🔴</div>
+    <div>
+      <div class="hl-title">Deadlock xảy ra lúc 04:46–04:47 sáng ngày 12/06/2026 — Lặp lại có pattern</div>
+      <div class="hl-body">Không phải deadlock data thông thường. Đây là <strong>Schema Lock deadlock</strong> trên Service Broker objects — xảy ra khi app tạo/xóa SB infrastructure đồng thời với background activation threads.</div>
+    </div>
+  </div>
+
+  <div class="two-col mb-20">
+    <div class="panel">
+      <div class="panel-title">🔍 Root Cause</div>
+      <div style="font-size:11px;line-height:1.7;color:#333;font-weight:500">
+        <p style="margin-bottom:8px"><strong>App:</strong> <code style="background:#f5f5f5;padding:1px 5px;border-radius:3px;font-size:10px">dcorpmasterdata@RK7-88-NEW</code></p>
+        <p style="margin-bottom:8px"><strong>Isolation level:</strong> SERIALIZABLE — quá strict cho operation này</p>
+        <p style="margin-bottom:8px"><strong>Pattern:</strong> DROP TRIGGER → ALTER QUEUE OFF → END CONVERSATIONS → DROP SERVICE → DROP QUEUE cho <strong>nhiều tables đồng thời</strong> trong 1 transaction</p>
+        <p style="margin-bottom:8px"><strong>Conflict:</strong> Background QueueActivation threads đang <code style="background:#f5f5f5;padding:1px 5px;border-radius:3px;font-size:10px">WAITFOR RECEIVE</code> giữ <code style="background:#f5f5f5;padding:1px 5px;border-radius:3px;font-size:10px">Sch-S</code> → app cần <code style="background:#f5f5f5;padding:1px 5px;border-radius:3px;font-size:10px">Sch-M</code> → circular wait</p>
+        <p><strong>Objects liên quan:</strong> dbo_TRADEGROUPDETAILS, dbo_PERIODS, dbo_DISCOUNTS, dbo_DISCOUNTDETAILS, dbo_MODISCHEMEDETAILS</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📊 Service Broker State</div>
+      <div class="item"><div class="dot green"></div><div class="item-body"><div class="item-name">DISCONNECTED_INBOUND conversations</div><div class="item-meta">13 records · Từ 2020–2026</div></div><span class="tag tag-done">CLEANED</span></div>
+      <div class="item"><div class="dot red"></div><div class="item-body"><div class="item-name">CONVERSING conversations (SPID 79/84)</div><div class="item-meta">dbo_TRADEGROUPS + dbo_UNCHANGEABLEORDERTYPES · lifetime 2094</div></div><span class="tag tag-warn">PENDING</span></div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">Total queues tích lũy</div><div class="item-meta">290 total · 165 Sender · 125 Receiver</div></div><span class="tag tag-warn">~40 ORPHANED</span></div>
+      <div class="item"><div class="dot amber"></div><div class="item-body"><div class="item-name">Activation-enabled Sender queues</div><div class="item-meta">38 queues · PendingMessages = 0 trên tất cả</div></div><span class="tag tag-ip">ACTIVE</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Deadlock Events — 12/06/2026</div>
+  <div class="full-table-wrap mb-20">
+    <div class="table-header">2 deadlock events từ system_health ring buffer</div>
+    <table class="data-table">
+      <thead><tr><th>Thời gian</th><th>Victim SPID</th><th>Victim Login</th><th>Lock Mode</th><th>Object</th><th>Loại Transaction</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">04:47:00</td><td class="mono"><strong>32</strong></td><td>dcorpmasterdata</td><td><span class="tag tag-block">Sch-M</span></td><td class="mono" style="font-size:9px">dbo_TRADEGROUPDETAILS_*_Receiver</td><td>DROP SERVICE BROKER OBJECT</td></tr>
+        <tr><td class="mono">04:46:55</td><td class="mono"><strong>45</strong></td><td>dcorpmasterdata</td><td><span class="tag tag-block">Sch-S</span></td><td class="mono" style="font-size:9px">dbo_MODISCHEMEDETAILS_*_Sender</td><td>DROP SERVICE BROKER OBJECT</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-label">Action Plan — Fix Deadlock</div>
+  <div class="panel" style="margin-bottom:20px">
+    <div class="panel-title">Các bước cần thực hiện (theo thứ tự)</div>
+    <div class="plan-item">
+      <div class="plan-num">1</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Xác nhận app team: dcorpmasterdata job từ RK7-88-NEW là service gì?</div><div class="plan-sub">Sáng 13/06 · Hỏi: schedule mấy giờ? Có thể serialize DROP/CREATE không?</div></div>
+        <span class="tag tag-block">URGENT</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">2</div>
+      <div class="plan-body">
+        <div><div class="plan-text">End 2 CONVERSING conversations (sau khi confirm app team)</div><div class="plan-sub">END CONVERSATION 'F20C82BD...' WITH CLEANUP · Và F40C82BD</div></div>
+        <span class="tag tag-warn">TOMORROW</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">3</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Drop ~40 orphaned Sender queues không có Receiver</div><div class="plan-sub">Script đã generated · Chạy sau khi end conversations xong</div></div>
+        <span class="tag tag-ip">THIS WEEK</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">4</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Đề xuất app team: serialize SB teardown, dùng READ COMMITTED thay SERIALIZABLE</div><div class="plan-sub">Long-term fix · Cần dev team phối hợp</div></div>
+        <span class="tag tag-defer">LONG TERM</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- TAB: PENDING -->
+<div id="tab-pending" class="tab-content">
+<div class="container">
+
+  <div class="section-label" style="margin-top:4px">Rủi ro còn tồn tại</div>
+  <div class="risk-grid mb-20">
+    <div class="risk-card high">
+      <div class="risk-level high">🔴 HIGH RISK</div>
+      <div class="risk-title">Service Broker Deadlock chưa fix hoàn toàn</div>
+      <div class="risk-body">2 CONVERSING conversations vẫn active. Deadlock có thể tái diễn lúc ~04:46 sáng mai nếu app sync job chạy lại với cùng pattern.</div>
+      <div class="risk-action">→ Confirm app team sáng 13/06 · End CONVERSING conversations</div>
+    </div>
+    <div class="risk-card high">
+      <div class="risk-level high">🔴 HIGH RISK</div>
+      <div class="risk-title">SQL Server 2012 — End of Life</div>
+      <div class="risk-body">Version 12.0.4100.1, EOL từ 07/2022. Không nhận security patches. Không có Query Store. Rủi ro bảo mật và compliance dài hạn.</div>
+      <div class="risk-action">→ Lên kế hoạch migrate SQL Server 2019/2022</div>
+    </div>
+    <div class="risk-card med">
+      <div class="risk-level med">🟡 MEDIUM RISK</div>
+      <div class="risk-title">VISITS PK 38.6% — Chưa rebuild</div>
+      <div class="risk-body">Column text/ntext buộc OFFLINE rebuild. Table bị lock ~5–10 phút. Ảnh hưởng app nếu có user đang thao tác.</div>
+      <div class="risk-action">→ Chạy OFFLINE sau 22:00 ngày thấp điểm</div>
+    </div>
+    <div class="risk-card med">
+      <div class="risk-level med">🟡 MEDIUM RISK</div>
+      <div class="risk-title">HEAP tables — 99% fragmentation</div>
+      <div class="risk-body">STAT_RK7_SHIFTS_CECKSUM (99.7%, 5K pages) và DATA_RK7_AG_SERVICE_LOG (96%, 53K pages) là HEAP — không dùng ALTER INDEX được. Cần strategy riêng.</div>
+      <div class="risk-action">→ CREATE CLUSTERED INDEX hoặc TRUNCATE+reload nếu là staging table</div>
+    </div>
+    <div class="risk-card med">
+      <div class="risk-level med">🟡 MEDIUM RISK</div>
+      <div class="risk-title">RESTAURANTS query 24s / 1.5M reads</div>
+      <div class="risk-body">Query không có pagination, LEFT JOIN EMPLOYEES không liên quan đến filter chính. AvgCPU 24,016ms — ảnh hưởng nghiêm trọng khi nhiều user chạy đồng thời.</div>
+      <div class="risk-action">→ Review execution plan · Thêm covering index · Xem xét query rewrite</div>
+    </div>
+    <div class="risk-card low">
+      <div class="risk-level low">🟢 LOW RISK</div>
+      <div class="risk-title">SESSIONDISHES PK 17.5% — Monitor</div>
+      <div class="risk-body">4.4M pages (~35 GB). Dưới ngưỡng 30% cần rebuild. Cần kiểm tra có column text/ntext không trước khi schedule.</div>
+      <div class="risk-action">→ Monitor 1 tuần · Schedule rebuild nếu vượt 30%</div>
+    </div>
+  </div>
+
+  <div class="section-label">Action Plan — Tuần tới</div>
+  <div class="panel" style="margin-bottom:20px">
+    <div class="panel-title">Ưu tiên công việc 13/06 – 19/06/2026</div>
+    <div class="plan-item">
+      <div class="plan-num">1</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Kiểm tra deadlock tái diễn 04:46 sáng 13/06</div><div class="plan-sub">system_health ring buffer · Ngay khi vào làm</div></div>
+        <span class="tag tag-block">SÁNG 13/06</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">2</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Confirm app team về dcorpmasterdata sync job</div><div class="plan-sub">RK7-88-NEW · Schedule? Retry logic? Có thể serialize không?</div></div>
+        <span class="tag tag-block">13/06</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">3</div>
+      <div class="plan-body">
+        <div><div class="plan-text">End 2 CONVERSING SB conversations + Drop orphaned queues</div><div class="plan-sub">Sau khi confirm app team · ~40 orphaned Sender queues</div></div>
+        <span class="tag tag-warn">13–14/06</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">4</div>
+      <div class="plan-body">
+        <div><div class="plan-text">VISITS PK OFFLINE rebuild</div><div class="plan-sub">Sau 22:00 · MAXDOP 4 · Estimate 5–10 phút lock</div></div>
+        <span class="tag tag-warn">13–14/06 đêm</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">5</div>
+      <div class="plan-body">
+        <div><div class="plan-text">HEAP tables strategy — STAT_RK7_SHIFTS_CECKSUM, DATA_RK7_AG_SERVICE_LOG</div><div class="plan-sub">Kiểm tra có thể TRUNCATE không · Hay cần CREATE CLUSTERED INDEX</div></div>
+        <span class="tag tag-ip">14–15/06</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">6</div>
+      <div class="plan-body">
+        <div><div class="plan-text">RESTAURANTS query 24s — execution plan review + index recommendation</div><div class="plan-sub">1.5M logical reads · Cần dev team nếu query rewrite</div></div>
+        <span class="tag tag-ip">15–16/06</span>
+      </div>
+    </div>
+    <div class="plan-item">
+      <div class="plan-num">7</div>
+      <div class="plan-body">
+        <div><div class="plan-text">Lên kế hoạch migrate SQL Server 2019/2022</div><div class="plan-sub">EOL risk · Timeline · Resource estimate</div></div>
+        <span class="tag tag-defer">LONG TERM</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-l"><strong>Pham — DBA / Infrastructure Engineer</strong> · Dcorp Technology Corporation</div>
+  <div class="footer-r">db_maintenance_report v1 · Generated 12/06/2026 · Server: RK7-89-NEW · SQL Server 2012 SP1</div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+</script>
+</body>
+</html>
