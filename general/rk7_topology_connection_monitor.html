@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RK7 — Giám sát kết nối phân cấp</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --border:#e2e4e9;
+  --text:#1f2330; --text-muted:#6b7280;
+  --header-bg:#1a1f2e; --header-text:#f5f6f8;
+  --ok:#16a34a; --ok-bg:#dcfce7;
+  --down:#dc2626; --down-bg:#fee2e2;
+  --drift:#d97706; --drift-bg:#fef3c7;
+  --unknown:#6b7280; --unknown-bg:#eef0f2;
+  --unreg:#7c3aed; --unreg-bg:#f1e8fd;
+  --radius:10px; --shadow:0 1px 4px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px}
+.container{max-width:1280px;margin:0 auto;padding:24px}
+.header{background:var(--header-bg);color:var(--header-text);border-radius:var(--radius);padding:22px 28px;margin-bottom:20px}
+.header h1{margin:0 0 4px;font-size:19px;font-weight:700}
+.header p{margin:0;font-size:13px;color:#aab0c0}
+.header .note{margin-top:10px;font-size:12px;color:#fbbf24;background:rgba(251,191,36,.12);display:inline-block;padding:4px 10px;border-radius:6px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:6px}
+.kpi-value{font-size:25px;font-weight:700}
+.kpi-ok{color:var(--ok)} .kpi-attn{color:var(--down)} .kpi-unk{color:var(--unknown)} .kpi-unreg{color:var(--unreg)}
+.section-title{font-size:14px;font-weight:700;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:24px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);color:var(--text-muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;user-select:none}
+th[data-key]{cursor:pointer}
+td{padding:8px 12px;border-bottom:1px solid #f0f0f2;vertical-align:top}
+.transit-row{cursor:pointer}
+.transit-row:hover{background:#fafafa}
+.muted{color:var(--text-muted);font-size:12px}
+.note-line{font-size:11px;color:var(--text-muted)}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-down{background:var(--down-bg);color:var(--down)}
+.badge-drift{background:var(--drift-bg);color:var(--drift)}
+.badge-unknown{background:var(--unknown-bg);color:var(--unknown)}
+.row-down{background:var(--down-bg)}
+.row-drift{background:var(--drift-bg)}
+.row-unknown{background:var(--unknown-bg)}
+.healthbar{display:inline-block;width:84px;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;vertical-align:middle;margin-right:6px}
+.healthbar-fill{height:100%;background:var(--ok)}
+.pct{font-size:12px;color:var(--text-muted)}
+.drift-cell{color:var(--drift);font-weight:700}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.filter-bar input[type="text"],.filter-bar select{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card);color:var(--text)}
+.filter-bar input[type="text"]{flex:1;min-width:180px}
+.filter-bar label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);cursor:pointer}
+.filter-bar button{padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--card);font-size:13px;cursor:pointer}
+.filter-bar button:hover{background:#f1f2f4}
+.pagination{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px;color:var(--text-muted)}
+.pagination button{padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:13px}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.footer{font-size:12px;color:var(--text-muted);line-height:1.6;margin-top:8px}
+.footer strong{color:var(--text)}
+@media (max-width:680px){.kpi-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Giám sát kết nối phân cấp RK7</h1>
+  <p>Reference server → Central report → Report transit → Report local → MidServer</p>
+  <span class="note">Dữ liệu minh hoạ (mock) — chưa kết nối log/connection table thực tế</span>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card"><div class="kpi-label">Tổng số cửa hàng</div><div class="kpi-value" id="kpiTotal">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Đang kết nối</div><div class="kpi-value kpi-ok" id="kpiOk">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Cần xử lý</div><div class="kpi-value kpi-attn" id="kpiAttention">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Không xác định</div><div class="kpi-value kpi-unk" id="kpiUnknown">—</div></div>
+  <div class="kpi-card"><div class="kpi-label">Ngoài cấu hình</div><div class="kpi-value kpi-unreg" id="kpiUnreg">—</div></div>
+</div>
+
+<div class="card">
+  <div class="section-title">Tổng quan theo Report transit</div>
+  <table>
+    <thead><tr><th>Transit</th><th>Central</th><th>Trạng thái</th><th>Tỷ lệ kết nối</th><th>Chi tiết</th></tr></thead>
+    <tbody id="transitBody"></tbody>
+  </table>
+</div>
+
+<div class="card" id="localTableSection">
+  <div class="section-title">Danh sách Report local</div>
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Tìm theo mã cửa hàng...">
+    <select id="centralFilter"><option value="all">Tất cả Central</option></select>
+    <select id="transitFilter"><option value="all">Tất cả Transit</option></select>
+    <select id="statusFilter">
+      <option value="all">Tất cả trạng thái</option>
+      <option value="ok">Đã kết nối</option>
+      <option value="down">Mất kết nối</option>
+      <option value="drift">Lệch nhánh</option>
+      <option value="unknown">Không xác định</option>
+    </select>
+    <label><input type="checkbox" id="onlyIssues"> Chỉ hiện cần chú ý</label>
+    <button id="exportBtn">Xuất CSV</button>
+  </div>
+  <table>
+    <thead><tr>
+      <th data-key="code">Mã cửa hàng</th>
+      <th data-key="central">Central</th>
+      <th data-key="expectedTransit">Transit kỳ vọng</th>
+      <th data-key="actualTransit">Transit thực tế</th>
+      <th data-key="status">Trạng thái</th>
+      <th>Cập nhật / Ghi chú</th>
+    </tr></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="card">
+  <div class="section-title">Kết nối ngoài cấu hình</div>
+  <p class="muted" style="margin-top:-6px">Đối tượng đang kết nối nhưng không khớp với bất kỳ node nào trong danh sách đăng ký — cần xác minh thủ công, không tự suy ra là lỗi hay hợp lệ.</p>
+  <table>
+    <thead><tr><th>Định danh quan sát được</th><th>Kết nối vào</th><th>Phát hiện lúc</th><th>Ghi chú</th></tr></thead>
+    <tbody id="unregBody"></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <strong>Phương pháp thu thập (giả định, cần xác nhận thực tế):</strong> mỗi Reference/Central/Transit chỉ biết ai đang login trực tiếp vào nó — không probe được xuống dưới vì Local dùng IP local. Trạng thái "không xác định" áp dụng cho mọi Report local phía dưới một Report transit đang mất kết nối, vì khi đó không còn nguồn quan sát. "Kết nối ngoài cấu hình" là đối tượng có kết nối thật nhưng không khớp mã trong danh sách đăng ký gốc — khác với "lệch nhánh" (đối tượng đã đăng ký, kết nối đúng nhưng sai Transit so với cấu hình).
+</div>
+
+</div>
+
+<script>
+function pad(n,len){return String(n).padStart(len,'0');}
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function pickRandom(arr,n){const copy=arr.slice();const picked=[];for(let i=0;i<n&&copy.length;i++){const idx=randInt(0,copy.length-1);picked.push(copy.splice(idx,1)[0]);}return picked;}
+
+const CENTRALS=[
+  {id:'c1',name:'Central report 1'},
+  {id:'c2',name:'Central report 2'},
+  {id:'c3',name:'Central report 3'}
+];
+const TRANSITS=[
+  {id:'t1',central:'c1',name:'Transit 1.1',down:false},
+  {id:'t2',central:'c1',name:'Transit 1.2',down:true},
+  {id:'t3',central:'c1',name:'Transit 1.3',down:false},
+  {id:'t4',central:'c1',name:'Transit 1.4',down:false},
+  {id:'t5',central:'c2',name:'Transit 2.1',down:false},
+  {id:'t6',central:'c2',name:'Transit 2.2',down:false},
+  {id:'t7',central:'c2',name:'Transit 2.3',down:false},
+  {id:'t8',central:'c2',name:'Transit 2.4',down:false},
+  {id:'t9',central:'c2',name:'Transit 2.5',down:false},
+  {id:'t10',central:'c3',name:'Transit 3.1',down:false},
+  {id:'t11',central:'c3',name:'Transit 3.2',down:false},
+  {id:'t12',central:'c3',name:'Transit 3.3',down:false},
+  {id:'t13',central:'c3',name:'Transit 3.4',down:false}
+];
+const centralById={}; CENTRALS.forEach(c=>centralById[c.id]=c.name);
+const transitById={}; TRANSITS.forEach(t=>transitById[t.id]=t.name);
+
+let storeCounter=1;
+const LOCALS=[];
+TRANSITS.forEach(t=>{
+  const count=randInt(55,95);
+  for(let i=0;i<count;i++){
+    const code='HLC-'+pad(storeCounter,4); storeCounter++;
+    if(t.down){
+      LOCALS.push({code,central:t.central,expectedTransit:t.id,actualTransit:t.id,status:'unknown',lastSeen:'—',note:'Transit '+t.name+' mất kết nối — không có dữ liệu'});
+    }else{
+      LOCALS.push({code,central:t.central,expectedTransit:t.id,actualTransit:t.id,status:'ok',lastSeen:'Đang hoạt động',note:''});
+    }
+  }
+});
+
+pickRandom(LOCALS.filter(l=>l.status==='ok'),5).forEach(l=>{
+  l.status='down'; l.lastSeen=randInt(5,55)+' phút trước'; l.note='Transit cha vẫn sống, không thấy login';
+});
+
+pickRandom(LOCALS.filter(l=>l.status==='ok'),6).forEach(l=>{
+  const candidates=TRANSITS.filter(t=>t.id!==l.expectedTransit&&!t.down);
+  const newT=candidates[randInt(0,candidates.length-1)];
+  l.actualTransit=newT.id; l.status='drift'; l.lastSeen='Đang hoạt động (sai nhánh)';
+  l.note='Cấu hình kỳ vọng: '+transitById[l.expectedTransit];
+});
+
+const UNREGISTERED=[
+  {identifier:'MID-UNK-7741 (IP 10.44.12.91)',transit:'t7',detected:'12 phút trước',note:'Không khớp mã cửa hàng nào trong danh sách đăng ký'},
+  {identifier:'MID-UNK-2290 (IP 10.12.88.40)',transit:'t3',detected:'58 phút trước',note:'Có thể là thiết bị test hoặc cửa hàng mới chưa khai báo'},
+  {identifier:'RPT-DUP-0455',transit:'t1',detected:'3 giờ trước',note:'Trùng mã với một Report local đã đăng ký — nghi thiết bị dự phòng cấu hình sai'},
+  {identifier:'MID-UNK-9981 (IP 192.168.77.4)',transit:'t11',detected:'2 giờ trước',note:'IP nội bộ không thuộc range đã cấp cho cửa hàng nào'}
+];
+
+const total=LOCALS.length;
+const okCount=LOCALS.filter(l=>l.status==='ok').length;
+const downCount=LOCALS.filter(l=>l.status==='down').length;
+const driftCount=LOCALS.filter(l=>l.status==='drift').length;
+const unknownCount=LOCALS.filter(l=>l.status==='unknown').length;
+const attentionCount=downCount+driftCount;
+
+function statusBadge(s){
+  const map={ok:['ok','Đã kết nối'],down:['down','Mất kết nối'],drift:['drift','Lệch nhánh'],unknown:['unknown','Không xác định']};
+  const m=map[s]; return '<span class="badge badge-'+m[0]+'">'+m[1]+'</span>';
+}
+
+function renderKPIs(){
+  document.getElementById('kpiTotal').textContent=total.toLocaleString('vi-VN');
+  document.getElementById('kpiOk').textContent=okCount.toLocaleString('vi-VN');
+  document.getElementById('kpiAttention').textContent=attentionCount.toLocaleString('vi-VN');
+  document.getElementById('kpiUnknown').textContent=unknownCount.toLocaleString('vi-VN');
+  document.getElementById('kpiUnreg').textContent=UNREGISTERED.length;
+}
+
+function renderTransitOverview(){
+  const rows=TRANSITS.map(t=>{
+    const members=LOCALS.filter(l=>l.actualTransit===t.id);
+    const connected=members.filter(l=>l.status==='ok'||l.status==='drift').length;
+    const down=members.filter(l=>l.status==='down').length;
+    const unknown=members.filter(l=>l.status==='unknown').length;
+    const pct=members.length?Math.round(connected/members.length*100):0;
+    return {t,members,connected,down,unknown,pct};
+  });
+  rows.sort((a,b)=>{ if(a.t.down!==b.t.down) return a.t.down?-1:1; return a.pct-b.pct; });
+  document.getElementById('transitBody').innerHTML=rows.map(r=>{
+    const badge=r.t.down?'<span class="badge badge-down">Mất kết nối</span>':'<span class="badge badge-ok">Hoạt động</span>';
+    const bar=r.t.down?'<span class="muted">Không có dữ liệu</span>':'<div class="healthbar"><div class="healthbar-fill" style="width:'+r.pct+'%"></div></div><span class="pct">'+r.pct+'%</span>';
+    const detail=r.t.down?(r.unknown+' cửa hàng không xác định'):(r.connected+' kết nối · '+r.down+' mất kết nối · tổng '+r.members.length);
+    return '<tr class="transit-row" onclick="filterByTransit(\''+r.t.id+'\')"><td>'+r.t.name+'</td><td>'+centralById[r.t.central]+'</td><td>'+badge+'</td><td>'+bar+'</td><td class="muted">'+detail+'</td></tr>';
+  }).join('');
+}
+
+function renderUnregistered(){
+  document.getElementById('unregBody').innerHTML=UNREGISTERED.map(u=>
+    '<tr><td>'+u.identifier+'</td><td>'+transitById[u.transit]+'</td><td class="muted">'+u.detected+'</td><td class="muted">'+u.note+'</td></tr>'
+  ).join('');
+}
+
+function populateFilterOptions(){
+  document.getElementById('centralFilter').innerHTML+=CENTRALS.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('');
+  document.getElementById('transitFilter').innerHTML+=TRANSITS.map(t=>'<option value="'+t.id+'">'+t.name+'</option>').join('');
+}
+
+let filtered=LOCALS.slice();
+let sortKey='code', sortDir=1, currentPage=1;
+const pageSize=50;
+
+function sortData(){
+  const rank={down:0,unknown:1,drift:2,ok:3};
+  filtered.sort((a,b)=>{
+    let av,bv;
+    if(sortKey==='status'){av=rank[a.status];bv=rank[b.status];}
+    else if(sortKey==='central'){av=centralById[a.central];bv=centralById[b.central];}
+    else if(sortKey==='actualTransit'){av=transitById[a.actualTransit];bv=transitById[b.actualTransit];}
+    else if(sortKey==='expectedTransit'){av=transitById[a.expectedTransit];bv=transitById[b.expectedTransit];}
+    else {av=a.code;bv=b.code;}
+    if(av<bv) return -1*sortDir; if(av>bv) return 1*sortDir; return 0;
+  });
+}
+
+function applyFilters(){
+  const q=document.getElementById('searchInput').value.trim().toLowerCase();
+  const central=document.getElementById('centralFilter').value;
+  const transit=document.getElementById('transitFilter').value;
+  const status=document.getElementById('statusFilter').value;
+  const onlyIssues=document.getElementById('onlyIssues').checked;
+  filtered=LOCALS.filter(l=>{
+    if(q&&!l.code.toLowerCase().includes(q)) return false;
+    if(central!=='all'&&l.central!==central) return false;
+    if(transit!=='all'&&l.actualTransit!==transit) return false;
+    if(status!=='all'&&l.status!==status) return false;
+    if(onlyIssues&&l.status==='ok') return false;
+    return true;
+  });
+  sortData(); currentPage=1; renderTable();
+}
+
+function filterByTransit(id){
+  document.getElementById('transitFilter').value=id;
+  document.getElementById('centralFilter').value='all';
+  applyFilters();
+  document.getElementById('localTableSection').scrollIntoView({behavior:'smooth'});
+}
+
+function renderTable(){
+  const start=(currentPage-1)*pageSize;
+  const pageItems=filtered.slice(start,start+pageSize);
+  document.getElementById('tableBody').innerHTML=pageItems.map(l=>{
+    const rowClass=l.status==='down'?'row-down':l.status==='drift'?'row-drift':l.status==='unknown'?'row-unknown':'';
+    const expectedName=transitById[l.expectedTransit];
+    const actualName=transitById[l.actualTransit];
+    const actualCell=l.status==='drift'?('<span class="drift-cell">'+actualName+'</span>'):actualName;
+    const noteLine=l.note?('<div class="note-line">'+l.note+'</div>'):'';
+    return '<tr class="'+rowClass+'"><td>'+l.code+'</td><td>'+centralById[l.central]+'</td><td>'+expectedName+'</td><td>'+actualCell+'</td><td>'+statusBadge(l.status)+'</td><td class="muted">'+l.lastSeen+noteLine+'</td></tr>';
+  }).join('');
+  renderPagination();
+}
+
+function renderPagination(){
+  const totalPages=Math.max(1,Math.ceil(filtered.length/pageSize));
+  if(currentPage>totalPages) currentPage=totalPages;
+  const startIdx=filtered.length?(currentPage-1)*pageSize+1:0;
+  const endIdx=Math.min(currentPage*pageSize,filtered.length);
+  document.getElementById('pagination').innerHTML=
+    '<button onclick="goPage('+(currentPage-1)+')" '+(currentPage<=1?'disabled':'')+'>‹ Trước</button>'+
+    '<span>Hiển thị '+startIdx+'–'+endIdx+' trong '+filtered.length+' (trang '+currentPage+'/'+totalPages+')</span>'+
+    '<button onclick="goPage('+(currentPage+1)+')" '+(currentPage>=totalPages?'disabled':'')+'>Sau ›</button>';
+}
+function goPage(p){currentPage=p;renderTable();}
+
+function exportCSV(){
+  const headers=['Mã cửa hàng','Central','Transit kỳ vọng','Transit thực tế','Trạng thái','Cập nhật'];
+  const rows=filtered.map(l=>[l.code,centralById[l.central],transitById[l.expectedTransit],transitById[l.actualTransit],l.status,l.lastSeen]);
+  const csv=[headers,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='rk7_report_local_status.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+populateFilterOptions();
+renderKPIs();
+renderTransitOverview();
+renderUnregistered();
+sortData();
+renderTable();
+
+document.getElementById('searchInput').addEventListener('input',applyFilters);
+document.getElementById('centralFilter').addEventListener('change',applyFilters);
+document.getElementById('transitFilter').addEventListener('change',applyFilters);
+document.getElementById('statusFilter').addEventListener('change',applyFilters);
+document.getElementById('onlyIssues').addEventListener('change',applyFilters);
+document.getElementById('exportBtn').addEventListener('click',exportCSV);
+document.querySelectorAll('th[data-key]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const key=th.dataset.key;
+    if(sortKey===key) sortDir*=-1; else {sortKey=key;sortDir=1;}
+    sortData(); renderTable();
+  });
+});
+</script>
+</body>
+</html>
