@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Night 2 — Index Maintenance Report · CARD_COUPONS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613;--black:#000;--white:#fff;--gray:#727171;
+  --bg:#f0f2f5;--dark:#1a1f2e;--tabs:#131722;
+  --amber:#d97706;--green:#16a34a;--blue:#2563eb;
+  --radius:10px;--shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px;line-height:1.5}
+.mono{font-family:'DM Mono',monospace}
+.wrap{max-width:1100px;margin:0 auto;padding:0 18px 60px}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;
+  display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;
+  padding:12px 18px;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.logo{width:40px;height:40px;border-radius:6px;background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;
+  letter-spacing:-.5px;text-align:center;line-height:1}
+.h-center{display:flex;flex-direction:column;gap:2px}
+.h-title{font-weight:800;font-size:14px;letter-spacing:.3px}
+.h-sub{font-size:9px;color:#aab;font-family:'DM Mono',monospace;letter-spacing:.5px}
+.h-right{text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.badge{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:3px 8px;
+  border-radius:4px;background:rgba(255,255,255,.1);color:#dde}
+.badge.ok{background:var(--green);color:#fff}
+
+/* Status strip */
+.strip{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border-radius:var(--radius);
+  padding:16px 20px;margin:18px 0;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow)}
+.strip-icon{font-size:30px}
+.strip-txt h2{font-size:16px;font-weight:900;letter-spacing:.3px}
+.strip-txt p{font-size:11px;opacity:.9;margin-top:2px}
+
+/* Section */
+.sec{margin:24px 0 10px}
+.sec-title{font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;
+  color:var(--gray);border-left:3px solid var(--red);padding-left:8px;margin-bottom:12px}
+
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:#fff;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);
+  border-top:3px solid var(--gray)}
+.kpi.red{border-top-color:var(--red)}
+.kpi.green{border-top-color:var(--green)}
+.kpi.blue{border-top-color:var(--blue)}
+.kpi.amber{border-top-color:var(--amber)}
+.kpi-label{font-size:9px;text-transform:uppercase;font-weight:700;letter-spacing:1px;color:var(--gray)}
+.kpi-val{font-family:'DM Mono',monospace;font-size:28px;font-weight:900;margin:6px 0 2px;line-height:1}
+.kpi-sub{font-size:9px;color:var(--gray);font-family:'DM Mono',monospace}
+
+/* Table */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f7f8fa;text-align:left;padding:9px 12px;font-size:9px;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--gray);font-weight:800;border-bottom:1px solid #e8eaed}
+td{padding:9px 12px;border-bottom:1px solid #f0f1f3}
+tr:last-child td{border-bottom:none}
+td.num{font-family:'DM Mono',monospace}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  padding:2px 7px;border-radius:10px}
+.p-green{background:#dcfce7;color:#15803d}
+.p-amber{background:#fef3c7;color:#b45309}
+.p-blue{background:#dbeafe;color:#1d4ed8}
+.p-gray{background:#eceef1;color:#555}
+.up{color:var(--green);font-weight:700}
+.same{color:var(--gray)}
+
+/* two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two,.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.kpis{grid-template-columns:1fr}}
+
+/* note banner */
+.note{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;
+  border-left:3px solid var(--amber);margin-bottom:14px}
+.note.blue{border-left-color:var(--blue)}
+.note.green{border-left-color:var(--green)}
+.note-t{font-weight:800;font-size:12px;margin-bottom:4px}
+.note-b{font-size:11px;color:#333;line-height:1.55}
+.note-b strong{color:var(--black)}
+
+/* timeline */
+.tl{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.tl-row{display:flex;gap:12px;padding:7px 0;align-items:baseline}
+.tl-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--red);font-weight:500;min-width:66px}
+.tl-txt{font-size:12px}
+.tl-txt strong{font-weight:700}
+
+/* checklist */
+.chk{list-style:none;font-size:12px}
+.chk li{padding:6px 0;display:flex;gap:9px;align-items:flex-start;border-bottom:1px solid #f0f1f3}
+.chk li:last-child{border-bottom:none}
+.chk .box{font-family:'DM Mono',monospace;color:var(--gray)}
+
+.footer{margin-top:28px;padding:14px 18px;background:var(--dark);color:#aab;border-radius:var(--radius);
+  display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px}
+.footer strong{color:#fff}
+code{font-family:'DM Mono',monospace;background:#f0f1f3;padding:1px 5px;border-radius:3px;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'CORP</div>
+  <div class="h-center">
+    <div class="h-title">NIGHT 2 — INDEX MAINTENANCE REPORT</div>
+    <div class="h-sub">CARD_COUPONS · R_KEEPER_7_CRM_VTI · RK7-DB-ECODE-SR</div>
+  </div>
+  <div class="h-right">
+    <span class="badge ok">✓ SUCCEEDED</span>
+    <span class="badge">10–11 / 07 / 2026</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="strip">
+    <div class="strip-icon">🟢</div>
+    <div class="strip-txt">
+      <h2>Hoàn tất — 2 covering index đã tạo, hệ thống ổn định hơn baseline</h2>
+      <p>Job chạy 21 phút 51 giây · Không blocking · Write perf giữ &lt;5ms · PLE tăng gấp ~2,5 lần sau đêm</p>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="sec"><div class="sec-title">Tổng quan kết quả</div></div>
+  <div class="kpis">
+    <div class="kpi green">
+      <div class="kpi-label">Job Duration</div>
+      <div class="kpi-val">21:51</div>
+      <div class="kpi-sub">est. 50–90m · nhanh hơn dự kiến</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Index tạo mới</div>
+      <div class="kpi-val">2</div>
+      <div class="kpi-sub">11,8 GB · PAGE compressed</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Blocking</div>
+      <div class="kpi-val">0</div>
+      <div class="kpi-sub">ONLINE build suốt quá trình</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Write perf (B6)</div>
+      <div class="kpi-val">0<span style="font-size:14px">ms</span></div>
+      <div class="kpi-sub">avg · ngưỡng &lt; 5ms</div>
+    </div>
+  </div>
+
+  <!-- Before / After -->
+  <div class="sec"><div class="sec-title">So sánh Trước → Sau Index</div></div>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>Chỉ số</th><th>Trước (13:20 · 10/07)</th><th>Sau (06:35 · 11/07)</th><th>Đánh giá</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>SQL Server CPU</td><td class="num">0%</td><td class="num">0%</td><td><span class="same">→ không đổi</span></td></tr>
+        <tr><td>Page Life Expectancy</td><td class="num">11.514s</td><td class="num up">28.367s (~7,9h)</td><td><span class="pill p-green">🟢 cao hơn hẳn</span></td></tr>
+        <tr><td>SQL Memory dùng</td><td class="num">53.350 MB</td><td class="num">53.378 MB</td><td><span class="same">→ ổn định</span></td></tr>
+        <tr><td>User connections</td><td class="num">30</td><td class="num">26</td><td><span class="pill p-green">🟢 bình thường</span></td></tr>
+        <tr><td>Blocking sessions</td><td class="num">0</td><td class="num">0</td><td><span class="pill p-green">🟢 sạch</span></td></tr>
+        <tr><td>PRIMARY file (.mdf)</td><td class="num">115 / 500 GB (23%)</td><td class="num">115 / 500 GB (23%)</td><td><span class="same">→ chỉ thêm index</span></td></tr>
+        <tr><td>Transaction Log</td><td class="num">11 GB</td><td class="num">20 GB · dùng 0,2</td><td><span class="pill p-blue">↑ pre-extend</span></td></tr>
+        <tr><td>Filegroup INDEX free</td><td class="num">~34,6 GB</td><td class="num">~20,4 GB</td><td><span class="pill p-green">🟢 đủ headroom</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Timeline -->
+  <div class="sec"><div class="sec-title">Diễn tiến đêm bảo trì</div></div>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">22:30:33</div><div class="tl-txt"><strong>Job start</strong> — pre-flight checks pass (log 20GB, INDEX fg 32,6GB, không job trùng)</div></div>
+    <div class="tl-row"><div class="tl-time">22:41:10</div><div class="tl-txt"><strong>Index #2 xong</strong> — IX_CARD_COUPONS_TypeId_Flags_DateTo · 3,26 GB</div></div>
+    <div class="tl-row"><div class="tl-time">22:46 →</div><div class="tl-txt">Index #1 build 59,6% @16 phút · wait CXCONSUMER (parallel) · blocking 0 · PLE tụt 184s (tạm thời)</div></div>
+    <div class="tl-row"><div class="tl-time">22:52:24</div><div class="tl-txt"><strong>Index #1 xong</strong> — IX_CARD_COUPONS_TypeId_DateTo_Flags · 8,51 GB</div></div>
+    <div class="tl-row"><div class="tl-time">22:52:24</div><div class="tl-txt"><strong>Job SUCCEEDED</strong> — tổng 21m51s · 0 resumable pending</div></div>
+    <div class="tl-row"><div class="tl-time">00:00:01</div><div class="tl-txt">Execute_UpdateFlags_Coupon chạy (mass update FLAGS) — SUCCEEDED, B6 vẫn 0ms</div></div>
+    <div class="tl-row"><div class="tl-time">06:35</div><div class="tl-txt">Health check sáng — PLE hồi phục 28.367s, hệ thống ổn định</div></div>
+  </div>
+
+  <!-- Index detail -->
+  <div class="sec"><div class="sec-title">Chi tiết 2 Index mới</div></div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Index</th><th>Key columns</th><th>Size</th><th>Compress</th><th>Fill</th><th>Rows</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>IX_CARD_COUPONS_TypeId_Flags_DateTo <span class="pill p-gray">#2</span></td>
+          <td class="num">TYPE_ID, FLAGS, DATE_TO</td>
+          <td class="num">3,26 GB</td><td><span class="pill p-green">PAGE</span></td><td class="num">85</td><td class="num">109,76M</td>
+        </tr>
+        <tr>
+          <td>IX_CARD_COUPONS_TypeId_DateTo_Flags <span class="pill p-gray">#1</span></td>
+          <td class="num">TYPE_ID, DATE_TO, FLAGS</td>
+          <td class="num">8,51 GB</td><td><span class="pill p-green">PAGE</span></td><td class="num">85</td><td class="num">109,76M</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Performance two-col -->
+  <div class="sec"><div class="sec-title">Hiệu năng nghiệp vụ sau đêm</div></div>
+  <div class="two">
+    <div class="card">
+      <table>
+        <thead><tr><th colspan="2">B6 · Write — Trigger CARD_TRANSACTIONS_BI</th></tr></thead>
+        <tbody>
+          <tr><td>Execution count</td><td class="num">~1.021.000</td></tr>
+          <tr><td>Avg elapsed</td><td class="num"><span class="pill p-green">0 ms</span> (ngưỡng &lt;5)</td></tr>
+          <tr><td>Max elapsed (thường)</td><td class="num">3 ms</td></tr>
+          <tr><td>Outlier đơn lẻ</td><td class="num">3.115 ms ×1 — spike cũ vendor</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th colspan="2">Index Usage — CARD_COUPONS (sau 8h)</th></tr></thead>
+        <tbody>
+          <tr><td>#2 TypeId_Flags_DateTo</td><td class="num"><span class="pill p-amber">0 seek</span> · 116 upd</td></tr>
+          <tr><td>#1 TypeId_DateTo_Flags</td><td class="num"><span class="pill p-amber">0 seek</span> · 108 upd</td></tr>
+          <tr><td>PK_CARD_COUPONS (hot)</td><td class="num">46,0M seek</td></tr>
+          <tr><td>I_CARD_COUPONS_B (COUPON_CODE)</td><td class="num">23,9M seek</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note green">
+    <div class="note-t">✅ Rủi ro chính đã qua an toàn — Write amplification</div>
+    <div class="note-b">FLAGS là key column ở cả 2 index mới, nghiệp vụ redeem coupon update FLAGS liên tục. Lo ngại lớn nhất trước khi làm là mỗi update phải maintain thêm 2 index sẽ làm chậm trigger insert giao dịch. Kết quả thực tế: <strong>B6 avg vẫn 0ms qua ~1 triệu lần chạy</strong>, kể cả sau khi job mass-update FLAGS chạy lúc 00:00. Không có tác động tiêu cực tới hot-path ghi.</div>
+  </div>
+
+  <div class="note">
+    <div class="note-t">🟡 Index mới chưa có seek — chưa vội DROP index cũ</div>
+    <div class="note-b">Cả 2 index mới <strong>0 seek sau 8 giờ</strong> — nhóm query filter theo <code>COUPON_TYPE_ID</code> (dạng batch/report tần suất thấp) chưa chạy giữa đêm–sáng sớm. Đây là bình thường (index đã nhận updates, hoạt động đúng). Hệ quả: chưa validate được optimizer có chọn index mới hay không → <strong>giữ nguyên <code>IX_CARD_COUPONS_TYPE_FLAGS</code></strong>, chờ giờ hành chính có traffic report rồi mới đánh giá DROP. Giữ đúng window 1–2 tuần.</div>
+  </div>
+
+  <!-- Next steps -->
+  <div class="sec"><div class="sec-title">Việc còn lại</div></div>
+  <div class="card" style="padding:14px 18px">
+    <ul class="chk">
+      <li><span class="box">[ ]</span><div>Chạy <code>EXEC dbo.usp_Night2_Verify;</code> trong giờ hành chính để bắt seek index mới (B5/B6 + usage)</div></li>
+      <li><span class="box">[✓]</span><div>Bật lại 2 job đã disable — <strong>đã hoàn tất</strong> (RebuildStats 23:00, UpdateFlags 00:00)</div></li>
+      <li><span class="box">[ ]</span><div>Theo dõi B6 (&lt;5ms) trong 2–3 ngày đầu — xác nhận write ổn định lâu dài</div></li>
+      <li><span class="box">[ ]</span><div>Sau 1–2 tuần validate → DROP <code>IX_CARD_COUPONS_TYPE_FLAGS</code> (đã bị #2 bao trùm, đang gánh ~966K updates thừa)</div></li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <div><strong>Database Team</strong> · Dcorp Technology Corporation</div>
+    <div>night2_index_report · CARD_COUPONS · Generated 11/07/2026</div>
+  </div>
+
+</div>
+</body>
+</html>
