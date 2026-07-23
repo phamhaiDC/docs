@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mass Command Dispatch — HO → 1048 Locations | Dcorp Core Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e30613; --black:#000; --white:#fff; --gray:#727171;
+  --bg:#f0f2f5; --dark:#1a1f2e; --tabs:#131722;
+  --amber:#d97706; --green:#16a34a; --blue:#2563eb;
+  --radius:10px; --shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 40px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;padding:12px 0}
+.header-in{max-width:1080px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.mark{height:38px;width:38px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;letter-spacing:-.5px}
+.h-title{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
+.h-sub{font-size:9px;font-family:'DM Mono',monospace;color:#9aa2b1;margin-top:3px}
+.h-right{text-align:right}
+.badge{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:5px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:9px;margin-left:5px}
+
+/* TABS */
+.tabs{position:sticky;top:62px;z-index:99;background:var(--tabs);display:flex;overflow-x:auto}
+.tabs-in{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;width:100%}
+.nav-tab{background:none;border:none;color:#8b93a3;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:12px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none;padding-top:20px}
+.tab-content.active{display:block}
+
+/* SECTIONS */
+.sec-title{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin:22px 0 10px}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px}
+.card.t-red{border-top:3px solid var(--red)}
+.card.t-amber{border-top:3px solid var(--amber)}
+.card.t-green{border-top:3px solid var(--green)}
+.card.t-blue{border-top:3px solid var(--blue)}
+.card h3{font-size:13px;font-weight:800;margin-bottom:8px}
+.card p{margin-bottom:8px}
+.card p:last-child{margin-bottom:0}
+.lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:5px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.kpi.t-red{border-top:3px solid var(--red)}
+.kpi.t-amber{border-top:3px solid var(--amber)}
+.kpi.t-blue{border-top:3px solid var(--blue)}
+.kpi.t-green{border-top:3px solid var(--green)}
+.kpi-val{font-family:'DM Mono',monospace;font-size:30px;font-weight:500;line-height:1.05;margin:4px 0}
+.kpi-sub{font-size:9px;font-family:'DM Mono',monospace;color:var(--gray)}
+
+/* BANNER */
+.hl-banner{background:#fff;border-left:3px solid var(--red);border-radius:8px;box-shadow:var(--shadow);padding:12px 14px;display:flex;gap:12px;margin-bottom:10px}
+.hl-banner.amber{border-left-color:var(--amber)}
+.hl-banner.green{border-left-color:var(--green)}
+.hl-banner.blue{border-left-color:var(--blue)}
+.hl-icon{font-size:18px;line-height:1}
+.hl-title{font-size:12px;font-weight:800;margin-bottom:3px}
+.hl-body{font-size:11.5px;color:#333}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px}
+th{background:var(--dark);color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:9px 12px}
+td{padding:9px 12px;border-bottom:1px solid #eceef2;font-size:12px;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.num{font-family:'DM Mono',monospace;white-space:nowrap}
+tbody tr:hover{background:#fafbfc}
+
+/* TAGS */
+.tag{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:4px;white-space:nowrap}
+.tag-block{background:#fee2e2;color:#b91c1c}
+.tag-warn{background:#fef3c7;color:#92400e}
+.tag-ok{background:#dcfce7;color:#15803d}
+.tag-done{background:#dbeafe;color:#1d4ed8}
+.tag-ip{background:#e0f2fe;color:#0369a1}
+.tag-new{background:#ede9fe;color:#6d28d9}
+
+/* CODE */
+code,pre{font-family:'DM Mono',monospace}
+pre{background:#131722;color:#e6e9ef;padding:12px 14px;border-radius:8px;font-size:11px;overflow-x:auto;margin:8px 0}
+code.inl{background:#eef0f4;padding:1px 5px;border-radius:4px;font-size:11px}
+
+/* TIMELINE */
+.tl{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.tl-row{display:grid;grid-template-columns:74px 1fr;gap:12px;padding:8px 0;border-bottom:1px dashed #e5e7eb}
+.tl-row:last-child{border-bottom:none}
+.tl-t{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--red)}
+.tl-d{font-size:12px}
+.tl-sub{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* PLAN */
+.plan-item{display:flex;gap:12px;background:#fff;border-radius:8px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:8px;align-items:flex-start}
+.plan-num{flex:0 0 24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-family:'DM Mono',monospace;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:500}
+.plan-body{flex:1;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.plan-text{font-size:12.5px;font-weight:700}
+.plan-sub{font-size:10.5px;color:var(--gray);margin-top:3px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+ul{margin:6px 0 6px 18px}
+li{margin-bottom:5px;font-size:12px}
+.note{background:#fff8e6;border:1px solid #f5e0a8;border-radius:8px;padding:11px 13px;font-size:11.5px;color:#6b5314;margin:12px 0}
+
+/* FOOTER */
+.footer{background:var(--dark);color:#8b93a3;margin-top:30px;padding:14px 0;font-size:10px}
+.footer-in{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;justify-content:space-between;font-family:'DM Mono',monospace}
+.footer strong{color:#fff}
+
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
+@media print{.tabs{display:none}.tab-content{display:block!important;page-break-before:always}.header{position:static}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-in">
+    <div class="mark">DC</div>
+    <div>
+      <div class="h-title">Mass Command Dispatch — HO → 1,048 Locations</div>
+      <div class="h-sub">Dcorp Technology Corporation · Core Technology · Middle Server Failover (MS01 → MS02)</div>
+    </div>
+    <div class="h-right">
+      <span class="badge">DRAFT v2</span>
+      <span class="badge">23/07/2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tabs-in">
+    <button class="nav-tab active" onclick="switchTab('sum',this)">📊 Tóm tắt</button>
+    <button class="nav-tab" onclick="switchTab('ana',this)">🔍 Phân tích</button>
+    <button class="nav-tab" onclick="switchTab('risk',this)">⚠️ Rủi ro</button>
+    <button class="nav-tab" onclick="switchTab('sol',this)">🛠️ Phương án</button>
+    <button class="nav-tab" onclick="switchTab('plan',this)">✅ Kế hoạch</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ============ TAB 1 ============ -->
+<div id="tab-sum" class="tab-content active">
+
+  <div class="sec-title">Executive Summary</div>
+  <div class="card t-red">
+    <p><strong>Issue —</strong> Cơ chế hiện tại dùng Zabbix remote command để ra lệnh stop MiddleServer01 / start MiddleServer02 tại 1,048 location. Lệnh được xử lý <strong>tuần tự</strong>, mất <strong>26 phút 30 giây</strong> để store cuối cùng nhận được tín hiệu.</p>
+    <p><strong>Impact —</strong> Cửa sổ trạng thái không đồng nhất kéo dài 26 phút giữa các store; không có xác nhận thành công / thất bại theo từng store; không đạt mục tiêu chuyển đổi 10–15 phút.</p>
+    <p><strong>Status —</strong> Đã xác định nút thắt là <em>cách dispatch</em>, không phải năng lực hạ tầng. Chưa có số đo thời gian stop MS01 — đây là dữ liệu còn thiếu quan trọng nhất.</p>
+    <p><strong>Next Action —</strong> (1) Đo T_stop trên 5 store thật; (2) Đóng gói thành 1 script duy nhất phía store; (3) Chuyển dispatch sang gọi song song. Ba việc này đủ để đạt mục tiêu.</p>
+  </div>
+
+  <div class="sec-title">Chỉ số chính</div>
+  <div class="kpis">
+    <div class="kpi t-red">
+      <div class="lbl">Dispatch hiện tại</div>
+      <div class="kpi-val">26:30</div>
+      <div class="kpi-sub">tuần tự · ~1.5s/host</div>
+    </div>
+    <div class="kpi t-green">
+      <div class="lbl">Dispatch mục tiêu</div>
+      <div class="kpi-val">~1:03</div>
+      <div class="kpi-sub">song song @ concurrency 25</div>
+    </div>
+    <div class="kpi t-amber">
+      <div class="lbl">Sàn thời gian/store</div>
+      <div class="kpi-val">2:00+</div>
+      <div class="kpi-sub">start MS02 · không nén được</div>
+    </div>
+    <div class="kpi t-blue">
+      <div class="lbl">Mục tiêu toàn chain</div>
+      <div class="kpi-val">10–15</div>
+      <div class="kpi-sub">phút · 1,048 locations</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Kết luận nhanh</div>
+
+  <div class="hl-banner green">
+    <div class="hl-icon">✅</div>
+    <div>
+      <div class="hl-title">Mục tiêu 10–15 phút là khả thi</div>
+      <div class="hl-body">Chỉ cần cải thiện tốc độ dispatch <strong>2–4 lần</strong>. Không cần thay đổi kiến trúc lớn, không cần thay thế Zabbix.</div>
+    </div>
+  </div>
+
+  <div class="hl-banner">
+    <div class="hl-icon">🔴</div>
+    <div>
+      <div class="hl-title">Rủi ro lớn nhất không phải tốc độ — mà là ràng buộc "MS01 tắt thì MS02 mới chạy"</div>
+      <div class="hl-body">Nếu MS01 không tắt được (hang, giữ file handle, đang flush transaction), MS02 sẽ không bao giờ start và store đó <strong>offline vô thời hạn</strong>, không ai biết.</div>
+    </div>
+  </div>
+
+  <div class="hl-banner amber">
+    <div class="hl-icon">📏</div>
+    <div>
+      <div class="hl-title">Thiếu số đo T_stop_MS01</div>
+      <div class="hl-body">Đã biết start ≈ 2 phút, nhưng chưa biết stop mất bao lâu. Thiếu số này thì mọi timeline đều là phỏng đoán.</div>
+    </div>
+  </div>
+
+  <div class="hl-banner">
+    <div class="hl-icon">🌐</div>
+    <div>
+      <div class="hl-title">Zabbix đang chạy passive mode — store không có public IP</div>
+      <div class="hl-body">Đây là ràng buộc quan trọng nhất mới bổ sung. Passive mode nghĩa là <strong>HO phải chủ động mở kết nối vào store</strong>. Điều này vừa giới hạn khả năng chạy song song, vừa khiến mô hình push phụ thuộc hoàn toàn vào đường tunnel/VPN. <strong>Cần làm rõ HO đang reach store bằng đường nào.</strong></div>
+    </div>
+  </div>
+
+  <div class="hl-banner blue">
+    <div class="hl-icon">📊</div>
+    <div>
+      <div class="hl-title">Hiện không có cơ chế đối soát</div>
+      <div class="hl-body">Không biết store nào đã switch, store nào fail, store nào chưa nhận lệnh. Đây là hạng mục bắt buộc dù chọn phương án nào.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 2 ============ -->
+<div id="tab-ana" class="tab-content">
+
+  <div class="sec-title">1. Bản chất bài toán</div>
+  <div class="card">
+    <p>Đây không phải bài toán <em>monitoring</em> mà là bài toán <strong>orchestration</strong> (điều phối lệnh quy mô lớn).</p>
+    <p>Zabbix remote command được thiết kế cho remediation nhỏ lẻ — restart 1 service khi trigger fire — không phải mass command dispatch tới hơn 1,000 node cùng lúc. Việc dùng sai vai trò công cụ chính là nguồn gốc của độ trễ 26 phút.</p>
+  </div>
+
+  <div class="sec-title">2. Nút thắt: thực thi tuần tự</div>
+  <div class="card t-red">
+    <p>1.5 giây là độ trễ của <strong>một</strong> lệnh. Nhân với 1,048 host nghĩa là toàn bộ đang xếp hàng qua một luồng duy nhất.</p>
+    <p>Nguyên nhân nhiều khả năng: remote command phát sinh từ Action được xử lý bởi tiến trình <code class="inl">escalator</code>, mặc định <code class="inl">StartEscalators=1</code> → hàng đợi tuần tự.</p>
+    <pre>Hiện tại (tuần tự):
+1,048 host × 1.5s = 1,572s ≈ 26 phút 12 giây  ✔ khớp số đo của team
+
+Song song (concurrency 25):
+1,048 × 1.5s ÷ 25 = 63s ≈ 1 phút</pre>
+    <p><strong>→ Dispatch giảm từ 26:30 xuống ~1 phút. Đây là thay đổi rẻ nhất và hiệu quả nhất.</strong></p>
+  </div>
+
+  <div class="sec-title">3. Ngân sách thời gian</div>
+  <pre>T_total = T_dispatch(store cuối) + T_stop_MS01 + T_start_MS02 + T_verify</pre>
+  <table>
+    <thead><tr><th>Thành phần</th><th>Hiện tại</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+      <tr><td>Dispatch tới store cuối</td><td class="num">26:30</td><td>🔴 nút thắt duy nhất</td></tr>
+      <tr><td>Stop MS01</td><td class="num">?</td><td><strong>Chưa có số — cần đo gấp</strong></td></tr>
+      <tr><td>Start MS02</td><td class="num">~2:00</td><td>Cố định, không nén được</td></tr>
+      <tr><td>Verify + báo cáo</td><td class="num">?</td><td>Chưa có cơ chế</td></tr>
+    </tbody>
+  </table>
+
+  <table>
+    <thead><tr><th>Mục tiêu</th><th>Ngân sách dispatch cho phép</th><th>Mức cải thiện cần</th></tr></thead>
+    <tbody>
+      <tr><td>15 phút</td><td class="num">~11–12 phút</td><td>~2× <span class="tag tag-ok">Dễ đạt</span></td></tr>
+      <tr><td>10 phút</td><td class="num">~6–7 phút</td><td>~4× <span class="tag tag-ok">Đạt được</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="sec-title">4. Ràng buộc mạng — passive mode, store không có public IP</div>
+  <div class="card t-red">
+    <p><strong>Passive mode</strong> nghĩa là Zabbix server (hoặc proxy) <strong>chủ động mở kết nối tới agent</strong> tại store, cổng 10050. Chiều kết nối là HO → store.</p>
+    <p><strong>Điểm cần làm rõ ngay:</strong> nếu store không có public IP, HO đang reach store bằng đường nào? Site-to-site VPN, Cloudflare Tunnel, MPLS, hay có Zabbix proxy đặt tại store/vùng? Câu trả lời quyết định giới hạn concurrency thật sự — nên đây là câu hỏi quan trọng nhất hiện tại.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>Hệ quả 1 — 1.5s/host có thể không phải do escalator</h3>
+    <p>Trong passive mode, mỗi lệnh phải mở một kết nối TCP mới xuyên qua tunnel/VPN tới store. 1.5 giây rất giống <strong>RTT + handshake qua tunnel</strong> hơn là độ trễ hàng đợi nội bộ.</p>
+    <p><strong>Ý nghĩa:</strong> giả định "chạy song song concurrency 25 → 63 giây" ở mục 2 <strong>chỉ đúng nếu đường truyền chịu được 25 kết nối đồng thời</strong>. Nếu nút thắt nằm ở tunnel hoặc băng thông HO thì mức cải thiện sẽ thấp hơn. Cần POC để đo thực tế, không suy ra bằng phép chia.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>Hệ quả 2 — nếu có Zabbix proxy, có thêm một lớp trễ</h3>
+    <p>Với kiến trúc proxy (rất thường gặp ở quy mô &gt;1,000 host), remote command đi theo đường <code class="inl">server → proxy → agent</code>. Với <em>active proxy</em>, proxy chỉ nhận task khi nó tự connect về server theo chu kỳ → phát sinh độ trễ theo chu kỳ đó, cộng thêm vào tổng thời gian.</p>
+    <p><em>Em chưa rõ hệ thống hiện có dùng proxy hay không — cần confirm. Nếu có, số lượng proxy và vị trí đặt sẽ quyết định mức song song tối đa.</em></p>
+  </div>
+
+  <div class="card t-red">
+    <h3>Hệ quả 3 — push model trong passive mode rất dễ gãy</h3>
+    <p>Store rớt tunnel tại đúng thời điểm ra lệnh sẽ <strong>không nhận được lệnh và không có cơ chế tự chữa</strong>. Ở quy mô 1,048 store, đây không phải trường hợp hiếm mà là điều chắc chắn xảy ra ở một tỷ lệ nhất định mỗi lần chạy.</p>
+  </div>
+
+  <div class="card t-green">
+    <h3>Hệ quả 4 — pull model trở thành lựa chọn hợp lý hơn hẳn</h3>
+    <p>Nếu store tự đi hỏi HO thay vì HO đi ra lệnh cho store, toàn bộ traffic là <strong>outbound từ store</strong> — đúng chiều mà mạng hiện tại vốn đã cho phép. Không cần public IP, không cần inbound firewall rule, không phụ thuộc tunnel còn sống tại đúng thời điểm ra lệnh.</p>
+    <p>Ràng buộc mạng anh vừa cung cấp <strong>củng cố thêm cho phương án A</strong>, không phải làm nó khó hơn.</p>
+  </div>
+
+  <div class="note">
+    <strong>Lưu ý về độ tin cậy số liệu:</strong> các con số dispatch (63s, concurrency 25) là ước tính dựa trên phép chia tuyến tính từ 1.5s/host do team cung cấp. Cần POC thực tế để xác nhận — có thể gặp giới hạn khác ở phía Zabbix server, database, hoặc đường truyền tới store. Cơ chế <code class="inl">escalator</code> là hiểu biết chung về Zabbix, nên verify lại trên đúng version đang chạy.
+  </div>
+
+</div>
+
+<!-- ============ TAB 3 ============ -->
+<div id="tab-risk" class="tab-content">
+
+  <div class="sec-title">Rủi ro — xếp theo mức nghiêm trọng</div>
+
+  <div class="card t-red">
+    <h3>🔴 Stop treo = store chết vô thời hạn</h3>
+    <p>Ràng buộc "MS01 tắt thì MS02 mới chạy" biến mỗi store thành một chuỗi không có đường lùi. Nếu MS01 không tắt được, MS02 không bao giờ start.</p>
+    <p><strong>Giảm thiểu bắt buộc:</strong> script phía store phải có <code class="inl">stop → chờ N giây → force kill nếu chưa tắt → verify đã tắt → mới start MS02</code>. Timeout cứng, không chờ vô hạn.</p>
+  </div>
+
+  <div class="card t-red">
+    <h3>🔴 Không có transactional guarantee</h3>
+    <p>Nếu <code class="inl">stop MS01</code> thành công nhưng <code class="inl">start MS02</code> fail → store offline hoàn toàn mà không ai biết. Nếu dùng <code class="inl">system.run[...,nowait]</code>, Zabbix không trả về kết quả — fire and forget.</p>
+    <p><strong>Giảm thiểu:</strong> script có health check và rollback; kết quả từng store phải được ghi ngược về HO.</p>
+  </div>
+
+  <div class="card t-red">
+    <h3>🔴 Cửa sổ không đồng nhất 26 phút</h3>
+    <p>Trong 26 phút, hệ thống tồn tại hai nhóm store chạy hai Middle Server khác nhau. Với RK7, nếu MS01/MS02 cùng trỏ về một luồng replication hoặc DB trung tâm → nguy cơ split-brain hoặc lệch refdata.</p>
+    <p><strong>Cần làm rõ:</strong> MS01 và MS02 có thể cùng tồn tại an toàn không? Câu trả lời quyết định thứ tự stop/start và có được chạy theo wave hay không.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>🟡 Store offline tại thời điểm ra lệnh</h3>
+    <p>Ở quy mô 1,048 store luôn có một tỷ lệ nhất định offline (mất mạng, mất điện, ngoài giờ). Push model của Zabbix không tự chữa — những store đó vĩnh viễn không switch cho đến khi có người phát hiện.</p>
+    <p><strong>Giảm thiểu:</strong> danh sách store chưa phản hồi phải hiển thị rõ trên dashboard; trung hạn bổ sung pull fallback.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>🟡 Retry tốn ~4 phút mỗi lượt</h3>
+    <p>Mỗi store fail phải làm lại từ đầu (stop + start ≈ 4 phút). Timeline phải chừa sẵn ít nhất một lượt retry — không được lấp đầy 15 phút.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>🟡 Thundering herd</h3>
+    <p>1,048 instance MS02 cùng khởi động và reconnect về HO trong thời gian ngắn → tải đột biến lên license server và DB trung tâm. Đây là lý do chính nên chạy theo wave thay vì đồng loạt.</p>
+  </div>
+
+  <div class="card t-amber">
+    <h3>🟡 Không có canary / rollback</h3>
+    <p>Nếu lệnh sai hoặc cấu hình MS02 lỗi, toàn bộ 1,048 store sập cùng lúc, không có cơ chế dừng giữa chừng.</p>
+    <p><strong>Giảm thiểu:</strong> health gate sau canary 5 store trước khi cho phép wave tiếp theo.</p>
+  </div>
+
+</div>
+
+<!-- ============ TAB 4 ============ -->
+<div id="tab-sol" class="tab-content">
+
+  <div class="sec-title">So sánh phương án</div>
+  <table>
+    <thead><tr><th style="width:16%">Phương án</th><th>Mô tả</th><th style="width:14%">Dispatch</th><th style="width:16%">Đánh giá</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>A — Pull model</strong></td>
+        <td>HO publish "desired state" qua một HTTPS endpoint (JSON / DB flag). Mỗi store chạy một agent nhẹ riêng (scheduled task / cron / Windows service) poll endpoint mỗi 30–60 giây, so sánh <code class="inl">desired ≠ actual</code> → tự thực thi script switch → POST kết quả về HO. <strong>Toàn bộ traffic là outbound từ store.</strong></td>
+        <td class="num">~1–2 phút</td>
+        <td><span class="tag tag-ok">Khuyến nghị mạnh</span><div style="margin-top:5px;font-size:11px">Không cần public IP, không cần inbound. Self-healing cho store offline. Zabbix quay về đúng vai trò giám sát và đối soát.</div></td>
+      </tr>
+      <tr>
+        <td><strong>B — Orchestration tool</strong></td>
+        <td>Ansible (<code class="inl">forks</code> cao + <code class="inl">async</code>) hoặc SaltStack (pub/sub, phù hợp nhất ở quy mô &gt;1,000 node). Zabbix giữ vai trò verify sau khi lệnh chạy.</td>
+        <td class="num">~1–3 phút</td>
+        <td><span class="tag tag-warn">Đúng công cụ</span><div style="margin-top:5px;font-size:11px">Cần đầu tư hạ tầng và kỹ năng mới.</div></td>
+      </tr>
+      <tr>
+        <td><strong>C — Zabbix push tối ưu</strong></td>
+        <td>Giữ nguyên Zabbix nhưng chuyển sang gọi song song qua API <code class="inl">script.execute</code> đa luồng, tăng <code class="inl">StartEscalators</code>/<code class="inl">StartPollers</code>, chạy theo wave.</td>
+        <td class="num">~1–2 phút <span style="color:#b91c1c">(*)</span></td>
+        <td><span class="tag tag-ip">Nhanh triển khai</span><div style="margin-top:5px;font-size:11px">Ít thay đổi nhất. <strong>(*) Phụ thuộc đường tunnel chịu được bao nhiêu kết nối đồng thời</strong> — cần POC xác nhận.</div></td>
+      </tr>
+      <tr>
+        <td><strong>D — Zabbix agent active mode</strong></td>
+        <td>Chuyển agent tại store từ passive sang <strong>active</strong> — agent tự connect ra server (outbound, cổng 10051). Phù hợp bản chất mạng hiện tại hơn passive.</td>
+        <td class="num">theo chu kỳ<br>refresh</td>
+        <td><span class="tag tag-warn">Cần verify</span><div style="margin-top:5px;font-size:11px">Khả năng chạy remote command trên active agent thay đổi theo version Zabbix — <strong>phải kiểm chứng trên version đang chạy trước khi tính đến.</strong></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Khuyến nghị sau khi có ràng buộc passive mode:</strong> trọng số đã dịch chuyển từ C sang <strong>A</strong>. Push model trong môi trường không public IP luôn phải đánh cược vào việc tunnel còn sống tại đúng một thời điểm — ở 1,048 store, canh bạc đó chắc chắn thua ở một tỷ lệ nhất định mỗi lần chạy. Pull model đi đúng chiều mạng vốn có và tự chữa.<br><br>
+    <strong>Lộ trình đề xuất:</strong> POC song song cả A và C trên 5 store → so số đo thực tế → nếu C đạt mục tiêu thì dùng C trong ngắn hạn <em>nhưng vẫn phải xây A</em> làm lớp self-healing trước khi mở rộng lên 1,500–2,000 store. Hai phương án không loại trừ nhau: C là kênh ra lệnh nhanh, A là lưới an toàn.
+  </div>
+
+  <div class="sec-title">Chi tiết phương án C — 5 hạng mục</div>
+  <div class="card t-blue">
+    <ul>
+      <li>Tăng <code class="inl">StartEscalators</code> (10–20) và <code class="inl">StartPollers</code>; giám sát <code class="inl">zabbix[process,escalator,,avg busy]</code></li>
+      <li>Gọi qua <strong>Zabbix API <code class="inl">script.execute</code> đa luồng</strong> từ script bên ngoài thay vì Action — kiểm soát được concurrency và bắt được kết quả từng host</li>
+      <li>Đóng gói thành <strong>1 script duy nhất phía store</strong> (<code class="inl">switch-mid.ps1/sh</code>): stop MS01 → verify stopped (có force-kill timeout) → start MS02 → health check → rollback nếu fail → ghi kết quả về HO. Zabbix chỉ trigger script này, không điều khiển từng bước</li>
+      <li><strong>Triển khai theo wave</strong>: 5 store (canary) → 260 → 260 → 260 → phần còn lại, có health gate giữa các wave</li>
+      <li><strong>Dashboard đối soát</strong>: bao nhiêu store đã switch / fail / chưa phản hồi</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">Timeline khả thi — mô hình wave</div>
+  <p style="font-size:12px;margin-bottom:10px">Vì start MS02 mất 2 phút và cố định, sàn thời gian là <strong>~4 phút</strong> dù làm cách nào. Còn dư ~10 phút — khuyến nghị <strong>dùng khoản dư đó mua sự an toàn</strong>, không dùng để chạy nhanh hơn.</p>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-t">T+0:00</div><div><div class="tl-d">Canary — 5 store</div><div class="tl-sub">Health gate bắt buộc. Fail → dừng toàn bộ.</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+2:00</div><div><div class="tl-d">Wave 1 — ~260 store</div><div class="tl-sub">Giám sát tải HO / license server / DB trung tâm</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+4:00</div><div><div class="tl-d">Wave 2 — ~260 store</div><div class="tl-sub">Health gate</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+6:00</div><div><div class="tl-d">Wave 3 — ~260 store</div><div class="tl-sub">Health gate</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+8:00</div><div><div class="tl-d">Wave 4 — phần còn lại</div><div class="tl-sub">Health gate</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+12:00</div><div><div class="tl-d">Wave cuối hoàn tất start MS02</div><div class="tl-sub">Toàn bộ store đã nhận và thực thi lệnh</div></div></div>
+    <div class="tl-row"><div class="tl-t">T+12–15</div><div><div class="tl-d">Cửa sổ retry cho store fail / offline</div><div class="tl-sub">Đủ cho 1 lượt retry đầy đủ (~4 phút/store)</div></div></div>
+    <div class="tl-row"><div class="tl-t">~T+15</div><div><div class="tl-d"><strong>Hoàn tất — có báo cáo đối soát ✅</strong></div><div class="tl-sub">Đạt mục tiêu, tránh thundering herd, có điểm dừng an toàn</div></div></div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 5 ============ -->
+<div id="tab-plan" class="tab-content">
+
+  <div class="sec-title">Kế hoạch hành động — theo thứ tự ưu tiên</div>
+
+  <div class="plan-item">
+    <div class="plan-num">1</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Đo T_stop_MS01 trên 5 store thật</div>
+      <div class="plan-sub">Thiếu số này thì mọi timeline đều là phỏng đoán. Đo cả trường hợp MS01 đang có transaction đang chạy.</div></div>
+      <span class="tag tag-block">Blocker</span>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">2</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Đóng gói thành 1 script duy nhất phía store</div>
+      <div class="plan-sub">stop → force-kill timeout → verify → start → health check → báo kết quả về HO. Zabbix chỉ gọi 1 lệnh, không điều khiển từng bước.</div></div>
+      <span class="tag tag-block">P1</span>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">3</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Chuyển dispatch sang gọi song song</div>
+      <div class="plan-sub">Zabbix API script.execute multi-thread, concurrency 20–30. Giải quyết ~90% bài toán tốc độ.</div></div>
+      <span class="tag tag-warn">P1</span>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">4</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Xây dashboard đối soát trạng thái</div>
+      <div class="plan-sub">Đã switch / fail / chưa phản hồi. Bắt buộc — hiện tại không biết store nào chưa nhận lệnh.</div></div>
+      <span class="tag tag-warn">P1</span>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">5</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Chạy theo wave + canary gate</div>
+      <div class="plan-sub">5 → 260 → 260 → 260 → còn lại. An toàn, vẫn trong ngân sách 15 phút.</div></div>
+      <span class="tag tag-ip">P2</span>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">6</div>
+    <div class="plan-body">
+      <div><div class="plan-text">Bổ sung pull fallback cho store offline</div>
+      <div class="plan-sub">Trung hạn. Self-healing khi mở rộng lên quy mô 1,500–2,000 store.</div></div>
+      <span class="tag tag-new">P3</span>
+    </div>
+  </div>
+
+  <div class="sec-title">Câu hỏi cần được trả lời trước khi chốt thiết kế</div>
+  <table>
+    <thead><tr><th style="width:6%">#</th><th>Câu hỏi</th><th style="width:30%">Vì sao quan trọng</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><strong>Ràng buộc "MS01 tắt trước" là per-store hay toàn chain?</strong></td><td>Nếu là toàn chain (tất cả MS01 phải tắt hết rồi mới được start MS02 nào) thì mô hình wave <strong>không dùng được</strong>, phải làm 2 pha có barrier, và mục tiêu 10–15 phút gần như không khả thi nếu giữ push tuần tự.</td></tr>
+      <tr><td class="num">2</td><td>Thời gian stop MS01 thực tế là bao lâu?</td><td>Quyết định toàn bộ timeline.</td></tr>
+      <tr><td class="num">3</td><td>RTO chấp nhận được cho một store lẻ bị fail?</td><td>Quyết định có cần retry tự động hay xử lý tay.</td></tr>
+      <tr><td class="num">4</td><td>MS01 và MS02 có thể cùng chạy an toàn không?</td><td>Quyết định thứ tự stop/start và rủi ro split-brain.</td></tr>
+      <tr><td class="num">5</td><td>Version Zabbix đang chạy? Trigger bằng Action hay API? Lệnh qua Zabbix agent hay SSH?</td><td>Cần để xác nhận nguyên nhân nút thắt và chọn cách tối ưu đúng.</td></tr>
+      <tr><td class="num">6</td><td>Tỷ lệ store offline trung bình tại thời điểm ra lệnh?</td><td>Quyết định có bắt buộc pull fallback ngay hay không.</td></tr>
+      <tr><td class="num">7</td><td><strong>Store không có public IP thì HO đang reach store bằng đường nào?</strong> (site-to-site VPN / Cloudflare Tunnel / MPLS / khác)</td><td>Quyết định giới hạn concurrency thật sự. Không có câu trả lời này thì con số "63 giây" chỉ là lý thuyết.</td></tr>
+      <tr><td class="num">8</td><td>Có dùng Zabbix proxy không? Bao nhiêu proxy, đặt ở đâu (tại store hay tại vùng)?</td><td>Proxy thêm một lớp trễ theo chu kỳ và quyết định mức song song tối đa.</td></tr>
+      <tr><td class="num">9</td><td>Đường tunnel/VPN chịu được bao nhiêu kết nối đồng thời từ HO?</td><td>Đây mới là trần thật của phương án C, không phải cấu hình Zabbix.</td></tr>
+      <tr><td class="num">10</td><td>Store có được phép gọi outbound HTTPS ra một endpoint của HO không?</td><td>Điều kiện tiên quyết của phương án A.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Về độ tin cậy của tài liệu này:</strong> các con số 26:30 và 2 phút là số liệu do team cung cấp. Các con số dispatch song song (~63s, concurrency 25) là <em>ước tính tuyến tính</em>, chưa được POC xác nhận. Nhận định về cơ chế <code class="inl">escalator</code> của Zabbix dựa trên kiến thức chung về sản phẩm, cần verify trên version đang chạy thực tế. Tài liệu này là cơ sở để thảo luận và POC, không phải kết luận cuối cùng.
+  </div>
+
+</div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-in">
+    <div><strong>Phạm Minh Hải</strong> · Core Technology · Dcorp Technology Corporation</div>
+    <div>ms_failover_orchestration_brief v2 · 23/07/2026</div>
+  </div>
+</div>
+
+<script>
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
