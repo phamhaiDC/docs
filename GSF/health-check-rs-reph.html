@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Health Check — RS_REPH (WIN-ASH63MMQP74)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613;--black:#000;--white:#fff;--gray:#727171;
+  --bg:#f0f2f5;--dark:#1a1f2e;--tabs:#131722;
+  --amber:#d97706;--green:#16a34a;--blue:#2563eb;
+  --radius:10px;--shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);line-height:1.5;font-size:13px}
+.mono{font-family:'DM Mono',monospace}
+
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;
+  display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;
+  padding:12px 26px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.logo{height:44px;width:44px;border-radius:7px;background:var(--red);color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-weight:900;letter-spacing:.5px;line-height:1}
+.logo .l1{font-size:13px}.logo .l2{font-size:6.5px;font-weight:700;opacity:.9;margin-top:2px}
+.h-center .h-title{font-size:15px;font-weight:800;letter-spacing:.3px}
+.h-center .h-sub{font-size:9.5px;color:#aeb4c2;margin-top:2px;font-weight:600}
+.h-center .h-route{font-size:9px;color:#7f8798;margin-top:1px}
+.h-right{text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.badge{font-family:'DM Mono',monospace;font-size:9px;padding:3px 9px;border-radius:20px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e6e9f0;white-space:nowrap}
+.badge.red{background:var(--red);border-color:var(--red);color:#fff;font-weight:500}
+
+/* Layout */
+.wrap{max-width:1120px;margin:0 auto;padding:22px 26px 60px}
+.section{margin-top:26px}
+.section-title{font-size:10px;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;
+  color:var(--gray);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:"";width:20px;height:2px;background:var(--red);display:inline-block}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
+.card+.card{margin-top:14px}
+
+/* Verdict banner */
+.verdict{border-left:4px solid var(--amber);background:linear-gradient(90deg,#fff8ee,#fff);
+  border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+.verdict h2{font-size:15px;font-weight:800;margin-bottom:8px}
+.verdict p{font-size:12.5px;color:#333}
+.verdict strong{color:var(--red)}
+
+/* KPI mini */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;border-top:3px solid var(--gray)}
+.kpi.red{border-top-color:var(--red)}.kpi.amber{border-top-color:var(--amber)}
+.kpi.green{border-top-color:var(--green)}.kpi.blue{border-top-color:var(--blue)}
+.kpi-label{font-size:8.5px;text-transform:uppercase;font-weight:700;letter-spacing:1px;color:var(--gray)}
+.kpi-val{font-family:'DM Mono',monospace;font-size:26px;font-weight:900;margin-top:6px;line-height:1}
+.kpi-sub{font-size:9px;color:var(--gray);margin-top:5px;font-weight:600}
+
+/* Status table */
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--dark);color:#fff;text-align:left;padding:9px 12px;font-size:9px;
+  text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+td{padding:9px 12px;border-bottom:1px solid #eef0f3;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#fafbfc}
+td.val{font-family:'DM Mono',monospace;font-size:11px}
+.light{display:inline-block;font-size:8px;font-weight:800;padding:3px 8px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.g{background:#dcfce7;color:#15803d}.y{background:#fef3c7;color:#b45309}.r{background:#fee2e2;color:#b91c1c}
+
+/* Findings */
+.finding{border-left:3px solid var(--blue);padding:2px 0 2px 14px;margin:14px 0}
+.finding.crit{border-left-color:var(--red)}
+.finding h4{font-size:12.5px;font-weight:800;margin-bottom:4px}
+.finding p{font-size:12px;color:#444}
+.finding code,code.inl{font-family:'DM Mono',monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:11px;color:#b91c1c}
+
+/* Priority blocks */
+.prio{border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-top:14px;background:#fff}
+.prio-head{padding:11px 18px;font-weight:800;font-size:12px;color:#fff;display:flex;align-items:center;gap:10px}
+.prio-head .tag{font-family:'DM Mono',monospace;font-size:9px;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:5px;font-weight:500}
+.prio.p0 .prio-head{background:var(--red)}
+.prio.p1 .prio-head{background:var(--amber)}
+.prio.p2 .prio-head{background:var(--green)}
+.prio-body{padding:16px 18px}
+.prio-body ul{list-style:none}
+.prio-body li{font-size:12px;padding:6px 0 6px 18px;position:relative;color:#333}
+.prio-body li::before{content:"▸";position:absolute;left:0;color:var(--red);font-weight:800}
+.prio-body li strong{color:#111}
+
+pre{background:#0f1420;color:#e6e9f0;border-radius:8px;padding:14px 16px;overflow-x:auto;
+  font-family:'DM Mono',monospace;font-size:11px;line-height:1.6;margin:10px 0}
+pre .kw{color:#ff7b72}pre .fn{color:#79c0ff}pre .cm{color:#8b949e}pre .st{color:#a5d6ff}
+
+.note{background:#f8f9fb;border:1px dashed #d5d9e0;border-radius:8px;padding:12px 14px;font-size:11.5px;color:#555;margin-top:12px}
+.note strong{color:var(--red)}
+
+.footer{margin-top:40px;background:var(--dark);color:#aeb4c2;display:flex;justify-content:space-between;
+  padding:14px 26px;font-size:9.5px;font-family:'DM Mono',monospace;border-radius:var(--radius)}
+.footer strong{color:#fff}
+
+@media print{.header{position:static}body{background:#fff}.wrap{max-width:100%}}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.header{grid-template-columns:auto 1fr;row-gap:8px}.h-right{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><span class="l1">D'</span><span class="l2">R-KEEPER</span></div>
+  <div class="h-center">
+    <div class="h-title">SQL SERVER HEALTH CHECK — RS_REPH</div>
+    <div class="h-sub">Dcorp Technology Corporation · Platform. Empowering Growth.</div>
+    <div class="h-route">Server: WIN-ASH63MMQP74 · Connection: dcorp-gsf-RS_REPH-prod (read-only)</div>
+  </div>
+  <div class="h-right">
+    <span class="badge red">05/08/2026</span>
+    <span class="badge">SQL 2016 Enterprise</span>
+    <span class="badge">health_check_v1</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- VERDICT -->
+  <div class="section">
+    <div class="verdict">
+      <h2>Kết luận tổng quan</h2>
+      <p>Server mới đang <strong>hoạt động ổn định, không có sự cố cấp bách</strong> — backup RS_REPH chạy đều hằng đêm, không job nào lỗi, CPU nhàn rỗi. <strong>Tuy nhiên</strong> đây là một reporting server đang bị <strong>I/O-bound nghiêm trọng</strong> với 3 vấn đề gốc rễ: (1) thiếu nonclustered index trên các bảng 100M+ dòng, (2) storage đọc chậm (RS_REPH 68 ms/read, RK7_SAP_RS 265 ms/read), (3) SQL 2016 vẫn ở bản RTM chưa vá SP/CU. Điểm sáng: instance đã được tune sẵn (memory / MAXDOP / cost threshold) khá chuẩn.</p>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="section">
+    <div class="section-title">Chỉ số then chốt</div>
+    <div class="kpis">
+      <div class="kpi red">
+        <div class="kpi-label">Read Latency RS_REPH</div>
+        <div class="kpi-val">68<span style="font-size:13px"> ms</span></div>
+        <div class="kpi-sub">Ngưỡng tốt &lt; 10–20 ms · nút thắt chính</div>
+      </div>
+      <div class="kpi amber">
+        <div class="kpi-label">Page Life Expectancy</div>
+        <div class="kpi-val">1,255<span style="font-size:13px"> s</span></div>
+        <div class="kpi-sub">~21 phút · buffer bị churn bởi scan lớn</div>
+      </div>
+      <div class="kpi blue">
+        <div class="kpi-label">Top Query Reads/lần</div>
+        <div class="kpi-val">2.8<span style="font-size:13px"> M</span></div>
+        <div class="kpi-sub">SP_SAP_Reconciliation · max 206 s</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-label">Backup RS_REPH</div>
+        <div class="kpi-val">5<span style="font-size:13px"> h</span></div>
+        <div class="kpi-sub">Full hằng đêm 03:41 · OK</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS GRID -->
+  <div class="section">
+    <div class="section-title">Bảng đánh giá theo ngưỡng</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table>
+        <thead><tr><th style="width:36%">Hạng mục</th><th style="width:44%">Giá trị</th><th style="width:20%">Đánh giá</th></tr></thead>
+        <tbody>
+          <tr><td>SQL build</td><td class="val">13.0.1601.5 — 2016 <strong>RTM</strong>, chưa SP/CU</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>CPU hiện tại</td><td class="val">SQL 7% · idle 85%</td><td><span class="light g">An toàn</span></td></tr>
+          <tr><td>max server memory</td><td class="val">48 GB (chừa 16 GB cho OS)</td><td><span class="light g">An toàn</span></td></tr>
+          <tr><td>MAXDOP / cost threshold</td><td class="val">8 / 50</td><td><span class="light g">An toàn</span></td></tr>
+          <tr><td>Page Life Expectancy</td><td class="val">1,255 s (~21 phút)</td><td><span class="light y">Cảnh báo</span></td></tr>
+          <tr><td>Ổ đĩa D:\</td><td class="val">70.8% dùng (còn 598 GB / 2 TB)</td><td><span class="light y">Cảnh báo</span></td></tr>
+          <tr><td>Read latency RS_REPH</td><td class="val">68 ms / read</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>Read latency RK7_SAP_RS</td><td class="val">265 ms / read</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>Autogrowth (RK7_SAP_RS, POS_INT_EFFECT)</td><td class="val">1 MB</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>TempDB</td><td class="val">8 file (tốt) nhưng size lệch (0.28 vs 4–10 GB)</td><td><span class="light y">Cảnh báo</span></td></tr>
+          <tr><td>Backup RS_REPH &amp; STAT DBs</td><td class="val">Full hằng đêm, 5h trước</td><td><span class="light g">An toàn</span></td></tr>
+          <tr><td>Backup ShiftTransport / ReportServer / Skymonitor (FULL)</td><td class="val">Chưa/không backup → log không truncate</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>SQL Agent Jobs</td><td class="val">Tất cả Succeeded, 0 Failed</td><td><span class="light g">An toàn</span></td></tr>
+          <tr><td>Index maintenance job</td><td class="val">Frag ~0% ✓ nhưng chạy 9h14 + fillfactor 80</td><td><span class="light y">Cảnh báo</span></td></tr>
+          <tr><td><strong>RS_REPH — NC index trên bảng lớn</strong></td><td class="val">Gần như không có (bảng 100M+ dòng)</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>RS_REPH — bảng HEAP lớn</td><td class="val">5 bảng (16M / 14.7M / 5M dòng...)</td><td><span class="light r">Nguy hiểm</span></td></tr>
+          <tr><td>Top query I/O</td><td class="val">SP_SAP_Reconciliation 2.8M reads/lần, max 206s</td><td><span class="light r">Nguy hiểm</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FINDINGS -->
+  <div class="section">
+    <div class="section-title">Phát hiện chi tiết &amp; phân tích gốc rễ</div>
+    <div class="card">
+      <div class="finding">
+        <h4>Cấu hình instance — đã được tune tốt</h4>
+        <p>16 core / 64 GB / 2 NUMA. <code class="inl">max memory = 48 GB</code>, <code class="inl">MAXDOP = 8</code>, <code class="inl">cost threshold = 50</code>, <code class="inl">optimize for ad hoc = 1</code>, page verify = CHECKSUM, auto-stats bật. Chỉ nên bật thêm <code class="inl">backup compression default</code>.</p>
+      </div>
+      <div class="finding crit">
+        <h4>Root cause I/O-bound: thiếu nonclustered index</h4>
+        <p>Các bảng khổng lồ chỉ có clustered PK, <strong>hoàn toàn không có nonclustered index</strong> phục vụ report: SESSIONDISHES (104M dòng, 47 GB), OPERATIONLOG (154M, 19 GB), TAXPARTS (100M), PAYBINDINGS (100M), UploadHistory (64M), DISCPARTS (50M), ORDERSESSIONS (48M), VISITGUESTS (22M). Bộ proc <code class="inl">SP_SAP_Reconciliation</code> + <code class="inl">SP_GetTaxTotal/SaleTotal/PaymentTotal/DiscTotal</code> lọc theo <code class="inl">(@IRESTAURANT, @START_DATE, @END_DATE)</code> nhưng phải scan full → mỗi lần đọc ~2.8 triệu page (~22 GB logical I/O), chạy hàng chục nghìn lần/ngày. Đây là nguyên nhân trực tiếp của <code class="inl">CXPACKET 54%</code> + <code class="inl">PAGEIOLATCH_SH</code> trong wait stats.</p>
+      </div>
+      <div class="finding crit">
+        <h4>5 bảng HEAP lớn (không có clustered index)</h4>
+        <p>CRM_CARD_TRANSACTIONS (16M dòng, 2.5 GB heap), DATA_RK7_AG_SERVICE_LOG_DETAILS (14.7M), CRM_CARD_TRANSACTION_NOTE (5M), STAT_RK7_SHIFTS_CECKSUM (5M / 6.5 GB), DATA_RK7_AG_SERVICE_LOG (4.9M / 6.4 GB). Heap scan kém hiệu quả và dễ sinh forwarded record.</p>
+      </div>
+      <div class="finding">
+        <h4>Fill factor 80 sai hướng cho workload đọc</h4>
+        <p>Sau reindex, fragmentation ~0% (job hoạt động tốt) nhưng clustered index chỉ đầy <strong>~80%/trang</strong> → lãng phí ~20% dung lượng và đọc dư 20% page trên mỗi scan. Với bảng insert-rồi-đọc như reporting, nên dùng fillfactor 95–100 để giảm I/O ngay lập tức.</p>
+      </div>
+      <div class="finding">
+        <h4>Storage &amp; dung lượng file</h4>
+        <p>RS_REPH: 321 GB cấp phát, thực dùng 168 GB (còn 153 GB trống trong file — dư headroom). Tất cả data/log/tempdb nằm chung ổ D:\ (70.8%). DB <code class="inl">RK7BK20182021</code> (backup 2018–2021 "không xóa") đang online chiếm 321 GB.</p>
+      </div>
+      <div class="finding">
+        <h4>Backup — lỗ hổng ở các DB FULL recovery</h4>
+        <p>RS_REPH và STAT DBs được backup full hằng đêm (OK). Nhưng <code class="inl">ShiftTransport</code> (FULL, chưa backup log → log đã 4.26 GB), <code class="inl">ReportServer / DWConfiguration / Skymonitor</code> (FULL, chưa từng backup) → log không truncate được + không có điểm phục hồi.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIMIZATION PLAN -->
+  <div class="section">
+    <div class="section-title">Phương án tối ưu (ưu tiên theo tác động)</div>
+
+    <div class="prio p0">
+      <div class="prio-head">🔴 P0 — Tác động lớn nhất, làm sớm <span class="tag">off-peak · test trên dcorpcrmtest</span></div>
+      <div class="prio-body">
+        <ul>
+          <li><strong>Thêm nonclustered index cho các query report nặng nhất</strong> — đòn bẩy #1, biến scan 100M dòng thành seek. Tạo <code class="inl">ONLINE = ON</code> (Enterprise hỗ trợ, không khóa bảng).</li>
+        </ul>
+<pre><span class="cm">-- GLOBALSHIFTS: 275K seek, impact 97.8% — cao nhất</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_GLOBALSHIFTS_GUIDSTRING_STATUS
+<span class="kw">ON</span> dbo.GLOBALSHIFTS (GUIDSTRING, STATUS)
+<span class="kw">WITH</span> (ONLINE=<span class="kw">ON</span>, FILLFACTOR=100, SORT_IN_TEMPDB=<span class="kw">ON</span>, MAXDOP=4);
+
+<span class="cm">-- SESSIONDISHES: bảng lớn nhất, scan theo ngày trong report</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_SESSIONDISHES_CREATIONDATETIME
+<span class="kw">ON</span> dbo.SESSIONDISHES (CREATIONDATETIME)
+<span class="kw">INCLUDE</span> (VISIT, MIDSERVER, UNI)
+<span class="kw">WITH</span> (ONLINE=<span class="kw">ON</span>, FILLFACTOR=100, SORT_IN_TEMPDB=<span class="kw">ON</span>, MAXDOP=4);
+
+<span class="cm">-- CRM_CARD_TRANSACTIONS (heap): lọc theo TRANSACTION_TYPE</span>
+<span class="kw">CREATE NONCLUSTERED INDEX</span> IX_CRMCT_TYPE
+<span class="kw">ON</span> dbo.CRM_CARD_TRANSACTIONS (TRANSACTION_TYPE)
+<span class="kw">INCLUDE</span> (TRANSACTION_ID, TRANSACTION_TIME, ACCOUNT_ID, SUMM, EXTERNAL_ID)
+<span class="kw">WITH</span> (ONLINE=<span class="kw">ON</span>, FILLFACTOR=100, SORT_IN_TEMPDB=<span class="kw">ON</span>, MAXDOP=4);</pre>
+        <ul>
+          <li><strong>Sửa fill factor về 95–100</strong> cho các bảng report insert-rồi-đọc → giảm ~20% size + I/O ngay, nâng PLE hiệu dụng.</li>
+        </ul>
+<pre><span class="kw">ALTER INDEX</span> PK_SESSIONDISHES <span class="kw">ON</span> dbo.SESSIONDISHES
+<span class="kw">REBUILD WITH</span> (ONLINE=<span class="kw">ON</span>, FILLFACTOR=100, SORT_IN_TEMPDB=<span class="kw">ON</span>, MAXDOP=4);
+<span class="cm">-- áp dụng tương tự: OPERATIONLOG, ORDERSESSIONS, TAXPARTS, PAYBINDINGS...</span></pre>
+        <div class="note"><strong>Lưu ý:</strong> đây là bảng thuộc hệ RK7 do vendor UCS quản lý — đặt tên index rõ ràng (IX_...) để phân biệt, test trên <code class="inl">dcorpcrmtest</code> trước. Trước khi tạo hàng loạt nên phân tích <strong>execution plan của SP_SAP_ReconciliationReport + SP_GetTaxTotal</strong> để chọn đúng bộ index khớp cả 5–6 proc, tránh tạo thừa.</div>
+      </div>
+    </div>
+
+    <div class="prio p1">
+      <div class="prio-head">🟡 P1 — Nên làm trong tuần</div>
+      <div class="prio-body">
+        <ul>
+          <li><strong>Chuyển 5 HEAP lớn thành clustered index</strong> (CRM_CARD_TRANSACTIONS, DATA_RK7_AG_SERVICE_LOG(_DETAILS), CRM_CARD_TRANSACTION_NOTE, STAT_RK7_SHIFTS_CECKSUM) — chọn clustered key theo cột truy vấn phổ biến (GUID/DATETIME).</li>
+          <li><strong>Vá SQL 2016</strong>: RTM có nhiều bug nghiêm trọng đã fix. Tối thiểu lên <strong>SP3 + GDR mới nhất</strong>. (2016 gần hết extended support 07/2026 — cần kế hoạch nâng đời trung hạn.)</li>
+          <li><strong>Sửa autogrowth 1 MB → 512 MB</strong> cho RK7_SAP_RS, POS_INT_EFFECT (đang gây fragmentation vật lý + growth event liên tục).</li>
+          <li><strong>Xử lý backup các DB FULL không backup</strong>: ShiftTransport / ReportServer / Skymonitor / DWConfiguration — hoặc chuyển SIMPLE (nếu không cần point-in-time), hoặc thêm log backup, tránh log phình.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prio p2">
+      <div class="prio-head">🟢 P2 — Tối ưu dài hạn</div>
+      <div class="prio-body">
+        <ul>
+          <li><strong>Cân đối tempdb</strong>: đưa 8 file về cùng size (ví dụ mỗi file 8 GB).</li>
+          <li><strong>Tối ưu job reindex 9h</strong>: chuyển sang script theo ngưỡng fragmentation (reorg 5–30%, rebuild &gt;30%) thay vì rebuild toàn bộ → giảm còn 1–2h.</li>
+          <li><strong>Giải phóng ổ D:\</strong>: RK7BK20182021 (321 GB) — cân nhắc detach + nén lưu offline để lấy lại ~321 GB.</li>
+          <li>Bật <code class="inl">backup compression default = 1</code>; review 2 index gần trùng trên PAYBINDINGS.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:16px">
+      <strong>Rủi ro &amp; rollback:</strong> Tạo index ONLINE không khóa bảng nhưng tốn tempdb + I/O — chạy off-peak, giới hạn MAXDOP. Index mới có thể DROP tức thì để rollback. Rebuild fillfactor revert được bằng rebuild lại. Mọi thao tác nên test trên <code class="inl">dcorpcrmtest</code> trước. Connection health check này là read-only — mọi DDL do DBA thực thi trực tiếp trong SSMS.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div><strong>Database Team — Dcorp Technology Corporation</strong></div>
+    <div>health_check_v1 · Generated 05/08/2026 · RS_REPH @ WIN-ASH63MMQP74</div>
+  </div>
+
+</div>
+</body>
+</html>
