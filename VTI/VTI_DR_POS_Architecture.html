@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DR Architecture — Master/Slave POS | VTI × Dcorp</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e30613;--black:#000;--white:#fff;--gray:#727171;
+  --bg:#f0f2f5;--dark:#1a1f2e;--tabs:#131722;
+  --amber:#d97706;--green:#16a34a;--blue:#2563eb;
+  --radius:10px;--shadow:0 2px 10px rgba(0,0,0,.09)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px}
+
+.hdr{position:sticky;top:0;z-index:100;background:var(--dark);padding:12px 28px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;
+  border-bottom:3px solid var(--red)}
+.hdr-logo{width:44px;height:44px;background:var(--red);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:900;color:#fff;letter-spacing:-.5px;text-align:center;line-height:1.3;flex-shrink:0}
+.hdr-title{font-size:11px;font-weight:800;color:#fff;letter-spacing:1.5px;text-transform:uppercase}
+.hdr-sub{font-size:9px;font-family:'DM Mono',monospace;color:#8899bb;margin-top:2px}
+.hdr-right{text-align:right}
+.hdr-badge{display:inline-block;background:var(--green);color:#fff;font-size:8px;
+  font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:4px;text-transform:uppercase}
+.hdr-date{font-size:9px;font-family:'DM Mono',monospace;color:#8899bb;margin-top:4px}
+
+.tabnav{position:sticky;top:65px;z-index:99;background:var(--tabs);
+  display:flex;gap:0;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto}
+.nav-tab{padding:12px 20px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  color:#6677aa;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;
+  transition:.2s;white-space:nowrap}
+.nav-tab:hover{color:#aabbdd}
+.nav-tab.active{color:var(--red);border-bottom:2px solid var(--red)}
+
+.tab-content{display:none;padding:24px 28px}
+.tab-content.active{display:block}
+
+.sec-title{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gray);margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--red)}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.card-title{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dark);margin-bottom:14px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.banner{padding:14px 16px;border-radius:8px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.banner.red{background:#fef2f2;border-left:4px solid var(--red)}
+.banner.amber{background:#fffbeb;border-left:4px solid var(--amber)}
+.banner.green{background:#f0fdf4;border-left:4px solid var(--green)}
+.banner.blue{background:#eff6ff;border-left:4px solid var(--blue)}
+.banner-icon{font-size:20px;flex-shrink:0}
+.banner-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.banner-body{font-size:11px;margin-top:4px;line-height:1.7;color:#333}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:16px;text-align:center}
+.kpi-val{font-size:28px;font-weight:900;font-family:'DM Mono',monospace;margin:4px 0}
+.kpi-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gray)}
+.kpi-sub{font-size:9px;color:#888;margin-top:4px}
+.kpi.green{border-top:3px solid var(--green)}
+.kpi.red{border-top:3px solid var(--red)}
+.kpi.amber{border-top:3px solid var(--amber)}
+.kpi.blue{border-top:3px solid var(--blue)}
+
+/* STEP FLOW */
+.step-flow{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px dashed #e5e7eb}
+.step:last-child{border-bottom:none}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--dark);color:#fff;
+  font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-num.red{background:var(--red)}
+.step-num.green{background:var(--green)}
+.step-num.amber{background:var(--amber)}
+.step-body{flex:1}
+.step-name{font-size:11px;font-weight:700;color:var(--dark)}
+.step-detail{font-size:10px;color:#555;margin-top:4px;line-height:1.6}
+.step-timing{display:inline-block;font-size:9px;font-weight:700;font-family:'DM Mono',monospace;
+  background:#1a1f2e;color:#7dd3fc;padding:2px 8px;border-radius:4px;margin-top:6px}
+.step-note{font-size:9px;color:#666;font-style:italic;margin-top:4px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{background:var(--dark);color:#fff;padding:9px 11px;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;text-align:left}
+td{padding:9px 11px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.5}
+tr:hover td{background:#fafafa}
+.badge{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.6px;
+  padding:2px 8px;border-radius:12px;text-transform:uppercase;white-space:nowrap}
+.b-pass{background:#dcfce7;color:#166534}
+.b-fail{background:#fee2e2;color:#991b1b}
+.b-warn{background:#fef3c7;color:#92400e}
+.b-ok{background:#dbeafe;color:#1e40af}
+.b-high{background:#fee2e2;color:#991b1b}
+.b-med{background:#fef3c7;color:#92400e}
+.b-low{background:#dcfce7;color:#166534}
+.b-new{background:#ede9fe;color:#6d28d9}
+
+.tag{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.6px;
+  padding:2px 8px;border-radius:12px;text-transform:uppercase;margin:1px}
+.tag-ok{background:#dcfce7;color:#166534}
+.tag-slave{background:#fce7f3;color:#9d174d}
+.tag-pending{background:#fef3c7;color:#92400e}
+.tag-active{background:#dbeafe;color:#1e40af}
+.tag-new{background:#ede9fe;color:#6d28d9}
+
+/* IMPACT */
+.impact-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f4f4f4}
+.impact-item:last-child{border-bottom:none}
+.ii-icon{font-size:15px;flex-shrink:0;width:22px;text-align:center;margin-top:1px}
+.ii-text{font-size:10px;line-height:1.6}
+.ii-label{font-weight:700;color:var(--dark)}
+
+/* INFRA */
+.infra-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.infra-hdr{background:var(--dark);color:#fff;padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.infra-name{font-size:11px;font-weight:800;font-family:'DM Mono',monospace;color:#7dd3fc}
+.infra-role{font-size:9px;color:#8899bb;margin-top:3px}
+.infra-body{padding:14px 16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+.stat-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--gray)}
+.stat-val{font-size:15px;font-weight:900;font-family:'DM Mono',monospace;color:var(--dark);margin-top:2px}
+.stat-unit{font-size:9px;color:var(--gray)}
+
+.diagram-wrap{width:100%;overflow-x:auto;background:#f8f9fb;
+  border-radius:8px;border:1px solid #e5e7eb;padding:16px}
+
+/* FEASIBILITY SCORE */
+.score-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.score-row:last-child{border-bottom:none}
+.score-label{font-size:10px;font-weight:700;flex:1}
+.score-bar-wrap{width:200px;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.score-bar{height:100%;border-radius:4px}
+.score-val{font-size:10px;font-weight:800;font-family:'DM Mono',monospace;width:40px;text-align:right}
+
+.footer{background:var(--dark);color:#8899bb;padding:14px 28px;
+  display:flex;justify-content:space-between;align-items:center;margin-top:32px;
+  font-size:9px;font-family:'DM Mono',monospace}
+.footer strong{color:#fff}
+
+@media(max-width:700px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .g2,.g3{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">D'CORP<br>RK7</div>
+  <div>
+    <div class="hdr-title">DR Architecture — Master / Slave POS System</div>
+    <div class="hdr-sub">Tài liệu chứng minh tính khả thi · Trình bày cho VTI IT Team · Dcorp Technology Corporation</div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-badge">✅ Đã Test & Xác Nhận</div>
+    <div class="hdr-date">Cập nhật: 30/06/2026 · v2.0</div>
+  </div>
+</div>
+
+<div class="tabnav">
+  <button class="nav-tab active" onclick="sw('arch',this)">🏗 Kiến Trúc</button>
+  <button class="nav-tab" onclick="sw('proc',this)">⚡ Quy Trình</button>
+  <button class="nav-tab" onclick="sw('test',this)">🧪 Kết Quả Test</button>
+  <button class="nav-tab" onclick="sw('feasibility',this)">✅ Tính Khả Thi</button>
+  <button class="nav-tab" onclick="sw('infra',this)">🖥 Hạ Tầng</button>
+</div>
+
+<!-- ══════════════════════════════════════════════ TAB: ARCH -->
+<div id="tab-arch" class="tab-content active">
+
+  <div class="kpi-grid">
+    <div class="kpi green">
+      <div class="kpi-label">Tổng thời gian switch</div>
+      <div class="kpi-val" style="color:var(--green)">~4'</div>
+      <div class="kpi-sub">2' gửi lệnh + 2' slave start</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">Scale</div>
+      <div class="kpi-val" style="color:var(--blue)">1,000</div>
+      <div class="kpi-sub">Cửa hàng xử lý đồng thời</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Sales Data</div>
+      <div class="kpi-val" style="color:var(--green)">OK</div>
+      <div class="kpi-sub">work.udb không ảnh hưởng</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">Rebuild Slave</div>
+      <div class="kpi-val" style="color:var(--amber)">6AM</div>
+      <div class="kpi-sub">Tự động mỗi ngày</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Sơ đồ kiến trúc tổng thể</div>
+  <div class="card">
+    <div class="card-title">Master / Slave Architecture — rk7 POS DR (2-Chain)</div>
+    <div class="diagram-wrap">
+<svg viewBox="0 0 860 500" xmlns="http://www.w3.org/2000/svg" font-family="Montserrat,sans-serif" style="width:100%;min-width:680px">
+  <defs>
+    <marker id="a0" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#475569"/></marker>
+    <marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#2563EB"/></marker>
+    <marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#DB2777"/></marker>
+    <marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#F59E0B"/></marker>
+    <marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#16a34a"/></marker>
+  </defs>
+
+  <!-- HO CLOUD BG -->
+  <rect x="8" y="8" width="405" height="310" rx="12" fill="#EEF2FF" stroke="#818CF8" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="210" y="27" text-anchor="middle" font-size="9" font-weight="800" fill="#6366F1" letter-spacing="1.2">HO CLOUD — HEAD OFFICE</text>
+
+  <!-- MASTER CHAIN -->
+  <rect x="18" y="36" width="178" height="270" rx="8" fill="#DBEAFE" stroke="#3B82F6" stroke-width="1.3"/>
+  <text x="107" y="53" text-anchor="middle" font-size="8" font-weight="800" fill="#1D4ED8" letter-spacing=".8">MASTER CHAIN</text>
+  <!-- REF_Main -->
+  <rect x="28" y="60" width="158" height="42" rx="6" fill="#1D4ED8"/>
+  <text x="107" y="77" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">REF_Main</text>
+  <text x="107" y="91" text-anchor="middle" font-size="8" fill="#BFDBFE">rk7.udb · Live masterdata</text>
+  <line x1="107" y1="103" x2="107" y2="120" stroke="#475569" stroke-width="1.5" marker-end="url(#a0)"/>
+  <!-- CRS_Main -->
+  <rect x="28" y="121" width="158" height="38" rx="6" fill="#2563EB"/>
+  <text x="107" y="137" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">CRS_Main</text>
+  <text x="107" y="150" text-anchor="middle" font-size="8" fill="#BFDBFE">rkTransitServ Central</text>
+  <line x1="107" y1="160" x2="107" y2="177" stroke="#475569" stroke-width="1.5" marker-end="url(#a0)"/>
+  <!-- TRS_Main -->
+  <rect x="28" y="178" width="158" height="38" rx="6" fill="#3B82F6"/>
+  <text x="107" y="194" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">TRS_Main</text>
+  <text x="107" y="207" text-anchor="middle" font-size="8" fill="#DBEAFE">rkTransitServ Transit</text>
+  <line x1="107" y1="217" x2="107" y2="265" stroke="#2563EB" stroke-width="1.8" marker-end="url(#a1)"/>
+  <!-- REP_LOCAL label -->
+  <rect x="28" y="247" width="158" height="24" rx="5" fill="none" stroke="#93C5FD" stroke-dasharray="4,2"/>
+  <text x="107" y="263" text-anchor="middle" font-size="8" fill="#1D4ED8" font-weight="700">→ REP_LOCAL_Master</text>
+
+  <!-- SLAVE CHAIN -->
+  <rect x="218" y="36" width="185" height="270" rx="8" fill="#FCE7F3" stroke="#DB2777" stroke-width="1.3"/>
+  <text x="310" y="53" text-anchor="middle" font-size="8" font-weight="800" fill="#9D174D" letter-spacing=".8">SLAVE CHAIN</text>
+  <!-- 6AM JOB -->
+  <rect x="228" y="60" width="165" height="38" rx="6" fill="#9D174D"/>
+  <text x="310" y="76" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">⏰ Job tự động — 06:00</text>
+  <text x="310" y="89" text-anchor="middle" font-size="7.5" fill="#FBB6CE">Backup REF_Main → REF_02</text>
+  <line x1="310" y1="99" x2="310" y2="115" stroke="#DB2777" stroke-width="1.5" marker-end="url(#a2)"/>
+  <!-- REF_02 -->
+  <rect x="228" y="116" width="165" height="38" rx="6" fill="#BE185D"/>
+  <text x="310" y="132" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">REF_02</text>
+  <text x="310" y="145" text-anchor="middle" font-size="8" fill="#FBCFE8">Snapshot từ REF_Main (6AM)</text>
+  <line x1="310" y1="155" x2="310" y2="172" stroke="#DB2777" stroke-width="1.5" marker-end="url(#a2)"/>
+  <!-- CRS_Slave -->
+  <rect x="228" y="173" width="165" height="38" rx="6" fill="#DB2777"/>
+  <text x="310" y="189" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">CRS_Slave</text>
+  <text x="310" y="202" text-anchor="middle" font-size="8" fill="#FCE7F3">Central_Slave_BAK_01</text>
+  <line x1="310" y1="212" x2="310" y2="229" stroke="#DB2777" stroke-width="1.5" marker-end="url(#a2)"/>
+  <!-- TRS_Slave -->
+  <rect x="228" y="230" width="165" height="38" rx="6" fill="#EC4899"/>
+  <text x="310" y="246" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">TRS_Slave</text>
+  <text x="310" y="259" text-anchor="middle" font-size="8" fill="#FCE7F3">Transit_Slave_BAK_01</text>
+  <line x1="310" y1="269" x2="310" y2="280" stroke="#DB2777" stroke-width="1.8" marker-end="url(#a2)"/>
+  <rect x="228" y="270" width="165" height="24" rx="5" fill="none" stroke="#F9A8D4" stroke-dasharray="4,2"/>
+  <text x="310" y="286" text-anchor="middle" font-size="8" fill="#9D174D" font-weight="700">→ REP_LOCAL_Slave</text>
+
+  <!-- CLOUDFLARE -->
+  <rect x="8" y="330" width="405" height="68" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="210" y="350" text-anchor="middle" font-size="9" font-weight="800" fill="#92400E" letter-spacing="1">CLOUDFLARE ZERO TRUST</text>
+  <text x="210" y="364" text-anchor="middle" font-size="8.5" fill="#78350F">1 Tunnel / Location · 1,000 cửa hàng · Kernel access · Lệnh gửi toàn bộ ~2 phút</text>
+  <text x="210" y="378" text-anchor="middle" font-size="8" fill="#92400E" font-style="italic">Quản lý: cfman.dcorp.com.vn · Monitor: Zabbix</text>
+  <!-- arrows cloud→cf -->
+  <line x1="107" y1="318" x2="107" y2="329" stroke="#2563EB" stroke-width="2" marker-end="url(#a1)"/>
+  <line x1="310" y1="295" x2="310" y2="329" stroke="#DB2777" stroke-width="2" marker-end="url(#a2)"/>
+  <!-- cf→local -->
+  <line x1="414" y1="364" x2="456" y2="364" stroke="#F59E0B" stroke-width="2" marker-end="url(#a3)"/>
+
+  <!-- LOCAL STORE BG -->
+  <rect x="456" y="8" width="396" height="484" rx="12" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="654" y="27" text-anchor="middle" font-size="9" font-weight="800" fill="#15803D" letter-spacing="1">LOCAL STORE — × 1,000 CỬA HÀNG</text>
+
+  <!-- REP_LOCAL boxes -->
+  <rect x="466" y="38" width="172" height="52" rx="8" fill="#DBEAFE" stroke="#3B82F6" stroke-width="1.5"/>
+  <text x="552" y="57" text-anchor="middle" font-size="9" font-weight="800" fill="#1D4ED8">REP_LOCAL_Master</text>
+  <text x="552" y="70" text-anchor="middle" font-size="8" fill="#1E40AF">refsdata.udb · từ TRS_Main</text>
+  <rect x="506" y="74" width="92" height="11" rx="3" fill="#BFDBFE"/>
+  <text x="552" y="83" text-anchor="middle" font-size="7.5" fill="#1D4ED8" font-weight="700">ACTIVE always-on</text>
+
+  <rect x="648" y="38" width="192" height="52" rx="8" fill="#FCE7F3" stroke="#DB2777" stroke-width="1.5"/>
+  <text x="744" y="57" text-anchor="middle" font-size="9" font-weight="800" fill="#9D174D">REP_LOCAL_Slave</text>
+  <text x="744" y="70" text-anchor="middle" font-size="8" fill="#BE185D">refsdata.udb · từ TRS_Slave</text>
+  <rect x="689" y="74" width="110" height="11" rx="3" fill="#FBCFE8"/>
+  <text x="744" y="83" text-anchor="middle" font-size="7.5" fill="#9D174D" font-weight="700">STANDBY ~50MB</text>
+
+  <!-- Arrows cloud→REP_LOCAL through tunnel -->
+  <line x1="107" y1="399" x2="107" y2="430" stroke="#2563EB" stroke-width="2"/>
+  <line x1="107" y1="430" x2="551" y2="430" stroke="#2563EB" stroke-width="2"/>
+  <line x1="551" y1="430" x2="551" y2="91" stroke="#2563EB" stroke-width="2" marker-end="url(#a1)"/>
+  <line x1="310" y1="399" x2="310" y2="450" stroke="#DB2777" stroke-width="2"/>
+  <line x1="310" y1="450" x2="744" y2="450" stroke="#DB2777" stroke-width="2"/>
+  <line x1="744" y1="450" x2="744" y2="91" stroke="#DB2777" stroke-width="2" marker-end="url(#a2)"/>
+
+  <!-- FOLDER MASTER -->
+  <rect x="466" y="110" width="172" height="110" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+  <rect x="466" y="110" width="172" height="26" rx="8" fill="#2563EB"/>
+  <rect x="466" y="126" width="172" height="10" fill="#2563EB"/>
+  <text x="552" y="127" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">📁  Folder MASTER</text>
+  <text x="552" y="152" text-anchor="middle" font-size="10" font-weight="800" fill="#1D4ED8">midserv.exe</text>
+  <text x="552" y="166" text-anchor="middle" font-size="8" fill="#444">rkeeper.ini → REP_LOCAL_Master</text>
+  <rect x="492" y="176" width="120" height="18" rx="9" fill="#2563EB"/>
+  <text x="552" y="189" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">▶ ACTIVE</text>
+  <text x="552" y="207" text-anchor="middle" font-size="8" fill="#64748B" font-style="italic">Giữ nguyên toàn bộ</text>
+
+  <!-- FOLDER SLAVE -->
+  <rect x="648" y="110" width="192" height="110" rx="8" fill="#FDF2F8" stroke="#DB2777" stroke-width="2" stroke-dasharray="5,3"/>
+  <rect x="648" y="110" width="192" height="26" rx="8" fill="#DB2777"/>
+  <rect x="648" y="126" width="192" height="10" fill="#DB2777"/>
+  <text x="744" y="127" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff">📁  Folder SLAVE</text>
+  <text x="744" y="152" text-anchor="middle" font-size="10" font-weight="800" fill="#9D174D">midserv_slave.exe</text>
+  <text x="744" y="166" text-anchor="middle" font-size="8" fill="#444">rkeeper.ini → REP_LOCAL_Slave</text>
+  <rect x="669" y="176" width="150" height="18" rx="9" fill="#F1F5F9"/>
+  <text x="744" y="189" text-anchor="middle" font-size="8" font-weight="700" fill="#64748B">⏸ STANDBY</text>
+  <text x="744" y="207" text-anchor="middle" font-size="8" fill="#9D174D" font-style="italic">Auto-update refdata khi start</text>
+
+  <!-- arrows REP→Folder -->
+  <line x1="552" y1="91" x2="552" y2="109" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+  <line x1="744" y1="91" x2="744" y2="109" stroke="#DB2777" stroke-width="1.5" marker-end="url(#a2)"/>
+
+  <!-- SWITCH BOX -->
+  <rect x="466" y="240" width="374" height="65" rx="8" fill="#FFF7ED" stroke="#F59E0B" stroke-width="2"/>
+  <text x="653" y="260" text-anchor="middle" font-size="10" font-weight="800" fill="#92400E">⚡ SWITCH POINT</text>
+  <text x="653" y="275" text-anchor="middle" font-size="8.5" fill="#333">Stop midserv.exe → Start midserv_slave.exe (auto-update refdata.udb)</text>
+  <text x="653" y="289" text-anchor="middle" font-size="8" fill="#666">Lệnh gửi toàn bộ ~2 phút · Slave start ~2 phút · Tổng ~4 phút</text>
+  <text x="653" y="299" text-anchor="middle" font-size="7.5" fill="#92400E" font-style="italic">Rollback: quy trình ngược lại, tốc độ tương đương</text>
+
+  <line x1="552" y1="221" x2="552" y2="239" stroke="#2563EB" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a1)"/>
+  <line x1="744" y1="221" x2="744" y2="239" stroke="#DB2777" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a2)"/>
+
+  <!-- DATA FILES -->
+  <rect x="466" y="325" width="180" height="55" rx="8" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5"/>
+  <text x="556" y="344" text-anchor="middle" font-size="9" font-weight="800" fill="#15803D">work.udb</text>
+  <text x="556" y="358" text-anchor="middle" font-size="8" fill="#333">Sales data · Transactions</text>
+  <text x="556" y="370" text-anchor="middle" font-size="8" fill="#15803D" font-weight="700">✅ Luôn hoạt động bình thường</text>
+
+  <rect x="660" y="325" width="180" height="55" rx="8" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.5"/>
+  <text x="750" y="344" text-anchor="middle" font-size="9" font-weight="800" fill="#1D4ED8">refdata.udb</text>
+  <text x="750" y="358" text-anchor="middle" font-size="8" fill="#333">Masterdata · Config</text>
+  <text x="750" y="370" text-anchor="middle" font-size="8" fill="#1D4ED8" font-weight="700">Auto-sync khi slave start</text>
+
+  <line x1="653" y1="305" x2="556" y2="324" stroke="#16a34a" stroke-width="1.5" marker-end="url(#a4)"/>
+  <line x1="653" y1="305" x2="750" y2="324" stroke="#2563EB" stroke-width="1.5" marker-end="url(#a1)"/>
+
+  <!-- POS -->
+  <rect x="553" y="398" width="200" height="48" rx="8" fill="#1A1F2E"/>
+  <text x="653" y="418" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">POS (CashStation · rkPOS)</text>
+  <text x="653" y="432" text-anchor="middle" font-size="8" fill="#94A3B8">Kết nối lại tự động · Tiếp tục hoạt động</text>
+
+  <line x1="653" y1="381" x2="653" y2="397" stroke="#16a34a" stroke-width="2" marker-end="url(#a4)"/>
+
+  <!-- ZABBIX MONITOR -->
+  <rect x="466" y="462" width="374" height="22" rx="5" fill="#1a1f2e" stroke="#4ADE80" stroke-width="1"/>
+  <text x="653" y="477" text-anchor="middle" font-size="8" font-weight="700" fill="#4ADE80">📊  Monitor sau switch: Zabbix (service health, POS status, Mid uptime)</text>
+</svg>
+    </div>
+  </div>
+
+  <div class="sec-title">Nguyên tắc hoạt động</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">🗂 Tách biệt 2 loại dữ liệu</div>
+      <div class="impact-item"><div class="ii-icon">📄</div><div class="ii-text"><span class="ii-label">work.udb — Sales Data:</span> Chứa toàn bộ giao dịch, order, payment. <strong>Hoàn toàn độc lập với chain</strong> — không bị ảnh hưởng khi switch. Đây là lý do Slave có thể hoạt động bình thường về mặt bán hàng và đóng ca.</div></div>
+      <div class="impact-item"><div class="ii-icon">📋</div><div class="ii-text"><span class="ii-label">refdata.udb — Masterdata:</span> Chứa menu, giá, discount, nhân viên, cấu hình. Được đồng bộ từ REP_LOCAL_Slave khi <code>midserv_slave.exe</code> start lên. <strong>Tự động cập nhật — không cần thao tác thủ công.</strong></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Điểm cần hiểu — Khi có đối tượng lệch</div>
+      <div class="impact-item"><div class="ii-icon">ℹ️</div><div class="ii-text">Slave được rebuild lúc 6AM. <strong>Các đối tượng tạo mới ở Master sau 6AM</strong> (menu, discount, price) sẽ không có trong Slave. Đây là <strong>thiết kế có chủ đích</strong> — không phải lỗi.</div></div>
+      <div class="impact-item"><div class="ii-icon">📌</div><div class="ii-text">Tác động chỉ là <strong>không xem lại được hoá đơn cũ</strong> có chứa đối tượng mới đó. Bán hàng, đóng ca, và doanh thu vẫn đúng. Đối tượng mới tạo <strong>trong phiên Slave</strong> hoạt động bình thường.</div></div>
+      <div class="impact-item"><div class="ii-icon">🔧</div><div class="ii-text"><strong>SLA cam kết:</strong> Masterdata Main phải được phục hồi và rollback trong ngày — đảm bảo không kéo dài sang ngày hôm sau.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ TAB: PROC -->
+<div id="tab-proc" class="tab-content">
+
+  <div class="sec-title">Lưu đồ — Switch & Rollback</div>
+  <div class="card">
+    <div class="diagram-wrap">
+<svg viewBox="0 0 820 600" xmlns="http://www.w3.org/2000/svg" font-family="Montserrat,sans-serif" style="width:100%;min-width:600px">
+  <defs>
+    <marker id="p0" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#475569"/></marker>
+    <marker id="p1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#e30613"/></marker>
+    <marker id="p2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#16a34a"/></marker>
+    <marker id="p3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#2563EB"/></marker>
+  </defs>
+
+  <!-- LEFT: SWITCH FLOW -->
+  <text x="210" y="20" text-anchor="middle" font-size="10" font-weight="800" fill="#E30613" letter-spacing=".5">SWITCH: MASTER → SLAVE</text>
+
+  <!-- S1 -->
+  <ellipse cx="210" cy="45" rx="120" ry="18" fill="#1A1F2E"/>
+  <text x="210" y="49" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">PHÁT HIỆN SỰ CỐ MASTER</text>
+  <line x1="210" y1="63" x2="210" y2="80" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <!-- S2 -->
+  <rect x="80" y="82" width="260" height="48" rx="8" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="210" y="101" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">① Xác nhận sự cố</text>
+  <text x="210" y="116" text-anchor="middle" font-size="8" fill="#444">Admin xác nhận qua cfman.dcorp.com.vn</text>
+  <line x1="210" y1="131" x2="210" y2="148" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <!-- S3 -->
+  <rect x="80" y="150" width="260" height="48" rx="8" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="210" y="169" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">② Gửi lệnh xuống 1,000 stores</text>
+  <text x="210" y="184" text-anchor="middle" font-size="8" fill="#444">Via Cloudflare Tunnel · Toàn bộ đồng thời</text>
+  <rect x="290" y="160" width="90" height="18" rx="4" fill="#92400E"/>
+  <text x="335" y="173" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">⏱ ~2 phút</text>
+  <line x1="210" y1="199" x2="210" y2="216" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <!-- S4 -->
+  <rect x="80" y="218" width="260" height="48" rx="8" fill="#FEE2E2" stroke="#E30613" stroke-width="2"/>
+  <text x="210" y="237" text-anchor="middle" font-size="10" font-weight="800" fill="#E30613">③ STOP midserv.exe</text>
+  <text x="210" y="252" text-anchor="middle" font-size="8" fill="#444">Dừng Master MiddleServer tại tất cả stores</text>
+  <line x1="210" y1="267" x2="210" y2="284" stroke="#E30613" stroke-width="2" marker-end="url(#p1)"/>
+
+  <!-- S5: START SLAVE — key step -->
+  <rect x="65" y="286" width="290" height="68" rx="8" fill="#1A1F2E" stroke="#16a34a" stroke-width="2.5"/>
+  <text x="210" y="308" text-anchor="middle" font-size="10" font-weight="800" fill="#4ADE80">④ START midserv_slave.exe</text>
+  <text x="210" y="323" text-anchor="middle" font-size="8.5" fill="#94A3B8">→ Auto-update refdata.udb từ REP_LOCAL_Slave</text>
+  <text x="210" y="337" text-anchor="middle" font-size="8" fill="#64748B">Sales data (work.udb) không bị ảnh hưởng</text>
+  <rect x="295" y="294" width="90" height="18" rx="4" fill="#16a34a"/>
+  <text x="340" y="307" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">⏱ ~2 phút</text>
+  <line x1="210" y1="355" x2="210" y2="372" stroke="#16a34a" stroke-width="2" marker-end="url(#p2)"/>
+
+  <!-- S6 -->
+  <rect x="80" y="374" width="260" height="48" rx="8" fill="#F0FDF4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="210" y="393" text-anchor="middle" font-size="10" font-weight="700" fill="#15803D">⑤ POS kết nối lại tự động</text>
+  <text x="210" y="408" text-anchor="middle" font-size="8" fill="#444">CashStation resume · Vận hành bình thường</text>
+  <line x1="210" y1="423" x2="210" y2="440" stroke="#16a34a" stroke-width="2" marker-end="url(#p2)"/>
+
+  <!-- S7 -->
+  <rect x="80" y="442" width="260" height="48" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="210" y="461" text-anchor="middle" font-size="10" font-weight="700" fill="#1D4ED8">⑥ Monitor qua Zabbix</text>
+  <text x="210" y="476" text-anchor="middle" font-size="8" fill="#444">Check service, POS status, Mid uptime</text>
+  <line x1="210" y1="491" x2="210" y2="508" stroke="#2563EB" stroke-width="1.8" marker-end="url(#p3)"/>
+
+  <!-- END SWITCH -->
+  <ellipse cx="210" cy="525" rx="130" ry="18" fill="#16a34a"/>
+  <text x="210" y="529" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">✅ SLAVE ĐANG HOẠT ĐỘNG</text>
+  <text x="210" y="560" text-anchor="middle" font-size="8" fill="#475569" font-style="italic">Tổng thời gian: ~4 phút</text>
+  <text x="210" y="573" text-anchor="middle" font-size="8" fill="#92400E" font-weight="700">⚠ Phục hồi Master trong ngày</text>
+
+  <!-- DIVIDER -->
+  <line x1="420" y1="10" x2="420" y2="590" stroke="#E5E7EB" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="420" y="300" text-anchor="middle" transform="rotate(-90,420,300)" font-size="9" fill="#9CA3AF" letter-spacing="2">TƯƠNG TỰ · NGƯỢC CHIỀU</text>
+
+  <!-- RIGHT: ROLLBACK FLOW -->
+  <text x="618" y="20" text-anchor="middle" font-size="10" font-weight="800" fill="#2563EB" letter-spacing=".5">ROLLBACK: SLAVE → MASTER</text>
+
+  <ellipse cx="618" cy="45" rx="140" ry="18" fill="#1A1F2E"/>
+  <text x="618" y="49" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">MASTER ĐÃ PHỤC HỒI TRONG NGÀY</text>
+  <line x1="618" y1="63" x2="618" y2="80" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <rect x="488" y="82" width="260" height="48" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="618" y="101" text-anchor="middle" font-size="10" font-weight="700" fill="#1D4ED8">① Xác nhận Master OK</text>
+  <text x="618" y="116" text-anchor="middle" font-size="8" fill="#444">Verify REF_Main, CRS, TRS hoạt động đầy đủ</text>
+  <line x1="618" y1="131" x2="618" y2="148" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <rect x="488" y="150" width="260" height="48" rx="8" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="618" y="169" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">② Gửi lệnh rollback</text>
+  <text x="618" y="184" text-anchor="middle" font-size="8" fill="#444">Via cfman.dcorp.com.vn · 1,000 stores</text>
+  <rect x="698" y="160" width="90" height="18" rx="4" fill="#92400E"/>
+  <text x="743" y="173" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">⏱ ~2 phút</text>
+  <line x1="618" y1="199" x2="618" y2="216" stroke="#475569" stroke-width="1.8" marker-end="url(#p0)"/>
+
+  <rect x="488" y="218" width="260" height="48" rx="8" fill="#FCE7F3" stroke="#DB2777" stroke-width="2"/>
+  <text x="618" y="237" text-anchor="middle" font-size="10" font-weight="800" fill="#9D174D">③ STOP midserv_slave.exe</text>
+  <text x="618" y="252" text-anchor="middle" font-size="8" fill="#444">Dừng Slave MiddleServer tại tất cả stores</text>
+  <line x1="618" y1="267" x2="618" y2="284" stroke="#DB2777" stroke-width="2" marker-end="url(#p0)"/>
+
+  <rect x="473" y="286" width="290" height="68" rx="8" fill="#1A1F2E" stroke="#2563EB" stroke-width="2.5"/>
+  <text x="618" y="308" text-anchor="middle" font-size="10" font-weight="800" fill="#7DD3FC">④ START midserv.exe (Master)</text>
+  <text x="618" y="323" text-anchor="middle" font-size="8.5" fill="#94A3B8">→ Kết nối lại REP_LOCAL_Master</text>
+  <text x="618" y="337" text-anchor="middle" font-size="8" fill="#64748B">Quy trình giống hệt switch sang Slave</text>
+  <rect x="703" y="294" width="90" height="18" rx="4" fill="#2563EB"/>
+  <text x="748" y="307" text-anchor="middle" font-size="8" font-weight="800" fill="#fff">⏱ ~2 phút</text>
+  <line x1="618" y1="355" x2="618" y2="372" stroke="#2563EB" stroke-width="2" marker-end="url(#p3)"/>
+
+  <rect x="488" y="374" width="260" height="48" rx="8" fill="#F0FDF4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="618" y="393" text-anchor="middle" font-size="10" font-weight="700" fill="#15803D">⑤ POS kết nối lại tự động</text>
+  <text x="618" y="408" text-anchor="middle" font-size="8" fill="#444">Trở về hoạt động Master bình thường</text>
+  <line x1="618" y1="423" x2="618" y2="440" stroke="#16a34a" stroke-width="2" marker-end="url(#p2)"/>
+
+  <rect x="488" y="442" width="260" height="48" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="618" y="461" text-anchor="middle" font-size="10" font-weight="700" fill="#1D4ED8">⑥ Monitor qua Zabbix</text>
+  <text x="618" y="476" text-anchor="middle" font-size="8" fill="#444">Confirm toàn bộ stores trên Master</text>
+  <line x1="618" y1="491" x2="618" y2="508" stroke="#2563EB" stroke-width="1.8" marker-end="url(#p3)"/>
+
+  <ellipse cx="618" cy="525" rx="130" ry="18" fill="#2563EB"/>
+  <text x="618" y="529" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">✅ MASTER ĐÃ PHỤC HỒI</text>
+  <text x="618" y="560" text-anchor="middle" font-size="8" fill="#475569" font-style="italic">Tổng thời gian: ~4 phút</text>
+  <text x="618" y="573" text-anchor="middle" font-size="8" fill="#15803D" font-weight="700">Chu kỳ bình thường tiếp tục</text>
+</svg>
+    </div>
+  </div>
+
+  <!-- TIMING SUMMARY -->
+  <div class="sec-title">Tóm tắt thời gian</div>
+  <div class="g3">
+    <div class="card" style="text-align:center;border-top:3px solid var(--amber)">
+      <div style="font-size:9px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:1px">Gửi lệnh toàn bộ</div>
+      <div style="font-size:32px;font-weight:900;font-family:'DM Mono',monospace;color:var(--amber);margin:8px 0">~2'</div>
+      <div style="font-size:10px;color:#555">cfman → Cloudflare tunnel<br>1,000 stores đồng thời</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--red)">
+      <div style="font-size:9px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:1px">Slave start</div>
+      <div style="font-size:32px;font-weight:900;font-family:'DM Mono',monospace;color:var(--red);margin:8px 0">~2'</div>
+      <div style="font-size:10px;color:#555">midserv_slave.exe khởi động<br>+ auto-update refdata.udb</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--green)">
+      <div style="font-size:9px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:1px">Tổng failover</div>
+      <div style="font-size:32px;font-weight:900;font-family:'DM Mono',monospace;color:var(--green);margin:8px 0">~4'</div>
+      <div style="font-size:10px;color:#555">Toàn bộ 1,000 stores<br>Rollback tương đương</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ TAB: TEST -->
+<div id="tab-test" class="tab-content">
+
+  <div class="banner green">
+    <div class="banner-icon">✅</div>
+    <div>
+      <div class="banner-title">Kết quả: Hệ thống vận hành khả thi trong toàn bộ kịch bản test</div>
+      <div class="banner-body">Các kịch bản đã test: Master thêm Menu mới, thêm Discount mới, đổi Price. Trong toàn bộ trường hợp: bán hàng bình thường, đóng ca được, doanh thu đúng. Hạn chế duy nhất xác nhận: không xem lại được hoá đơn cũ có đối tượng mới.</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Kịch bản đã test — Master thêm đối tượng mới trước khi switch</div>
+  <div class="card">
+    <table>
+      <tr>
+        <th>Kịch bản</th>
+        <th>Đối tượng thêm ở Master</th>
+        <th>Trạng thái trên Slave</th>
+        <th>Bán hàng</th>
+        <th>Xem hoá đơn cũ</th>
+        <th>Đóng ca (Mid Day / Day End)</th>
+        <th>Báo cáo DT</th>
+      </tr>
+      <tr>
+        <td><strong>Menu mới</strong></td>
+        <td>Thêm món mới vào menu sau 6AM ở REF_Main</td>
+        <td>Món mới không tồn tại trong REP_LOCAL_Slave</td>
+        <td><span class="badge b-pass">OK</span> Bán hàng món có sẵn bình thường</td>
+        <td><span class="badge b-warn">Cảnh báo</span> Hoá đơn có món mới → báo không tồn tại đối tượng</td>
+        <td><span class="badge b-pass">OK</span> Đóng ca bình thường</td>
+        <td><span class="badge b-pass">Đúng</span></td>
+      </tr>
+      <tr>
+        <td><strong>Discount mới</strong></td>
+        <td>Tạo discount mới ở REF_Main sau 6AM</td>
+        <td>Discount mới không tồn tại trong REP_LOCAL_Slave</td>
+        <td><span class="badge b-pass">OK</span> Bán hàng bình thường (không áp discount mới được)</td>
+        <td><span class="badge b-warn">Cảnh báo</span> Hoá đơn dùng discount mới → báo không tồn tại</td>
+        <td><span class="badge b-pass">OK</span> Đóng ca bình thường<br><span style="font-size:9px;color:#92400E">⚠ Dữ liệu cần xử lý sau</span></td>
+        <td><span class="badge b-pass">Đúng</span></td>
+      </tr>
+      <tr>
+        <td><strong>Đổi Price</strong></td>
+        <td>Cập nhật giá món ở REF_Main sau 6AM</td>
+        <td>Slave dùng giá theo snapshot 6AM (giá cũ)</td>
+        <td><span class="badge b-pass">OK</span> Bán hàng với giá theo Slave (6AM)</td>
+        <td><span class="badge b-warn">Cảnh báo</span> Hoá đơn với giá mới → báo không tồn tại đối tượng</td>
+        <td><span class="badge b-pass">OK</span> Đóng ca bình thường<br><span style="font-size:9px;color:#92400E">⚠ Dữ liệu cần xử lý sau</span></td>
+        <td><span class="badge b-pass">Đúng</span></td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>Tạo đối tượng mới trong phiên Slave</strong></td>
+        <td colspan="2">Tạo đối tượng mới trực tiếp trên Slave trong khi đang vận hành</td>
+        <td><span class="badge b-pass">OK</span> Đối tượng mới hoạt động bình thường</td>
+        <td><span class="badge b-pass">OK</span> Xem bình thường</td>
+        <td><span class="badge b-pass">OK</span></td>
+        <td><span class="badge b-pass">Đúng</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="sec-title">Tổng hợp tác động xác nhận</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">✅ Hoạt động bình thường khi ở Slave</div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Bán hàng (Order / Payment):</span> Hoạt động đầy đủ với toàn bộ đối tượng có trong Slave</div></div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Báo cáo doanh thu tổng hợp:</span> Số liệu chính xác, không bị ảnh hưởng</div></div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Mid Day (đóng ca giữa ngày):</span> Thực hiện bình thường</div></div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Day End (đóng ca cuối ngày):</span> Thực hiện bình thường</div></div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Tạo đối tượng mới trong phiên Slave:</span> Hoạt động bình thường, đồng bộ OK</div></div>
+      <div class="impact-item"><div class="ii-icon">✅</div><div class="ii-text"><span class="ii-label">Sales data (work.udb):</span> Hoàn toàn không bị ảnh hưởng trong toàn bộ quá trình switch</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Hạn chế đã xác nhận (có thể quản lý)</div>
+      <div class="impact-item"><div class="ii-icon">⚠️</div><div class="ii-text"><span class="ii-label">Xem hoá đơn đã đóng có đối tượng mới:</span> Hiển thị cảnh báo "đối tượng không tồn tại" — không thể void hoá đơn đó. Chỉ ảnh hưởng các hoá đơn có menu/discount/price mới tạo sau 6AM trên Master.</div></div>
+      <div class="impact-item"><div class="ii-icon">⚠️</div><div class="ii-text"><span class="ii-label">Dữ liệu đóng ca cần xử lý sau:</span> Các ca đóng trong phiên Slave cần được reconcile sau khi rollback về Master, đặc biệt với các đối tượng lệch (discount, price).</div></div>
+      <div class="impact-item"><div class="ii-icon">📌</div><div class="ii-text"><span class="ii-label">SLA cam kết vận hành:</span> <strong>Master phải được phục hồi và rollback trong ngày</strong> để tránh ảnh hưởng lũy kế sang ngày hôm sau và đảm bảo Slave rebuild lúc 6AM sáng hôm sau từ Master đã đúng.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ TAB: FEASIBILITY -->
+<div id="tab-feasibility" class="tab-content">
+
+  <div class="banner green">
+    <div class="banner-icon">🎯</div>
+    <div>
+      <div class="banner-title">Kết luận: Hệ thống đủ điều kiện triển khai production</div>
+      <div class="banner-body">Toàn bộ kịch bản critical đã được test và xác nhận. Vận hành bán hàng, đóng ca, và báo cáo doanh thu không bị gián đoạn. Thời gian failover ~4 phút cho 1,000 stores. Rollback đơn giản với quy trình tương đương.</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Đánh giá tính khả thi theo từng tiêu chí</div>
+  <div class="card">
+    <table>
+      <tr><th>Tiêu chí</th><th>Yêu cầu</th><th>Kết quả thực tế</th><th>Đánh giá</th></tr>
+      <tr>
+        <td><strong>Tốc độ failover</strong></td>
+        <td>Nhanh, không để stores offline lâu</td>
+        <td>~4 phút toàn bộ 1,000 stores (2' gửi lệnh + 2' slave start)</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Liên tục bán hàng</strong></td>
+        <td>POS tiếp tục nhận order trong và sau khi switch</td>
+        <td>✅ Xác nhận qua test — bán hàng bình thường ngay sau khi Slave start</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tính đúng đắn doanh thu</strong></td>
+        <td>Báo cáo sales không bị sai lệch</td>
+        <td>✅ Xác nhận qua 3 kịch bản test — báo cáo doanh thu tổng hợp đúng</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Đóng ca (Shift Closing)</strong></td>
+        <td>Mid Day và Day End không bị block</td>
+        <td>✅ Xác nhận qua test — Mid Day và Day End thực hiện bình thường</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Rollback</strong></td>
+        <td>Có thể trở về Master khi sự cố được khắc phục</td>
+        <td>✅ Quy trình rollback tương tự switch — ~4 phút, không cần thao tác đặc biệt</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tài nguyên Slave standby</strong></td>
+        <td>Slave không ảnh hưởng hiệu suất khi ở standby</td>
+        <td>~50MB — không đáng kể</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tạo đối tượng mới trên Slave</strong></td>
+        <td>Vận hành không bị hạn chế trong phiên Slave</td>
+        <td>✅ Tạo đối tượng mới và đồng bộ bình thường</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+      <tr>
+        <td><strong>Hạn chế xem hoá đơn cũ</strong></td>
+        <td>Chấp nhận được về mặt vận hành</td>
+        <td>⚠ Không xem được hoá đơn có đối tượng mới từ Master. Có thể quản lý trong ngày.</td>
+        <td><span class="badge b-warn">CHẤP NHẬN</span></td>
+      </tr>
+      <tr>
+        <td><strong>Monitor sau switch</strong></td>
+        <td>Có cơ chế theo dõi sau failover</td>
+        <td>Zabbix monitor service health, POS status, Mid uptime sau switch</td>
+        <td><span class="badge b-pass">ĐẠT</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="sec-title">Điều kiện vận hành — Cam kết SLA</div>
+  <div class="card">
+    <div class="g2">
+      <div>
+        <div class="card-title" style="margin-bottom:10px">Điều kiện tiên quyết</div>
+        <div class="impact-item"><div class="ii-icon">📌</div><div class="ii-text"><span class="ii-label">Slave rebuild tự động 6AM:</span> Job chạy hàng ngày trước giờ mở cửa — đảm bảo Slave luôn có masterdata của ngày hiện tại</div></div>
+        <div class="impact-item"><div class="ii-icon">📌</div><div class="ii-text"><span class="ii-label">Master phục hồi trong ngày:</span> Khi phải switch sang Slave, đội kỹ thuật cam kết khắc phục Master và rollback trong cùng ngày làm việc</div></div>
+        <div class="impact-item"><div class="ii-icon">📌</div><div class="ii-text"><span class="ii-label">Monitor liên tục:</span> Zabbix alert trước khi sự cố ảnh hưởng diện rộng; cfman.dcorp.com.vn sẵn sàng 24/7</div></div>
+      </div>
+      <div>
+        <div class="card-title" style="margin-bottom:10px">Xử lý sau sự cố</div>
+        <div class="impact-item"><div class="ii-icon">🔧</div><div class="ii-text"><span class="ii-label">Reconcile dữ liệu đóng ca:</span> Sau khi rollback về Master, các ca đóng trong phiên Slave cần được kiểm tra và reconcile đặc biệt với đối tượng lệch (discount, price đổi)</div></div>
+        <div class="impact-item"><div class="ii-icon">🔧</div><div class="ii-text"><span class="ii-label">Hoá đơn cần void:</span> Các hoá đơn không xem được trong phiên Slave xử lý sau khi đã rollback về Master thành công</div></div>
+        <div class="impact-item"><div class="ii-icon">📊</div><div class="ii-text"><span class="ii-label">Báo cáo doanh thu:</span> Không cần xử lý đặc biệt — số liệu tổng hợp đúng trong toàn bộ kịch bản đã test</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ TAB: INFRA -->
+<div id="tab-infra" class="tab-content">
+
+  <div class="sec-title">Hạ tầng Slave — Servers mới</div>
+
+  <div class="infra-card">
+    <div class="infra-hdr">
+      <div>
+        <div class="infra-name">RK_POS_Central_Slave_BAK_01</div>
+        <div class="infra-role">CRS Slave — Slave master-data backup before working day</div>
+      </div>
+      <div style="display:flex;gap:6px"><span class="tag tag-slave">SLAVE</span><span class="tag tag-pending">PENDING PROCUREMENT</span></div>
+    </div>
+    <div class="infra-body">
+      <div class="stat-grid">
+        <div><div class="stat-label">CPU</div><div class="stat-val">8 <span class="stat-unit">vCPU</span></div></div>
+        <div><div class="stat-label">RAM</div><div class="stat-val">32 <span class="stat-unit">GB</span></div></div>
+        <div><div class="stat-label">Storage</div><div class="stat-val">150 <span class="stat-unit">GB</span></div></div>
+        <div><div class="stat-label">OS</div><div class="stat-val" style="font-size:12px">Win 2022</div></div>
+      </div>
+      <div style="font-size:10px;color:#444;line-height:1.6;border-top:1px solid #f0f0f0;padding-top:10px">
+        <strong>Instance:</strong> s2-standard-8x32-n10 · <strong>Role:</strong> Central Report Server (CRS) của Slave chain, kết nối REF_02.<br>
+        <strong>Mục tiêu:</strong> Eliminate single-point-of-failure. Ensures automatic failover if primary POS Server becomes unavailable.
+      </div>
+    </div>
+  </div>
+
+  <div class="infra-card">
+    <div class="infra-hdr">
+      <div>
+        <div class="infra-name">RK_POS_Transit_Slave_BAK_01</div>
+        <div class="infra-role">TRS Slave — Multiple Application Reporting Servers · Connects to 1,000 locations · No MSSQL</div>
+      </div>
+      <div style="display:flex;gap:6px"><span class="tag tag-slave">SLAVE</span><span class="tag tag-pending">PENDING PROCUREMENT</span></div>
+    </div>
+    <div class="infra-body">
+      <div class="stat-grid">
+        <div><div class="stat-label">CPU</div><div class="stat-val">16 <span class="stat-unit">vCPU</span></div></div>
+        <div><div class="stat-label">RAM</div><div class="stat-val">32 <span class="stat-unit">GB</span></div></div>
+        <div><div class="stat-label">Storage</div><div class="stat-val">150 <span class="stat-unit">GB</span></div></div>
+        <div><div class="stat-label">MSSQL</div><div class="stat-val" style="font-size:12px;color:var(--red)">Không</div></div>
+      </div>
+      <div style="font-size:10px;color:#444;line-height:1.6;border-top:1px solid #f0f0f0;padding-top:10px">
+        <strong>Instance:</strong> s2-standard-16x32-n10 · <strong>Role:</strong> Transit Report Server (TRS), kết nối 1,000 locations đồng thời.<br>
+        CPU cao hơn (16 core) do maintain 1,000 concurrent connections. Không cần MSSQL — chỉ application layer.
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Kết nối HO → Stores</div>
+  <div class="card">
+    <table>
+      <tr><th>Thành phần</th><th>Chi tiết</th><th>Vai trò trong DR</th><th>Trạng thái</th></tr>
+      <tr><td><strong>Cloudflare Zero Trust</strong></td><td>1 tunnel / location · Encrypted · Zero-trust</td><td>Kênh gửi lệnh switch/rollback</td><td><span class="badge b-pass">DEPLOYED</span></td></tr>
+      <tr><td><strong>cfman.dcorp.com.vn</strong></td><td>Management portal · Batch operation · Gửi script trực tiếp</td><td>Trung tâm điều khiển failover</td><td><span class="badge b-pass">ACTIVE</span></td></tr>
+      <tr><td><strong>Kernel Access</strong></td><td>Chạy script/job trực tiếp tại store qua tunnel</td><td>Thực thi stop/start Mid service</td><td><span class="badge b-pass">ENABLED</span></td></tr>
+      <tr><td><strong>Zabbix Monitor</strong></td><td>Service health, POS status, Mid uptime</td><td>Monitor liên tục trước và sau switch</td><td><span class="badge b-pass">ACTIVE</span></td></tr>
+      <tr><td><strong>Scale</strong></td><td>1,000 locations</td><td>Lệnh gửi toàn bộ ~2 phút</td><td><span class="badge b-ok">TESTED</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="footer">
+  <div><strong>Dcorp Technology Corporation</strong> · Core Technology Department · HaiPM</div>
+  <div>VTI DR Architecture v2.0 · Tài liệu chứng minh tính khả thi · 30/06/2026</div>
+</div>
+
+<script>
+function sw(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+</script>
+</body>
+</html>

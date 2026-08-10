@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phương án Nâng cấp — CRM_CVL (v2)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613; --black:#000; --white:#fff; --gray:#727171;
+  --bg:#f0f2f5; --dark:#1a1f2e; --tabs:#131722;
+  --amber:#d97706; --green:#16a34a; --blue:#2563eb;
+  --radius:10px; --shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 60px}
+
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;
+  padding:12px 20px;margin:0 -20px 0}
+.logo{height:38px;width:38px;border-radius:6px;background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;letter-spacing:-.5px}
+.h-center h1{font-size:15px;font-weight:800;letter-spacing:.3px}
+.h-center .company{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:2px}
+.h-center .route{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:1px}
+.h-right{text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.h-badge{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  background:var(--red);color:#fff;padding:3px 9px;border-radius:4px}
+.h-ver{font-size:8px;color:#9aa0ac;font-family:'DM Mono',monospace}
+
+.section{margin-top:26px}
+.section-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--gray);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:#dde1e6}
+
+.alert{border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;gap:12px;
+  font-size:12px;line-height:1.65;box-shadow:var(--shadow)}
+.alert-icon{font-size:18px;flex-shrink:0;line-height:1.2}
+.alert-red{background:#fdeaea;border-left:4px solid var(--red)}
+.alert-amber{background:#fdf4e7;border-left:4px solid var(--amber)}
+.alert-blue{background:#eaf1fd;border-left:4px solid var(--blue)}
+.alert-green{background:#eafaef;border-left:4px solid var(--green)}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.kpi{background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-top:3px solid var(--gray)}
+.kpi.red{border-top-color:var(--red)}.kpi.amber{border-top-color:var(--amber)}
+.kpi.green{border-top-color:var(--green)}.kpi.blue{border-top-color:var(--blue)}
+.kpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray)}
+.kpi-value{font-family:'DM Mono',monospace;font-size:26px;font-weight:900;margin-top:4px}
+.kpi.red .kpi-value{color:var(--red)}.kpi.amber .kpi-value{color:var(--amber)}
+.kpi.green .kpi-value{color:var(--green)}.kpi.blue .kpi-value{color:var(--blue)}
+.kpi-sub{font-size:10px;color:var(--gray);margin-top:4px;line-height:1.45}
+
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f7f8fa;padding:8px 12px;text-align:left;font-weight:800;font-size:9px;
+  text-transform:uppercase;letter-spacing:.6px;color:var(--gray);border-bottom:1px solid #e6e9ed}
+td{padding:9px 12px;border-bottom:1px solid #eef1f4;vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+.mono{font-family:'DM Mono',monospace;font-size:11px}
+.arrow{color:var(--blue);font-weight:800;text-align:center}
+.r-red td:first-child{border-left:3px solid var(--red)}
+.r-amber td:first-child{border-left:3px solid var(--amber)}
+.r-blue td:first-child{border-left:3px solid var(--blue)}
+.r-green td:first-child{border-left:3px solid var(--green)}
+
+.badge{display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.5px;padding:3px 8px;border-radius:4px;white-space:nowrap;font-family:'Montserrat',sans-serif}
+.b-red{background:#fdeaea;color:#a32d2d}.b-amber{background:#fdf4e7;color:#8a5a0b}
+.b-green{background:#eafaef;color:#166534}.b-blue{background:#eaf1fd;color:#1d4ed8}
+.b-gray{background:#f0f2f5;color:var(--gray)}
+
+.no{color:#a32d2d;font-weight:800}
+.yes{color:#166534;font-weight:800}
+
+.footer{margin-top:32px;padding:16px 0;border-top:1px solid #dde1e6;
+  display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--gray)}
+.footer-r{font-family:'DM Mono',monospace}
+
+@media(max-width:820px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'C</div>
+  <div class="h-center">
+    <h1>PHƯƠNG ÁN NÂNG CẤP HẠ TẦNG — CRM_CVL</h1>
+    <div class="company">Dcorp Technology Corporation · Platform. Empowering Growth.</div>
+    <div class="route">VM: s2-standard-8x32 · SQL Server 2025 Express 17.0 · NVMe 5000 IOPS / 400 MB/s</div>
+  </div>
+  <div class="h-right">
+    <div class="h-badge">Database Team</div>
+    <div class="h-ver">upgrade_plan v2 · 10/08/2026</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- TÓM TẮT NHANH -->
+<div class="section">
+  <div class="section-title">Tóm tắt điều hành</div>
+  <div class="alert alert-green">
+    <div class="alert-icon">✅</div>
+    <div>
+      <strong>Việc duy nhất cần làm: nâng SQL Express → Standard. Không cần thay đổi phần cứng.</strong><br>
+      VM <span class="mono">s2-standard-8x32</span> (8 vCPU / 32 GB RAM) và ổ NVMe 5000 IOPS đã hoàn toàn đủ.
+      Express đang khóa SQL ở <strong>4/8 vCPU</strong> và <strong>1.4 GB / 32 GB RAM</strong>.
+      Nâng Edition là bước rẻ nhất, hiệu quả nhất — chỉ tốn license, không tốn hạ tầng.
+    </div>
+  </div>
+</div>
+
+<!-- HIỆN TRẠNG -->
+<div class="section">
+  <div class="section-title">Hiện trạng chính xác (đã verify)</div>
+  <div class="kpi-grid">
+    <div class="kpi red"><div class="kpi-label">vCPU — VM / SQL dùng</div><div class="kpi-value">8 / 4</div><div class="kpi-sub">Express cap 4 core → phí 4 vCPU</div></div>
+    <div class="kpi red"><div class="kpi-label">RAM — VM / SQL buffer</div><div class="kpi-value">32 / 1.4</div><div class="kpi-sub">GB · Express cap buffer ~1.4 GB</div></div>
+    <div class="kpi green"><div class="kpi-label">Disk</div><div class="kpi-value">NVMe</div><div class="kpi-sub">5000 IOPS · 400 MB/s (C &amp; D)</div></div>
+    <div class="kpi green"><div class="kpi-label">IOPS thực tế</div><div class="kpi-value">27.5</div><div class="kpi-sub">0.55% ceiling — xa mức nghẽn</div></div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi green"><div class="kpi-label">DB Size</div><div class="kpi-value">2.23<span style="font-size:13px"> GB</span></div><div class="kpi-sub">Nhỏ — xa cap 10 GB Express</div></div>
+    <div class="kpi green"><div class="kpi-label">Throughput thực</div><div class="kpi-value">0.22<span style="font-size:13px"> MB/s</span></div><div class="kpi-sub">0.05% của 400 MB/s</div></div>
+    <div class="kpi green"><div class="kpi-label">Signal Wait</div><div class="kpi-value">3.1<span style="font-size:13px"> %</span></div><div class="kpi-sub">CPU pressure nhẹ · &lt;20% OK</div></div>
+    <div class="kpi amber"><div class="kpi-label">Write Latency</div><div class="kpi-value">9.8<span style="font-size:13px"> ms</span></div><div class="kpi-sub">Latency nền NVMe cloud — không do tải</div></div>
+  </div>
+</div>
+
+<!-- ĐÍNH CHÍNH -->
+<div class="section">
+  <div class="section-title">Đính chính so với bản v1</div>
+  <div class="card">
+    <table>
+      <tr><th>Hạng mục</th><th>Bản v1 (sai)</th><th></th><th>Thực tế (đã verify)</th></tr>
+      <tr class="r-amber"><td><strong>vCPU của VM</strong></td><td class="mono no">4 vCPU</td><td class="arrow">→</td><td class="mono yes">8 vCPU (s2-standard-8x32) — SQL Express chỉ dùng 4</td></tr>
+      <tr class="r-amber"><td><strong>Loại disk</strong></td><td class="mono no">SSD thường, cần đổi NVMe</td><td class="arrow">→</td><td class="mono yes">Đã là NVMe 5000 IOPS / 400 MB/s</td></tr>
+      <tr class="r-amber"><td><strong>Khuyến nghị vCPU</strong></td><td class="mono no">Nâng 4→8</td><td class="arrow">→</td><td class="mono yes">Bỏ — VM đã có 8, chỉ cần Standard để dùng hết</td></tr>
+      <tr class="r-amber"><td><strong>Khuyến nghị disk</strong></td><td class="mono no">Chuyển sang NVMe</td><td class="arrow">→</td><td class="mono yes">Bỏ — đã NVMe, IOPS dùng 0.55%, không cần nâng tier</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- DISK KHÔNG PHẢI NÚT THẮT -->
+<div class="section">
+  <div class="section-title">Disk không phải nút thắt — không cần tier 10000 IOPS</div>
+  <div class="alert alert-green">
+    <div class="alert-icon">✓</div>
+    <div>
+      <strong>Giữ nguyên NVMe 5000 IOPS. Nâng lên 10000 IOPS / 600 MB/s là lãng phí.</strong>
+      <ul style="margin:8px 0 0 18px;line-height:1.7">
+        <li>IOPS thực tế trung bình <strong>27.5 / 5000</strong> — chỉ dùng <strong>0.55%</strong></li>
+        <li>Throughput <strong>0.22 / 400 MB/s</strong> — cực nhỏ</li>
+        <li>Write latency 9.8ms là <strong>latency nền của NVMe cloud (network block)</strong>, không phải do quá tải — vì IOPS chỉ 27.5 nên không có queueing. Tăng lên 10000 IOPS <strong>cũng không giảm</strong> latency này</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- NÚT THẮT -->
+<div class="section">
+  <div class="section-title">⚠ Nút thắt duy nhất — Express Edition</div>
+  <div class="alert alert-red">
+    <div class="alert-icon">🔴</div>
+    <div>
+      <strong>Toàn bộ vấn đề nằm ở Express Edition — VM đã dư sức, chỉ cần đổi license.</strong>
+      <ul style="margin:8px 0 0 18px;line-height:1.7">
+        <li><strong>CPU:</strong> dùng 4/8 vCPU → phí 50% CPU của VM</li>
+        <li><strong>RAM:</strong> buffer pool 1.4 GB / 32 GB → phí ~95% RAM của VM</li>
+        <li>Không SQL Agent · không ONLINE rebuild · không backup compression · không TDE</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PHƯƠNG ÁN -->
+<div class="section">
+  <div class="section-title">Phương án — Chỉ cần nâng Edition</div>
+  <div class="card">
+    <table>
+      <tr><th>Tài nguyên</th><th>Express (hiện tại)</th><th></th><th>Standard (sau nâng)</th><th>Ghi chú</th></tr>
+      <tr class="r-green"><td><strong>vCPU SQL dùng</strong></td><td class="mono">4 / 8</td><td class="arrow">→</td><td class="mono">8 / 8 (dùng hết)</td><td>Standard cap 24 core → dùng trọn 8 vCPU của VM</td></tr>
+      <tr class="r-green"><td><strong>Buffer pool RAM</strong></td><td class="mono">1.4 GB</td><td class="arrow">→</td><td class="mono">24 GB</td><td>Standard cap 128 GB → dùng trọn RAM (set max mem 24 GB)</td></tr>
+      <tr class="r-green"><td><strong>SQL Agent</strong></td><td class="mono no">❌</td><td class="arrow">→</td><td class="mono yes">✅</td><td>Bỏ Task Scheduler, quản lý job tập trung + alert</td></tr>
+      <tr class="r-green"><td><strong>ONLINE rebuild</strong></td><td class="mono no">❌</td><td class="arrow">→</td><td class="mono yes">✅</td><td>Rebuild index không khóa bảng</td></tr>
+      <tr class="r-green"><td><strong>Backup compression</strong></td><td class="mono no">❌</td><td class="arrow">→</td><td class="mono yes">✅</td><td>Backup nhanh + dung lượng nhỏ hơn</td></tr>
+      <tr class="r-green"><td><strong>VM (CPU/RAM/Disk)</strong></td><td class="mono">8vCPU / 32GB / NVMe</td><td class="arrow">→</td><td class="mono">GIỮ NGUYÊN</td><td>Đã dư sức — không thay đổi gì</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- CẤU HÌNH SAU NÂNG -->
+<div class="section">
+  <div class="section-title">Cấu hình sau khi lên Standard (tận dụng trọn VM)</div>
+  <div class="card">
+    <table>
+      <tr><th>Cấu hình</th><th>Giá trị đề xuất</th><th>Lý do</th></tr>
+      <tr class="r-blue"><td>max server memory</td><td class="mono">24,576 MB (24 GB)</td><td>Chừa 8 GB cho OS. Đang set sẵn 24 GB — sau Standard sẽ dùng thật</td></tr>
+      <tr class="r-blue"><td>max degree of parallelism</td><td class="mono">4</td><td>8 vCPU → MAXDOP=4 cho query báo cáo song song hợp lý</td></tr>
+      <tr class="r-blue"><td>cost threshold for parallelism</td><td class="mono">50 (giữ)</td><td>Đang tối ưu — chỉ query nặng mới parallel</td></tr>
+      <tr class="r-blue"><td>TempDB</td><td class="mono">4 → 8 file × 256 MB</td><td>8 vCPU → 8 tempdb file cân bằng, tránh PAGELATCH contention</td></tr>
+      <tr class="r-blue"><td>Instant File Init</td><td class="mono">Bật</td><td>Grant "Perform Volume Maintenance" → file autogrow tức thì</td></tr>
+      <tr class="r-blue"><td>Disk / VM</td><td class="mono">Không đổi</td><td>NVMe 5000 IOPS thừa sức — giữ nguyên tier, không nâng 10000</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- LỘ TRÌNH -->
+<div class="section">
+  <div class="section-title">Lộ trình triển khai</div>
+  <div class="card">
+    <table>
+      <tr><th style="width:60px">Bước</th><th>Việc làm</th><th>Downtime</th><th>Ưu tiên</th></tr>
+      <tr class="r-red"><td class="mono">1</td><td>Mua/kích hoạt license SQL Standard. Đánh giá core-based vs Server+CAL theo số client</td><td class="mono">0</td><td><span class="badge b-red">Quyết định trước</span></td></tr>
+      <tr class="r-amber"><td class="mono">2</td><td>Backup full CRM_CVL trước khi nâng</td><td class="mono">0</td><td><span class="badge b-amber">Bắt buộc</span></td></tr>
+      <tr class="r-amber"><td class="mono">3</td><td>In-place upgrade Express → Standard (giữ nguyên data + instance name, không cần đụng VM)</td><td class="mono">~20-30 phút</td><td><span class="badge b-amber">Cửa sổ bảo trì</span></td></tr>
+      <tr class="r-blue"><td class="mono">4</td><td>Xác nhận SQL dùng 8 vCPU (scheduler online = 8). Set max memory 24GB, MAXDOP 4, tạo 8 tempdb file, bật IFI</td><td class="mono">1 restart</td><td><span class="badge b-blue">Sau upgrade</span></td></tr>
+      <tr class="r-blue"><td class="mono">5</td><td>Chuyển maintenance (backup, rebuild index) từ Task Scheduler sang SQL Agent</td><td class="mono">0</td><td><span class="badge b-blue">Tuần kế tiếp</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- KẾT LUẬN -->
+<div class="section">
+  <div class="section-title">Kết luận</div>
+  <div class="alert alert-blue">
+    <div class="alert-icon">ℹ️</div>
+    <div>
+      Việc duy nhất cần làm là <strong>nâng Express → Standard</strong>. VM <span class="mono">s2-standard-8x32</span> và NVMe 5000 IOPS đã hoàn toàn đủ —
+      <strong class="no">không cần nâng vCPU</strong>, <strong class="no">không cần nâng RAM</strong>, <strong class="no">không cần nâng disk tier</strong>.
+      Sau khi lên Standard, SQL tự dùng trọn 8 vCPU + 24 GB RAM (chỉ cần set max memory + tạo thêm tempdb file).
+      Đây là nâng cấp rẻ nhất và hiệu quả nhất — chỉ tốn license, không tốn hạ tầng.
+      Hiện DB nhỏ (2.2 GB), tải vừa nên chưa khẩn cấp — triển khai trong cửa sổ bảo trì khi thuận tiện.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-l"><strong>Database Team</strong> · Dcorp Technology Corporation</div>
+  <div class="footer-r">upgrade_plan_CRM_CVL v2 · Generated 10/08/2026</div>
+</div>
+
+</div>
+</body>
+</html>
