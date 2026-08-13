@@ -6,13 +6,14 @@
 <title>Nghiệp vụ Kho — The Street · Trình chiếu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F7F4EC; --paper-deep:#EFE9DA; --ink:#1D2019; --ink-soft:#54544A;
-  --stamp:#B8420C; --stamp-soft:#F0DACB; --warehouse:#2B5D57; --warehouse-soft:#DCE6E1;
+  --stamp:#C01A1F; --stamp-soft:#F7DEDC; --warehouse:#2B5D57; --warehouse-soft:#DCE6E1;
   --line:#D8D0BC; --card:#FFFDF7; --note:#2F5F8A; --note-soft:#DCE6F0;
   --purple:#7A5FA0; --purple-soft:#EDE6F5;
+  --dc-red:#EC1F26; --dc-red-text:#961418;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;height:100%;}
@@ -53,7 +54,7 @@ body{
 }
 .s-eyebrow::before{content:"";width:26px;height:2px;background:var(--warehouse);}
 .s-title{
-  font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:700;
+  font-family:'Montserrat',sans-serif; text-transform:uppercase; font-weight:700;
   font-size:40px; letter-spacing:.01em; line-height:1; margin:0;
 }
 .s-sub{color:var(--ink-soft); font-size:17px; margin:10px 0 0; max-width:1050px;}
@@ -78,13 +79,13 @@ body{
 }
 .c-eyebrow::before{content:"";width:30px;height:2px;background:var(--warehouse);}
 .c-title{
-  font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:700;
+  font-family:'Montserrat',sans-serif; text-transform:uppercase; font-weight:700;
   font-size:88px; line-height:.94; margin:0 0 24px; letter-spacing:.005em;
 }
 .c-title span{color:var(--stamp);}
 .c-lede{font-size:20px; color:var(--ink-soft); max-width:620px; margin:0 0 30px; line-height:1.55;}
 .c-client{
-  font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.05em;
+  font-family:'Montserrat',sans-serif; text-transform:uppercase; letter-spacing:.05em;
   font-size:19px; color:var(--ink); border-left:5px solid var(--stamp); padding-left:14px; margin:0;
 }
 .cover-r{flex:0 0 430px; position:relative; background:var(--paper-deep);
@@ -95,7 +96,7 @@ body{
   width:200px; height:200px; border:4px solid var(--stamp); border-radius:50%;
   display:flex; align-items:center; justify-content:center; position:relative;
   transform:rotate(-13deg); color:var(--stamp); text-align:center;
-  font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+  font-family:'Montserrat',sans-serif; font-weight:700; text-transform:uppercase;
   font-size:24px; letter-spacing:.05em; line-height:1.05; opacity:.92;
 }
 .stamp::before{content:""; position:absolute; inset:12px; border:1.5px solid var(--stamp); border-radius:50%;}
@@ -104,7 +105,7 @@ body{
 /* ---- principle ---- */
 .principle{flex:1; display:flex; gap:40px; align-items:center;}
 .pr-l{flex:1;}
-.pr-big{font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:600;
+.pr-big{font-family:'Montserrat',sans-serif; text-transform:uppercase; font-weight:600;
   font-size:38px; line-height:1.08; margin:0 0 28px;}
 .pr-big span{color:var(--stamp);}
 .pr-list{list-style:none; padding:0; margin:0 0 22px; counter-reset:pr;}
@@ -114,7 +115,7 @@ body{
 .pr-list li::before{
   counter-increment:pr; content:counter(pr,decimal-leading-zero);
   position:absolute; left:0; top:12px; width:40px; height:40px; border-radius:50%;
-  background:var(--ink); color:var(--paper); font-family:'Oswald',sans-serif; font-weight:600;
+  background:var(--ink); color:var(--paper); font-family:'Montserrat',sans-serif; font-weight:600;
   font-size:17px; display:flex; align-items:center; justify-content:center;
 }
 .pr-note{font-family:'IBM Plex Mono',monospace; font-size:15px; color:var(--stamp); margin:0;}
@@ -128,7 +129,7 @@ body{
 .doc::before{content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--tone);}
 .doc-tag{font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.07em;
   text-transform:uppercase; color:var(--tone); display:block; margin-bottom:8px;}
-.doc h3{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:24px; margin:0 0 14px;}
+.doc h3{font-family:'Montserrat',sans-serif; text-transform:uppercase; font-size:24px; margin:0 0 14px;}
 .doc ul{margin:0; padding-left:20px; font-size:17px; color:var(--ink-soft); line-height:1.5;}
 .doc li{margin-bottom:8px;}
 .doc li:last-child{margin-bottom:0;}
@@ -138,17 +139,17 @@ body{
 .flow-svg{width:100%; height:auto; max-height:100%;}
 .swim-svg{width:100%; height:auto; max-height:100%;}
 .fi{font-size:38px;}
-.ft{font-family:'Oswald',sans-serif; font-size:21px; font-weight:600; text-transform:uppercase; letter-spacing:.01em;}
+.ft{font-family:'Montserrat',sans-serif; font-size:21px; font-weight:600; text-transform:uppercase; letter-spacing:.01em;}
 .ftag{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; letter-spacing:.05em;}
 .albl{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
 .si{font-size:30px;} .sic{font-size:26px;}
-.st{font-family:'Oswald',sans-serif; font-size:16.5px; font-weight:600; text-transform:uppercase;}
-.sdt{font-family:'Oswald',sans-serif; font-size:14px; font-weight:600; text-transform:uppercase;}
+.st{font-family:'Montserrat',sans-serif; font-size:16.5px; font-weight:600; text-transform:uppercase;}
+.sdt{font-family:'Montserrat',sans-serif; font-size:14px; font-weight:600; text-transform:uppercase;}
 .stag{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.05em;}
 .schip{font-family:'IBM Plex Mono',monospace; font-size:12px;}
 .clbl{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
-.lane{font-family:'Oswald',sans-serif; font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
-.glane{font-family:'Oswald',sans-serif; font-size:21px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
+.lane{font-family:'Montserrat',sans-serif; font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
+.glane{font-family:'Montserrat',sans-serif; font-size:21px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
 
 /* ---- legend ---- */
 .legend{flex:0 0 auto; display:flex; flex-wrap:wrap; gap:22px; padding:14px 0 4px;
@@ -156,16 +157,38 @@ body{
 .legend span{display:inline-flex; align-items:center; gap:8px;}
 .sw{width:15px; height:15px; border-radius:3px; display:inline-block;}
 
+/* ---- Dcorp brand identity ---- */
+.dcorp-logo{display:inline-flex; align-items:center; gap:9px; background:var(--dc-red);
+  padding:9px 13px; border-radius:6px; box-shadow:0 8px 20px rgba(0,0,0,.20);}
+.dcorp-logo .w{font-family:'Montserrat',sans-serif; font-weight:800; color:#fff;
+  font-size:23px; letter-spacing:.005em; line-height:1;}
+.dcorp-logo .b{font-family:'Montserrat',sans-serif; font-weight:700; color:var(--dc-red);
+  background:#fff; font-size:10.5px; letter-spacing:.11em; padding:3px 7px; border-radius:3px; line-height:1;}
+.cover-logo{position:absolute; top:30px; right:34px; z-index:70;}
+.cover-tag{position:absolute; top:84px; right:34px; z-index:70;
+  font-family:'IBM Plex Mono',monospace; text-transform:uppercase; letter-spacing:.13em;
+  font-size:11px; color:var(--ink-soft); text-align:right;}
+.dc-mini{display:inline-flex; align-items:center; gap:6px; vertical-align:middle; margin-right:8px;}
+.dc-mini b{font-family:'Montserrat',sans-serif; font-weight:800; color:var(--dc-red);
+  font-size:13px; letter-spacing:.005em;}
+.dc-mini i{font-style:normal; font-family:'IBM Plex Mono',monospace; font-weight:600;
+  font-size:8.5px; color:#fff; background:var(--dc-red); padding:1px 4px; border-radius:2px; letter-spacing:.08em;}
+.s-brand{display:inline-flex; align-items:center;}
+/* red brand strip on cover left edge */
+.slide-cover .s-body::before{content:""; position:absolute; left:0; top:0; bottom:0;
+  width:6px; background:var(--dc-red); z-index:65;}
+.slide-cover .s-foot{padding-left:28px; padding-right:28px;}
+
 /* ---- summary ---- */
 .summary{flex:1; display:flex; gap:48px;}
 .sum-col{flex:1;}
-.sum-col h4{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:20px;
+.sum-col h4{font-family:'Montserrat',sans-serif; text-transform:uppercase; font-size:20px;
   margin:0 0 16px; color:var(--warehouse); letter-spacing:.02em;}
 .sum-list{display:flex; flex-direction:column; gap:12px;}
 .sum-item{display:flex; align-items:baseline; gap:12px; font-size:18px; padding-bottom:10px;
   border-bottom:1px dashed var(--line);}
 .sum-dot{width:12px;height:12px;border-radius:3px;flex:0 0 auto; transform:translateY(1px);}
-.sum-item b{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:18px; letter-spacing:.01em;}
+.sum-item b{font-family:'Montserrat',sans-serif; text-transform:uppercase; font-size:18px; letter-spacing:.01em;}
 .sum-item i{color:var(--ink-soft); font-style:normal;}
 .sum-flows{margin:0; padding-left:22px; font-size:19px; color:var(--ink-soft); line-height:1.7;
   columns:2; column-gap:30px;}
@@ -182,8 +205,8 @@ body{
   width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
 #hud button:hover{background:rgba(255,255,255,.14);}
 #counter{min-width:64px; text-align:center; letter-spacing:.06em;}
-#bar{position:fixed; top:0; left:0; height:4px; background:var(--stamp); z-index:100;
-  transition:width .3s ease; box-shadow:0 0 8px rgba(184,66,12,.6);}
+#bar{position:fixed; top:0; left:0; height:5px; background:var(--dc-red); z-index:100;
+  transition:width .3s ease; box-shadow:0 0 8px rgba(236,31,38,.5);}
 
 </style>
 </head>
@@ -192,6 +215,8 @@ body{
 <div id="stage-wrap">
   <div id="stage">
 <section class="slide slide-cover" data-idx="0"><div class="s-body">
+<div class="cover-logo"><span class="dcorp-logo"><span class="w">D&#39;CORP</span><span class="b">R-KEEPER</span></span></div>
+<p class="cover-tag">Platform. Empowering Growth.</p>
 <div class="cover">
   <div class="cover-l">
     <p class="c-eyebrow">Kho vận · RK7 / StoreHouse 5</p>
@@ -203,7 +228,7 @@ body{
   <div class="cover-r">
     <div class="stamp">Kích hoạt<br>phiếu</div>
   </div>
-</div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">01 / 12</span></div></section>
+</div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">01 / 12</span></div></section>
 <section class="slide slide-principle" data-idx="1"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Nguyên tắc</p><h2 class="s-title">Mọi biến động kho đi qua một chứng từ</h2></div>
 <div class="principle">
@@ -217,10 +242,10 @@ body{
     <p class="pr-note">Trước khi kích hoạt, phiếu chỉ là bản nháp — tồn kho chưa thay đổi.</p>
   </div>
   <div class="pr-r"><div class="stamp stamp-lg">Kích hoạt<br>phiếu</div></div>
-</div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">02 / 12</span></div></section>
+</div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">02 / 12</span></div></section>
 <section class="slide slide-docs" data-idx="2"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Phần 01</p><h2 class="s-title">Bốn nhóm nghiệp vụ chứng từ</h2><p class="s-sub">Mỗi biến động kho gắn với một loại phiếu cụ thể.</p></div>
-<div class="doc-grid"><div class="doc" style="--tone:var(--warehouse)"><span class="doc-tag">Phiếu nhập mua</span><h3>Nhập mua hàng</h3><ul><li>Phiếu nhập từ nhà cung cấp về kho.</li><li>Bảng giá liên kết, gợi ý giá mua.</li><li>Thu mua kích hoạt phiếu → ghi số lượng vào kho.</li></ul></div><div class="doc" style="--tone:var(--stamp)"><span class="doc-tag">Phiếu sản xuất</span><h3>Xuất sử dụng / Nhập BTP</h3><ul><li>Nhập danh sách BTP, chọn kho NVL, kho nhập &amp; phiên bản BOM.</li><li>Hệ thống gợi ý NVL cần tiêu hao.</li><li>Kích hoạt → sản xuất BTP, trừ NVL.</li></ul></div><div class="doc" style="--tone:#8A3324"><span class="doc-tag">Phiếu xuất</span><h3>Xuất hủy</h3><ul><li>Phiếu xuất với đối tác là Hủy.</li><li>Bắt buộc kèm lý do cụ thể.</li></ul></div><div class="doc" style="--tone:#5B5844"><span class="doc-tag">Phiếu kiểm kê</span><h3>Xuất khác / Nhập khác</h3><ul><li>Kiểm kê theo ngày / tuần / tháng.</li><li>Nhập tồn thực tế → hệ thống tính chênh lệch.</li><li>Thừa → nhập khác · thiếu → xuất khác.</li></ul></div></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">03 / 12</span></div></section>
+<div class="doc-grid"><div class="doc" style="--tone:var(--warehouse)"><span class="doc-tag">Phiếu nhập mua</span><h3>Nhập mua hàng</h3><ul><li>Phiếu nhập từ nhà cung cấp về kho.</li><li>Bảng giá liên kết, gợi ý giá mua.</li><li>Thu mua kích hoạt phiếu → ghi số lượng vào kho.</li></ul></div><div class="doc" style="--tone:var(--stamp)"><span class="doc-tag">Phiếu sản xuất</span><h3>Xuất sử dụng / Nhập BTP</h3><ul><li>Nhập danh sách BTP, chọn kho NVL, kho nhập &amp; phiên bản BOM.</li><li>Hệ thống gợi ý NVL cần tiêu hao.</li><li>Kích hoạt → sản xuất BTP, trừ NVL.</li></ul></div><div class="doc" style="--tone:#8A3324"><span class="doc-tag">Phiếu xuất</span><h3>Xuất hủy</h3><ul><li>Phiếu xuất với đối tác là Hủy.</li><li>Bắt buộc kèm lý do cụ thể.</li></ul></div><div class="doc" style="--tone:#5B5844"><span class="doc-tag">Phiếu kiểm kê</span><h3>Xuất khác / Nhập khác</h3><ul><li>Kiểm kê theo ngày / tuần / tháng.</li><li>Nhập tồn thực tế → hệ thống tính chênh lệch.</li><li>Thừa → nhập khác · thiếu → xuất khác.</li></ul></div></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">03 / 12</span></div></section>
 <section class="slide slide-flow1" data-idx="3"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 01 · Quy trình hàng ngày</p><h2 class="s-title">Nhập đầu ngày</h2><p class="s-sub">Hàng về từ NCC hoặc Văn phòng trung tâm → ghi nhận vào tồn kho.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -261,7 +286,7 @@ body{
 <path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">04 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">04 / 12</span></div></section>
 <section class="slide slide-flow2" data-idx="4"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 02 · Quy trình hàng ngày</p><h2 class="s-title">Bán hàng</h2><p class="s-sub">Đóng ca POS → dữ liệu đồng bộ về StoreHouse 5 → tự sản xuất theo BOM.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -305,7 +330,7 @@ body{
 <path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">05 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">05 / 12</span></div></section>
 <section class="slide slide-flow3" data-idx="5"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 03 · Quy trình hàng ngày</p><h2 class="s-title">Điều chuyển nội bộ</h2><p class="s-sub">Luân chuyển kho trong cùng một nhà hàng.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1328 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -350,7 +375,7 @@ body{
 <path d="M 768 155.0 L 828 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">06 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">06 / 12</span></div></section>
 <section class="slide slide-flow4" data-idx="6"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 04 · Quy trình hàng ngày</p><h2 class="s-title">Sản xuất với BOM tại chi nhánh</h2><p class="s-sub">Sản xuất bán thành phẩm theo định mức BOM ngay tại cửa hàng.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1596 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -402,7 +427,7 @@ body{
 <path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 1304 155.0 L 1364 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">07 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">07 / 12</span></div></section>
 <section class="slide slide-flow5" data-idx="7"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 05 · Quy trình hàng ngày</p><h2 class="s-title">Hủy hàng</h2><p class="s-sub">Hàng bể, đổ vỡ, hết hạn — xuất huỷ kèm lý do cụ thể.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -441,7 +466,7 @@ body{
 <path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">08 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">08 / 12</span></div></section>
 <section class="slide slide-flow6" data-idx="8"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Luồng 06 · Quy trình hàng ngày</p><h2 class="s-title">Kiểm kê ngày / tuần / tháng</h2><p class="s-sub">Đối chiếu tồn thực tế với hệ thống, điều chỉnh chênh lệch.</p></div>
 <div class="flow-stage"><svg viewBox="0 0 1596 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
@@ -497,7 +522,7 @@ body{
 <path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
 <path d="M 1304 155.0 L 1364 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">09 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">09 / 12</span></div></section>
 <section class="slide slide-transfer" data-idx="9"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Phần 02</p><h2 class="s-title">Điều chuyển hàng liên cửa hàng</h2><p class="s-sub">Cửa hàng A hết hàng → điều chuyển từ cửa hàng B. Trạng thái đồng bộ 2 chiều qua SkyStoreHouse.</p></div>
 <div class="swim-stage"><svg viewBox="0 0 1700 660" xmlns="http://www.w3.org/2000/svg" class="swim-svg" role="img">
@@ -569,7 +594,7 @@ body{
 <path d="M 1620 95.0 C 1620 26, 540 26, 540 88.0" style="stroke:var(--stamp);stroke-width:2.4;fill:none" stroke-dasharray="3,8" stroke-linecap="round" marker-end="url(#a-stamp)"/>
 <text x="1080.0" y="20" text-anchor="middle" class="clbl" style="fill:var(--stamp)">↻ hàng về đủ → quay lại bán hàng</text>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">10 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">10 / 12</span></div></section>
 <section class="slide slide-order" data-idx="10"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Phần 03</p><h2 class="s-title">Order hàng lên Văn phòng trung tâm</h2><p class="s-sub">Cửa hàng tạo phiếu yêu cầu → VP trung tâm lọc, lập phiếu giao (đặt NCC nếu thiếu) → giao về, cửa hàng nhập kho.</p></div>
 <div class="swim-stage"><svg viewBox="0 0 1700 660" xmlns="http://www.w3.org/2000/svg" class="swim-svg" role="img">
@@ -645,7 +670,7 @@ body{
 <path d="M 1342 480.0 L 1360 480.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/><text x="1351.0" y="468.0" text-anchor="middle" class="albl" style="fill:var(--stamp)">✓ đủ hàng</text>
 <path d="M 1440 405.0 C 1530.0 405.0, 1530.0 245.0, 1620 245.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/><text x="1530.0" y="317.0" text-anchor="middle" class="clbl" style="fill:var(--warehouse)">Giao hàng về cửa hàng</text>
 </svg></div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">11 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">11 / 12</span></div></section>
 <section class="slide slide-summary" data-idx="11"><div class="s-body">
 <div class="s-head"><p class="s-eyebrow">Tổng kết</p><h2 class="s-title">Bức tranh toàn cảnh</h2></div>
 <div class="summary">
@@ -663,7 +688,7 @@ body{
     <p class="sum-p">Điều chuyển A↔B và order lên VP trung tâm — trạng thái phiếu đồng bộ qua <b>SkyStoreHouse</b>.</p>
   </div>
 </div>
-<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ Sky</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">12 / 12</span></div></section>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ Sky</span></div></div><div class="s-foot"><span class="s-brand"><span class="dc-mini"><b>D&#39;CORP</b><i>R-KEEPER</i></span>Dcorp Technology · Nghiệp vụ Kho — The Street</span><span class="s-page">12 / 12</span></div></section>
   </div>
 </div>
 <div id="hud">
