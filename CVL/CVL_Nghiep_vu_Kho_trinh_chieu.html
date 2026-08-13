@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nghiệp vụ Kho — Cửu Vân Long · Trình chiếu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F4EC; --paper-deep:#EFE9DA; --ink:#1D2019; --ink-soft:#54544A;
+  --stamp:#B8420C; --stamp-soft:#F0DACB; --warehouse:#2B5D57; --warehouse-soft:#DCE6E1;
+  --line:#D8D0BC; --card:#FFFDF7; --note:#2F5F8A; --note-soft:#DCE6F0;
+  --purple:#7A5FA0; --purple-soft:#EDE6F5;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;}
+body{
+  background:#14140F;
+  font-family:'IBM Plex Sans',sans-serif; color:var(--ink);
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+#stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+#stage{
+  position:relative; width:1280px; height:720px; flex:0 0 auto;
+  transform-origin:center center;
+  background:var(--paper);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+/* subtle paper grain */
+#stage::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.04; z-index:60;
+  background-image:radial-gradient(circle,#000 1px,transparent 1px); background-size:3px 3px;
+}
+.slide{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  padding:52px 64px 0; opacity:0; visibility:hidden;
+  transition:opacity .38s ease;
+}
+.slide.is-active{opacity:1; visibility:visible;}
+@media (prefers-reduced-motion:reduce){ .slide{transition:none;} }
+.s-body{flex:1 1 auto; display:flex; flex-direction:column; min-height:0;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+
+/* header */
+.s-head{border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:22px;}
+.s-eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--warehouse); margin:0 0 8px;
+  display:flex; align-items:center; gap:10px;
+}
+.s-eyebrow::before{content:"";width:26px;height:2px;background:var(--warehouse);}
+.s-title{
+  font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:700;
+  font-size:40px; letter-spacing:.01em; line-height:1; margin:0;
+}
+.s-sub{color:var(--ink-soft); font-size:17px; margin:10px 0 0; max-width:1050px;}
+
+/* footer */
+.s-foot{
+  flex:0 0 auto; display:flex; justify-content:space-between; align-items:center;
+  padding:14px 0; margin-top:8px; border-top:2px solid var(--ink);
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft);
+}
+.s-page{letter-spacing:.08em;}
+
+/* ---- cover ---- */
+.slide-cover{padding:0;}
+.slide-cover .s-body{flex-direction:row;}
+.cover{display:flex; width:100%;}
+.cover-l{flex:1; padding:88px 0 0 64px; display:flex; flex-direction:column; justify-content:center;}
+.c-eyebrow{
+  font-family:'IBM Plex Mono',monospace; font-size:15px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--warehouse); margin:0 0 22px;
+  display:flex; align-items:center; gap:10px;
+}
+.c-eyebrow::before{content:"";width:30px;height:2px;background:var(--warehouse);}
+.c-title{
+  font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:700;
+  font-size:88px; line-height:.94; margin:0 0 24px; letter-spacing:.005em;
+}
+.c-title span{color:var(--stamp);}
+.c-lede{font-size:20px; color:var(--ink-soft); max-width:620px; margin:0 0 30px; line-height:1.55;}
+.c-client{
+  font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.05em;
+  font-size:19px; color:var(--ink); border-left:5px solid var(--stamp); padding-left:14px; margin:0;
+}
+.cover-r{flex:0 0 430px; position:relative; background:var(--paper-deep);
+  border-left:1px solid var(--line); display:flex; align-items:center; justify-content:center;}
+
+/* rubber stamp */
+.stamp{
+  width:200px; height:200px; border:4px solid var(--stamp); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; position:relative;
+  transform:rotate(-13deg); color:var(--stamp); text-align:center;
+  font-family:'Oswald',sans-serif; font-weight:700; text-transform:uppercase;
+  font-size:24px; letter-spacing:.05em; line-height:1.05; opacity:.92;
+}
+.stamp::before{content:""; position:absolute; inset:12px; border:1.5px solid var(--stamp); border-radius:50%;}
+.stamp-lg{width:240px; height:240px; font-size:29px;}
+
+/* ---- principle ---- */
+.principle{flex:1; display:flex; gap:40px; align-items:center;}
+.pr-l{flex:1;}
+.pr-big{font-family:'Oswald',sans-serif; text-transform:uppercase; font-weight:600;
+  font-size:38px; line-height:1.08; margin:0 0 28px;}
+.pr-big span{color:var(--stamp);}
+.pr-list{list-style:none; padding:0; margin:0 0 22px; counter-reset:pr;}
+.pr-list li{position:relative; padding:14px 0 14px 58px; font-size:19px; color:var(--ink-soft);
+  border-bottom:1px dashed var(--line);}
+.pr-list li b{color:var(--ink);}
+.pr-list li::before{
+  counter-increment:pr; content:counter(pr,decimal-leading-zero);
+  position:absolute; left:0; top:12px; width:40px; height:40px; border-radius:50%;
+  background:var(--ink); color:var(--paper); font-family:'Oswald',sans-serif; font-weight:600;
+  font-size:17px; display:flex; align-items:center; justify-content:center;
+}
+.pr-note{font-family:'IBM Plex Mono',monospace; font-size:15px; color:var(--stamp); margin:0;}
+.pr-r{flex:0 0 300px; display:flex; align-items:center; justify-content:center;}
+
+/* ---- doc grid ---- */
+.doc-grid{flex:1; display:grid; grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(2,1fr);
+  gap:22px; align-content:stretch;}
+.doc{background:var(--card); border:1px solid var(--line); border-radius:3px;
+  padding:24px 26px; position:relative; overflow:hidden;}
+.doc::before{content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--tone);}
+.doc-tag{font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--tone); display:block; margin-bottom:8px;}
+.doc h3{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:24px; margin:0 0 14px;}
+.doc ul{margin:0; padding-left:20px; font-size:17px; color:var(--ink-soft); line-height:1.5;}
+.doc li{margin-bottom:8px;}
+.doc li:last-child{margin-bottom:0;}
+
+/* ---- flow / swim stages ---- */
+.flow-stage,.swim-stage{flex:1; display:flex; align-items:center; justify-content:center; min-height:0;}
+.flow-svg{width:100%; height:auto; max-height:100%;}
+.swim-svg{width:100%; height:auto; max-height:100%;}
+.fi{font-size:38px;}
+.ft{font-family:'Oswald',sans-serif; font-size:21px; font-weight:600; text-transform:uppercase; letter-spacing:.01em;}
+.ftag{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; letter-spacing:.05em;}
+.albl{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
+.si{font-size:30px;} .sic{font-size:26px;}
+.st{font-family:'Oswald',sans-serif; font-size:16.5px; font-weight:600; text-transform:uppercase;}
+.sdt{font-family:'Oswald',sans-serif; font-size:14px; font-weight:600; text-transform:uppercase;}
+.stag{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.05em;}
+.schip{font-family:'IBM Plex Mono',monospace; font-size:12px;}
+.clbl{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
+.lane{font-family:'Oswald',sans-serif; font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
+.glane{font-family:'Oswald',sans-serif; font-size:21px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;}
+
+/* ---- legend ---- */
+.legend{flex:0 0 auto; display:flex; flex-wrap:wrap; gap:22px; padding:14px 0 4px;
+  font-size:14px; color:var(--ink-soft);}
+.legend span{display:inline-flex; align-items:center; gap:8px;}
+.sw{width:15px; height:15px; border-radius:3px; display:inline-block;}
+
+/* ---- summary ---- */
+.summary{flex:1; display:flex; gap:48px;}
+.sum-col{flex:1;}
+.sum-col h4{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:20px;
+  margin:0 0 16px; color:var(--warehouse); letter-spacing:.02em;}
+.sum-list{display:flex; flex-direction:column; gap:12px;}
+.sum-item{display:flex; align-items:baseline; gap:12px; font-size:18px; padding-bottom:10px;
+  border-bottom:1px dashed var(--line);}
+.sum-dot{width:12px;height:12px;border-radius:3px;flex:0 0 auto; transform:translateY(1px);}
+.sum-item b{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:18px; letter-spacing:.01em;}
+.sum-item i{color:var(--ink-soft); font-style:normal;}
+.sum-flows{margin:0; padding-left:22px; font-size:19px; color:var(--ink-soft); line-height:1.7;
+  columns:2; column-gap:30px;}
+.sum-p{font-size:18px; color:var(--ink-soft); margin:0;}
+
+/* ---- HUD ---- */
+#hud{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:100;
+  display:flex; align-items:center; gap:14px; background:rgba(20,20,15,.72);
+  border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:8px 16px;
+  font-family:'IBM Plex Mono',monospace; color:#EFE9DA; font-size:13px; backdrop-filter:blur(6px);
+  opacity:.5; transition:opacity .25s;}
+#hud:hover{opacity:1;}
+#hud button{background:none; border:none; color:#EFE9DA; cursor:pointer; font-size:18px;
+  width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+#hud button:hover{background:rgba(255,255,255,.14);}
+#counter{min-width:64px; text-align:center; letter-spacing:.06em;}
+#bar{position:fixed; top:0; left:0; height:4px; background:var(--stamp); z-index:100;
+  transition:width .3s ease; box-shadow:0 0 8px rgba(184,66,12,.6);}
+
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage-wrap">
+  <div id="stage">
+<section class="slide slide-cover" data-idx="0"><div class="s-body">
+<div class="cover">
+  <div class="cover-l">
+    <p class="c-eyebrow">Kho vận · RK7 / StoreHouse 5</p>
+    <h1 class="c-title">Nghiệp vụ <span>Kho</span><br>tại cửa hàng</h1>
+    <p class="c-lede">Bốn nhóm chứng từ và quy trình vận hành hàng ngày tại chi nhánh —
+      từ nhập đầu ngày, sản xuất theo BOM, điều chuyển nội bộ &amp; liên cửa hàng, đến kiểm kê định kỳ.</p>
+    <p class="c-client">Chuỗi buffet · Cửu Vân Long</p>
+  </div>
+  <div class="cover-r">
+    <div class="stamp">Kích hoạt<br>phiếu</div>
+  </div>
+</div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">01 / 12</span></div></section>
+<section class="slide slide-principle" data-idx="1"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Nguyên tắc</p><h2 class="s-title">Mọi biến động kho đi qua một chứng từ</h2></div>
+<div class="principle">
+  <div class="pr-l">
+    <p class="pr-big">Phiếu chỉ ghi nhận vào tồn kho <span>sau khi được kích hoạt.</span></p>
+    <ul class="pr-list">
+      <li><b>Tạo phiếu</b> — nhập thông tin, danh sách hàng hoá, số lượng.</li>
+      <li><b>Kiểm tra</b> — đối chiếu, điều chỉnh nếu cần.</li>
+      <li><b>Kích hoạt</b> — hệ thống mới cập nhật số dư tồn kho.</li>
+    </ul>
+    <p class="pr-note">Trước khi kích hoạt, phiếu chỉ là bản nháp — tồn kho chưa thay đổi.</p>
+  </div>
+  <div class="pr-r"><div class="stamp stamp-lg">Kích hoạt<br>phiếu</div></div>
+</div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">02 / 12</span></div></section>
+<section class="slide slide-docs" data-idx="2"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Phần 01</p><h2 class="s-title">Bốn nhóm nghiệp vụ chứng từ</h2><p class="s-sub">Mỗi biến động kho gắn với một loại phiếu cụ thể.</p></div>
+<div class="doc-grid"><div class="doc" style="--tone:var(--warehouse)"><span class="doc-tag">Phiếu nhập mua</span><h3>Nhập mua hàng</h3><ul><li>Phiếu nhập từ nhà cung cấp về kho.</li><li>Bảng giá liên kết, gợi ý giá mua.</li><li>Thu mua kích hoạt phiếu → ghi số lượng vào kho.</li></ul></div><div class="doc" style="--tone:var(--stamp)"><span class="doc-tag">Phiếu sản xuất</span><h3>Xuất sử dụng / Nhập BTP</h3><ul><li>Nhập danh sách BTP, chọn kho NVL, kho nhập &amp; phiên bản BOM.</li><li>Hệ thống gợi ý NVL cần tiêu hao.</li><li>Kích hoạt → sản xuất BTP, trừ NVL.</li></ul></div><div class="doc" style="--tone:#8A3324"><span class="doc-tag">Phiếu xuất</span><h3>Xuất hủy</h3><ul><li>Phiếu xuất với đối tác là Hủy.</li><li>Bắt buộc kèm lý do cụ thể.</li></ul></div><div class="doc" style="--tone:#5B5844"><span class="doc-tag">Phiếu kiểm kê</span><h3>Xuất khác / Nhập khác</h3><ul><li>Kiểm kê theo ngày / tuần / tháng.</li><li>Nhập tồn thực tế → hệ thống tính chênh lệch.</li><li>Thừa → nhập khác · thiếu → xuất khác.</li></ul></div></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">03 / 12</span></div></section>
+<section class="slide slide-flow1" data-idx="3"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 01 · Quy trình hàng ngày</p><h2 class="s-title">Nhập đầu ngày</h2><p class="s-sub">Hàng về từ NCC hoặc Văn phòng trung tâm → ghi nhận vào tồn kho.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">🚚</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Giao hàng từ</text>
+<text x="128.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">NCC / VP trung</text>
+<text x="128.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">tâm</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">📝</text>
+<text x="396.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo phiếu nhập,</text>
+<text x="396.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">ghi nhận số</text>
+<text x="396.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">lượng thực</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="616.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="664.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="664.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="664.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">nhập</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">📦</text>
+<rect x="884.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="932.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="932.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Ghi nhận số dư</text>
+<text x="932.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">vào tồn kho</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">04 / 12</span></div></section>
+<section class="slide slide-flow2" data-idx="4"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 02 · Quy trình hàng ngày</p><h2 class="s-title">Bán hàng</h2><p class="s-sub">Đóng ca POS → dữ liệu đồng bộ về StoreHouse 5 → tự sản xuất theo BOM.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">🧾</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Đóng ca bán</text>
+<text x="128.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">hàng trên POS</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">🔄</text>
+<rect x="348.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="396.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="396.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Dữ liệu bán</text>
+<text x="396.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">hàng đồng bộ về</text>
+<text x="396.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">SH5</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="616.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="664.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="664.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo &amp; kích hoạt</text>
+<text x="664.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">phiếu sản xuất</text>
+<text x="664.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">/ tổng hợp</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">⚙️</text>
+<rect x="884.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="932.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="932.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tự sản xuất</text>
+<text x="932.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">theo BOM: tạo</text>
+<text x="932.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">TP, trừ BTP</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">05 / 12</span></div></section>
+<section class="slide slide-flow3" data-idx="5"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 03 · Quy trình hàng ngày</p><h2 class="s-title">Điều chuyển nội bộ</h2><p class="s-sub">Luân chuyển kho trong cùng một nhà hàng.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1328 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">📝</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo phiếu điều</text>
+<text x="128.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">chuyển nội bộ</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">🏬</text>
+<text x="396.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Chọn kho nguồn</text>
+<text x="396.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">&amp; kho đích</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">📋</text>
+<text x="664.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Nhập danh sách</text>
+<text x="664.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">hàng hoá / CCDC</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="884.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="932.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="932.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="932.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">điều chuyển</text>
+<rect x="1096" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="1200.0" y="98" text-anchor="middle" class="fi">🔁</text>
+<rect x="1152.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="1200.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="1200.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tự trừ kho</text>
+<text x="1200.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">xuất, tự nhập</text>
+<text x="1200.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">kho nhận</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">06 / 12</span></div></section>
+<section class="slide slide-flow4" data-idx="6"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 04 · Quy trình hàng ngày</p><h2 class="s-title">Sản xuất với BOM tại chi nhánh</h2><p class="s-sub">Sản xuất bán thành phẩm theo định mức BOM ngay tại cửa hàng.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1596 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">📝</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo phiếu xử lý</text>
+<text x="128.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">/ phiếu sản</text>
+<text x="128.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">xuất</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">🍰</text>
+<text x="396.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Chọn bán thành</text>
+<text x="396.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">phẩm cần sản</text>
+<text x="396.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">xuất</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">🧂</text>
+<text x="664.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Nhập NVL hoặc</text>
+<text x="664.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">chọn phiên bản</text>
+<text x="664.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">BOM</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">🏬</text>
+<text x="932.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Chọn kho cần</text>
+<text x="932.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">sản xuất</text>
+<rect x="1096" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="1200.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="1152.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="1200.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="1200.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="1200.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">sản xuất</text>
+<rect x="1364" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="1468.0" y="98" text-anchor="middle" class="fi">🏭</text>
+<rect x="1420.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="1468.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="1468.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tự trừ NVL, tự</text>
+<text x="1468.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">nhập TP / BTP</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 1304 155.0 L 1364 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">07 / 12</span></div></section>
+<section class="slide slide-flow5" data-idx="7"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 05 · Quy trình hàng ngày</p><h2 class="s-title">Hủy hàng</h2><p class="s-sub">Hàng bể, đổ vỡ, hết hạn — xuất huỷ kèm lý do cụ thể.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1060 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">📝</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo phiếu xuất</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">🗑️</text>
+<text x="396.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Nhập hàng hoá /</text>
+<text x="396.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">CCDC cần huỷ,</text>
+<text x="396.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">kèm lý do</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="616.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="664.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="664.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="664.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">để huỷ hàng</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">📉</text>
+<rect x="884.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="932.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="932.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tự trừ hàng hoá</text>
+<text x="932.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">/ NVL trong kho</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">08 / 12</span></div></section>
+<section class="slide slide-flow6" data-idx="8"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Luồng 06 · Quy trình hàng ngày</p><h2 class="s-title">Kiểm kê ngày / tuần / tháng</h2><p class="s-sub">Đối chiếu tồn thực tế với hệ thống, điều chỉnh chênh lệch.</p></div>
+<div class="flow-stage"><svg viewBox="0 0 1596 320" xmlns="http://www.w3.org/2000/svg" class="flow-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="24" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="128.0" y="98" text-anchor="middle" class="fi">🔢</text>
+<text x="128.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Kiểm đếm số</text>
+<text x="128.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">lượng tồn kho</text>
+<text x="128.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">thực tế</text>
+<rect x="292" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="396.0" y="98" text-anchor="middle" class="fi">📋</text>
+<text x="396.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Tạo phiếu kiểm</text>
+<text x="396.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">kê, chọn kho</text>
+<text x="396.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">cần kiểm</text>
+<rect x="560" y="40" width="208" height="230" rx="16" style="fill:var(--card);stroke:var(--line);stroke-width:1.6" filter="url(#ds)"/>
+<text x="664.0" y="98" text-anchor="middle" class="fi">✍️</text>
+<text x="664.0" y="136" text-anchor="middle" class="ft" style="fill:var(--ink)">Nhập danh sách</text>
+<text x="664.0" y="160" text-anchor="middle" class="ft" style="fill:var(--ink)">item &amp; số lượng</text>
+<text x="664.0" y="184" text-anchor="middle" class="ft" style="fill:var(--ink)">thực tế</text>
+<rect x="828" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="932.0" y="98" text-anchor="middle" class="fi">🔄</text>
+<rect x="884.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="932.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="932.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Gợi ý số lượng</text>
+<text x="932.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">chênh lệch thừa</text>
+<text x="932.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">/ thiếu</text>
+<rect x="1096" y="40" width="208" height="230" rx="16" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6" filter="url(#ds)"/>
+<text x="1200.0" y="98" text-anchor="middle" class="fi">✅</text>
+<rect x="1152.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="1200.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="1200.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="1200.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">kiểm kê</text>
+<rect x="1364" y="40" width="208" height="230" rx="16" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.6" filter="url(#ds)"/>
+<text x="1468.0" y="98" text-anchor="middle" class="fi">⚖️</text>
+<rect x="1420.0" y="114" width="96" height="24" rx="12" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="1468.0" y="130.5" text-anchor="middle" class="ftag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="1468.0" y="168" text-anchor="middle" class="ft" style="fill:var(--ink)">Tự trừ (thiếu)</text>
+<text x="1468.0" y="192" text-anchor="middle" class="ft" style="fill:var(--ink)">/ tự nhập</text>
+<text x="1468.0" y="216" text-anchor="middle" class="ft" style="fill:var(--ink)">(thừa)</text>
+<path d="M 232 155.0 L 292 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 500 155.0 L 560 155.0" style="stroke:var(--line);stroke-width:2.6;fill:none" marker-end="url(#a-line)"/>
+<path d="M 768 155.0 L 828 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+<path d="M 1036 155.0 L 1096 155.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 1304 155.0 L 1364 155.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác thủ công</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống tự xử lý</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">09 / 12</span></div></section>
+<section class="slide slide-transfer" data-idx="9"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Phần 02</p><h2 class="s-title">Điều chuyển hàng liên cửa hàng</h2><p class="s-sub">Cửa hàng A hết hàng → điều chuyển từ cửa hàng B. Trạng thái đồng bộ 2 chiều qua SkyStoreHouse.</p></div>
+<div class="swim-stage"><svg viewBox="0 0 1700 660" xmlns="http://www.w3.org/2000/svg" class="swim-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="300" y="70" width="1384" height="200" rx="18" style="fill:var(--card);stroke:var(--line);stroke-width:1.4"/>
+<rect x="300" y="70" width="6" height="200" rx="3" style="fill:var(--stamp)"/>
+<rect x="40" y="128.0" width="6" height="84" rx="3" style="fill:var(--stamp)"/>
+<text x="66" y="157.0" class="glane" dominant-baseline="middle" style="fill:var(--stamp)">🏪 Cửa hàng A</text>
+<text x="66" y="183.0" class="glane" dominant-baseline="middle" style="fill:var(--stamp)">· thiếu hàng</text>
+<rect x="300" y="380" width="1384" height="200" rx="18" style="fill:var(--card);stroke:var(--line);stroke-width:1.4"/>
+<rect x="300" y="380" width="6" height="200" rx="3" style="fill:var(--warehouse)"/>
+<rect x="40" y="438.0" width="6" height="84" rx="3" style="fill:var(--warehouse)"/>
+<text x="66" y="467.0" class="glane" dominant-baseline="middle" style="fill:var(--warehouse)">🏬 Cửa hàng B</text>
+<text x="66" y="493.0" class="glane" dominant-baseline="middle" style="fill:var(--warehouse)">· còn hàng</text>
+<rect x="280.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="360" y="141.0" text-anchor="middle" class="si">📦</text>
+<text x="360" y="175.0" text-anchor="middle" class="st" style="fill:var(--ink)">Nhận hàng, tạo</text>
+<text x="360" y="196.0" text-anchor="middle" class="st" style="fill:var(--ink)">phiếu nhập</text>
+<polygon points="540,96.0 622,170.0 540,244.0 458,170.0" style="fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.7" filter="url(#ds)"/>
+<text x="540" y="162.0" text-anchor="middle" class="sic">🛒</text>
+<text x="540" y="184.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">Bán hàng</text>
+<rect x="640.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.7" filter="url(#ds)"/>
+<text x="720" y="141.0" text-anchor="middle" class="si">🔄</text>
+<rect x="676.0" y="155.0" width="88" height="22" rx="11" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="720" y="170.0" text-anchor="middle" class="stag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="720" y="203.0" text-anchor="middle" class="st" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="720" y="224.0" text-anchor="middle" class="st" style="fill:var(--ink)">điều chuyển</text>
+<rect x="645.0" y="250.0" width="150" height="24" rx="12" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1"/>
+<text x="720" y="266.5" text-anchor="middle" class="schip" style="fill:var(--stamp)">Sky: Kích hoạt</text>
+<polygon points="900,406.0 982,480.0 900,554.0 818,480.0" style="fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.7" filter="url(#ds)"/>
+<text x="900" y="472.0" text-anchor="middle" class="sic">🔎</text>
+<text x="900" y="494.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">Nhận &amp; check</text>
+<text x="900" y="511.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">phiếu</text>
+<rect x="1000.0" y="405.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1080" y="451.0" text-anchor="middle" class="si">✅</text>
+<text x="1080" y="485.0" text-anchor="middle" class="st" style="fill:var(--ink)">Xác nhận phiếu</text>
+<rect x="1000.0" y="560.0" width="160" height="24" rx="12" style="fill:var(--note-soft);stroke:var(--note);stroke-width:1"/>
+<text x="1080" y="576.5" text-anchor="middle" class="schip" style="fill:var(--note)">Sky: Đã xác nhận</text>
+<rect x="1180.0" y="405.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1260" y="451.0" text-anchor="middle" class="si">🚚</text>
+<text x="1260" y="485.0" text-anchor="middle" class="st" style="fill:var(--ink)">Tạo phiếu xuất,</text>
+<text x="1260" y="506.0" text-anchor="middle" class="st" style="fill:var(--ink)">giao sang A</text>
+<rect x="1175.0" y="560.0" width="170" height="24" rx="12" style="fill:var(--note-soft);stroke:var(--note);stroke-width:1"/>
+<text x="1260" y="576.5" text-anchor="middle" class="schip" style="fill:var(--note)">Sky: Đã xuất hàng</text>
+<rect x="1360.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1440" y="141.0" text-anchor="middle" class="si">📥</text>
+<text x="1440" y="175.0" text-anchor="middle" class="st" style="fill:var(--ink)">Nhận, check SL,</text>
+<text x="1440" y="196.0" text-anchor="middle" class="st" style="fill:var(--ink)">tạo phiếu nhập</text>
+<rect x="1540.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1620" y="141.0" text-anchor="middle" class="si">↩️</text>
+<text x="1620" y="175.0" text-anchor="middle" class="st" style="fill:var(--ink)">Tiếp tục bán</text>
+<path d="M 440 170.0 L 458 170.0" style="stroke:var(--ink-soft);stroke-width:2.6;fill:none" marker-end="url(#a-ink)"/>
+<path d="M 622 170.0 L 640 170.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/><text x="631.0" y="158.0" text-anchor="middle" class="albl" style="fill:var(--stamp)">✕ hết hàng</text>
+<path d="M 720 245.0 C 810.0 245.0, 810.0 398.0, 900 398.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/><text x="810.0" y="313.5" text-anchor="middle" class="clbl" style="fill:var(--stamp)">gửi phiếu qua Sky</text>
+<path d="M 982 480.0 L 1000 480.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/><text x="991.0" y="468.0" text-anchor="middle" class="albl" style="fill:var(--warehouse)">✓ còn hàng</text>
+<path d="M 1160 480.0 L 1180 480.0" style="stroke:var(--note);stroke-width:2.6;fill:none" marker-end="url(#a-note)"/>
+<path d="M 1260 405.0 C 1350.0 405.0, 1350.0 245.0, 1440 245.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/><text x="1350.0" y="317.0" text-anchor="middle" class="clbl" style="fill:var(--warehouse)">Giao hàng về A</text>
+<path d="M 1520 170.0 L 1540 170.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+<path d="M 1620 95.0 C 1620 26, 540 26, 540 88.0" style="stroke:var(--stamp);stroke-width:2.4;fill:none" stroke-dasharray="3,8" stroke-linecap="round" marker-end="url(#a-stamp)"/>
+<text x="1080.0" y="20" text-anchor="middle" class="clbl" style="fill:var(--stamp)">↻ hàng về đủ → quay lại bán hàng</text>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">10 / 12</span></div></section>
+<section class="slide slide-order" data-idx="10"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Phần 03</p><h2 class="s-title">Order hàng lên Văn phòng trung tâm</h2><p class="s-sub">Cửa hàng tạo phiếu yêu cầu → VP trung tâm lọc, lập phiếu giao (đặt NCC nếu thiếu) → giao về, cửa hàng nhập kho.</p></div>
+<div class="swim-stage"><svg viewBox="0 0 1700 660" xmlns="http://www.w3.org/2000/svg" class="swim-svg" role="img">
+<defs>
+  <filter id="ds" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1D2019" flood-opacity="0.14"/>
+  </filter>
+  <marker id="a-line" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--line)"/></marker>
+  <marker id="a-stamp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--stamp)"/></marker>
+  <marker id="a-warehouse" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--warehouse)"/></marker>
+  <marker id="a-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink-soft)"/></marker>
+  <marker id="a-note" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--note)"/></marker>
+  <marker id="a-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--purple)"/></marker>
+</defs>
+<rect x="300" y="70" width="1384" height="200" rx="18" style="fill:var(--card);stroke:var(--line);stroke-width:1.4"/>
+<rect x="300" y="70" width="6" height="200" rx="3" style="fill:var(--ink)"/>
+<rect x="40" y="128.0" width="6" height="84" rx="3" style="fill:var(--ink)"/>
+<text x="66" y="170.0" class="glane" dominant-baseline="middle" style="fill:var(--ink)">🏪 Cửa hàng</text>
+<rect x="300" y="380" width="1384" height="200" rx="18" style="fill:var(--card);stroke:var(--line);stroke-width:1.4"/>
+<rect x="300" y="380" width="6" height="200" rx="3" style="fill:var(--warehouse)"/>
+<rect x="40" y="438.0" width="6" height="84" rx="3" style="fill:var(--warehouse)"/>
+<text x="66" y="467.0" class="glane" dominant-baseline="middle" style="fill:var(--warehouse)">🏢 Văn phòng</text>
+<text x="66" y="493.0" class="glane" dominant-baseline="middle" style="fill:var(--warehouse)">trung tâm</text>
+<rect x="280.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="360" y="141.0" text-anchor="middle" class="si">📝</text>
+<text x="360" y="175.0" text-anchor="middle" class="st" style="fill:var(--ink)">Tạo phiếu yêu</text>
+<text x="360" y="196.0" text-anchor="middle" class="st" style="fill:var(--ink)">cầu</text>
+<rect x="460.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.7" filter="url(#ds)"/>
+<text x="540" y="141.0" text-anchor="middle" class="si">✅</text>
+<rect x="496.0" y="155.0" width="88" height="22" rx="11" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="540" y="170.0" text-anchor="middle" class="stag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="540" y="203.0" text-anchor="middle" class="st" style="fill:var(--ink)">Kích hoạt yêu</text>
+<text x="540" y="224.0" text-anchor="middle" class="st" style="fill:var(--ink)">cầu</text>
+<polygon points="720,96.0 802,170.0 720,244.0 638,170.0" style="fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.7" filter="url(#ds)"/>
+<text x="720" y="162.0" text-anchor="middle" class="sic">🧐</text>
+<text x="720" y="184.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">CHT / KT xác</text>
+<text x="720" y="201.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">nhận</text>
+<rect x="640.0" y="250.0" width="160" height="24" rx="12" style="fill:var(--note-soft);stroke:var(--note);stroke-width:1"/>
+<text x="720" y="266.5" text-anchor="middle" class="schip" style="fill:var(--note)">Sky: Đã xác nhận</text>
+<rect x="820.0" y="405.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="900" y="451.0" text-anchor="middle" class="si">🔎</text>
+<text x="900" y="485.0" text-anchor="middle" class="st" style="fill:var(--ink)">Thu mua lọc</text>
+<text x="900" y="506.0" text-anchor="middle" class="st" style="fill:var(--ink)">phiếu đã xác</text>
+<text x="900" y="527.0" text-anchor="middle" class="st" style="fill:var(--ink)">nhận</text>
+<rect x="1000.0" y="405.0" width="160" height="150" rx="15" style="fill:var(--card);stroke:var(--line);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1080" y="451.0" text-anchor="middle" class="si">📤</text>
+<text x="1080" y="485.0" text-anchor="middle" class="st" style="fill:var(--ink)">Tạo phiếu giao</text>
+<text x="1080" y="506.0" text-anchor="middle" class="st" style="fill:var(--ink)">hàng</text>
+<polygon points="1260,406.0 1342,480.0 1260,554.0 1178,480.0" style="fill:var(--purple-soft);stroke:var(--purple);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1260" y="472.0" text-anchor="middle" class="sic">🧮</text>
+<text x="1260" y="494.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">Đủ / thiếu</text>
+<text x="1260" y="511.0" text-anchor="middle" class="sdt" style="fill:var(--ink)">hàng</text>
+<text x="1260" y="574.0" text-anchor="middle" class="clbl" style="fill:var(--stamp)">✕ thiếu → 📮 đặt hàng NCC</text>
+<rect x="1360.0" y="405.0" width="160" height="150" rx="15" style="fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1440" y="451.0" text-anchor="middle" class="si">✅</text>
+<rect x="1396.0" y="465.0" width="88" height="22" rx="11" style="fill:var(--paper);stroke:var(--stamp);stroke-width:1"/>
+<text x="1440" y="480.0" text-anchor="middle" class="stag" style="fill:var(--stamp)">KÍCH HOẠT</text>
+<text x="1440" y="513.0" text-anchor="middle" class="st" style="fill:var(--ink)">Kích hoạt phiếu</text>
+<text x="1440" y="534.0" text-anchor="middle" class="st" style="fill:var(--ink)">giao hàng</text>
+<rect x="1540.0" y="95.0" width="160" height="150" rx="15" style="fill:var(--warehouse-soft);stroke:var(--warehouse);stroke-width:1.7" filter="url(#ds)"/>
+<text x="1620" y="141.0" text-anchor="middle" class="si">📦</text>
+<rect x="1576.0" y="155.0" width="88" height="22" rx="11" style="fill:var(--paper);stroke:var(--warehouse);stroke-width:1"/>
+<text x="1620" y="170.0" text-anchor="middle" class="stag" style="fill:var(--warehouse)">HỆ THỐNG</text>
+<text x="1620" y="203.0" text-anchor="middle" class="st" style="fill:var(--ink)">Nhập kho: kích</text>
+<text x="1620" y="224.0" text-anchor="middle" class="st" style="fill:var(--ink)">hoạt phiếu</text>
+<text x="1620" y="245.0" text-anchor="middle" class="st" style="fill:var(--ink)">nhập, tồn cập</text>
+<text x="1620" y="266.0" text-anchor="middle" class="st" style="fill:var(--ink)">nhật</text>
+<path d="M 440 170.0 L 460 170.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/>
+<path d="M 620 170.0 L 638 170.0" style="stroke:var(--ink-soft);stroke-width:2.6;fill:none" marker-end="url(#a-ink)"/>
+<path d="M 720 245.0 C 810.0 245.0, 810.0 405.0, 900 405.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/><text x="810.0" y="317.0" text-anchor="middle" class="clbl" style="fill:var(--stamp)">phiếu sẵn sàng cho VPTT</text>
+<path d="M 980 480.0 L 1000 480.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+<path d="M 1160 480.0 L 1178 480.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/>
+<path d="M 1342 480.0 L 1360 480.0" style="stroke:var(--stamp);stroke-width:2.6;fill:none" marker-end="url(#a-stamp)"/><text x="1351.0" y="468.0" text-anchor="middle" class="albl" style="fill:var(--stamp)">✓ đủ hàng</text>
+<path d="M 1440 405.0 C 1530.0 405.0, 1530.0 245.0, 1620 245.0" style="stroke:var(--warehouse);stroke-width:2.6;fill:none" marker-end="url(#a-warehouse)"/><text x="1530.0" y="317.0" text-anchor="middle" class="clbl" style="fill:var(--warehouse)">Giao hàng về cửa hàng</text>
+</svg></div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác / chứng từ</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt phiếu</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Điểm quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ SkyStoreHouse</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">11 / 12</span></div></section>
+<section class="slide slide-summary" data-idx="11"><div class="s-body">
+<div class="s-head"><p class="s-eyebrow">Tổng kết</p><h2 class="s-title">Bức tranh toàn cảnh</h2></div>
+<div class="summary">
+  <div class="sum-col">
+    <h4>4 nhóm chứng từ</h4>
+    <div class="sum-list"><div class="sum-item"><span class="sum-dot" style="background:var(--warehouse)"></span><b>Phiếu nhập mua</b><i>Nhập mua hàng</i></div><div class="sum-item"><span class="sum-dot" style="background:var(--stamp)"></span><b>Phiếu sản xuất</b><i>Xuất sử dụng / Nhập BTP</i></div><div class="sum-item"><span class="sum-dot" style="background:#8A3324"></span><b>Phiếu xuất</b><i>Xuất hủy</i></div><div class="sum-item"><span class="sum-dot" style="background:#5B5844"></span><b>Phiếu kiểm kê</b><i>Xuất khác / Nhập khác</i></div></div>
+  </div>
+  <div class="sum-col">
+    <h4>6 luồng vận hành hàng ngày</h4>
+    <ol class="sum-flows">
+      <li>Nhập đầu ngày</li><li>Bán hàng</li><li>Điều chuyển nội bộ</li>
+      <li>Sản xuất với BOM</li><li>Hủy hàng</li><li>Kiểm kê ngày / tuần / tháng</li>
+    </ol>
+    <h4 style="margin-top:1.4rem">Liên cửa hàng &amp; trung tâm</h4>
+    <p class="sum-p">Điều chuyển A↔B và order lên VP trung tâm — trạng thái phiếu đồng bộ qua <b>SkyStoreHouse</b>.</p>
+  </div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--card);border:1.5px solid var(--line)"></i>Thao tác</span><span><i class="sw" style="background:var(--stamp-soft);border:1.5px solid var(--stamp)"></i>Kích hoạt</span><span><i class="sw" style="background:var(--warehouse-soft);border:1.5px solid var(--warehouse)"></i>Hệ thống</span><span><i class="sw" style="background:var(--purple-soft);border:1.5px solid var(--purple)"></i>Quyết định</span><span><i class="sw" style="background:var(--note-soft);border:1.5px solid var(--note)"></i>Đồng bộ Sky</span></div></div><div class="s-foot"><span class="s-brand">Nghiệp vụ Kho — RK7 / StoreHouse 5</span><span class="s-page">12 / 12</span></div></section>
+  </div>
+</div>
+<div id="hud">
+  <button id="btn-prev" title="Trước (←)">‹</button>
+  <span id="counter">01 / 12</span>
+  <button id="btn-next" title="Sau (→)">›</button>
+  <button id="btn-fs" title="Toàn màn hình (F)">⛶</button>
+</div>
+<script>
+const stage = document.getElementById('stage');
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let idx = 0;
+
+function fit(){
+  const pad = 0.965;
+  const s = Math.min(window.innerWidth*pad/1280, window.innerHeight*pad/720);
+  stage.style.transform = 'scale(' + s + ')';
+}
+window.addEventListener('resize', fit); fit();
+
+function show(n){
+  idx = Math.max(0, Math.min(total-1, n));
+  slides.forEach((s,i)=> s.classList.toggle('is-active', i===idx));
+  document.getElementById('counter').textContent =
+    String(idx+1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+  document.getElementById('bar').style.width = ((idx+1)/total*100) + '%';
+  if (location.hash !== '#'+(idx+1)) history.replaceState(null,'','#'+(idx+1));
+}
+function next(){ show(idx+1); }
+function prev(){ show(idx-1); }
+
+document.addEventListener('keydown', e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){ e.preventDefault(); next(); }
+  else if(['ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); prev(); }
+  else if(e.key==='Home'){ show(0); }
+  else if(e.key==='End'){ show(total-1); }
+  else if(e.key==='f'||e.key==='F'){ toggleFs(); }
+});
+function toggleFs(){
+  if(!document.fullscreenElement){ document.documentElement.requestFullscreen?.(); }
+  else { document.exitFullscreen?.(); }
+}
+// click zones (ignore clicks on HUD)
+document.getElementById('stage-wrap').addEventListener('click', e=>{
+  if(e.target.closest('#hud')) return;
+  if(e.clientX > window.innerWidth*0.5) next(); else prev();
+});
+document.getElementById('btn-next').onclick = e=>{ e.stopPropagation(); next(); };
+document.getElementById('btn-prev').onclick = e=>{ e.stopPropagation(); prev(); };
+document.getElementById('btn-fs').onclick = e=>{ e.stopPropagation(); toggleFs(); };
+
+const start = parseInt((location.hash||'#1').slice(1),10);
+show(Number.isFinite(start) && start>=1 ? start-1 : 0);
+</script>
+</body>
+</html>
