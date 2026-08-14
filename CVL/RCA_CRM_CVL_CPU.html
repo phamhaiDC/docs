@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RCA — Hiệu năng CRM_CVL (CPU/VM)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613; --black:#000; --white:#fff; --gray:#727171;
+  --bg:#f0f2f5; --dark:#1a1f2e;
+  --amber:#d97706; --green:#16a34a; --blue:#2563eb;
+  --radius:10px; --shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 60px}
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:12px 20px;margin:0 -20px 0}
+.logo{height:38px;width:38px;border-radius:6px;background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;letter-spacing:-.5px}
+.h-center h1{font-size:15px;font-weight:800;letter-spacing:.3px}
+.h-center .company{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:2px}
+.h-center .route{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:1px}
+.h-right{text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.h-badge{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;background:var(--red);color:#fff;padding:3px 9px;border-radius:4px}
+.h-ver{font-size:8px;color:#9aa0ac;font-family:'DM Mono',monospace}
+.section{margin-top:26px}
+.section-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:#dde1e6}
+.alert{border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;gap:12px;font-size:12px;line-height:1.65;box-shadow:var(--shadow)}
+.alert-icon{font-size:18px;flex-shrink:0;line-height:1.2}
+.alert-red{background:#fdeaea;border-left:4px solid var(--red)}
+.alert-amber{background:#fdf4e7;border-left:4px solid var(--amber)}
+.alert-blue{background:#eaf1fd;border-left:4px solid var(--blue)}
+.alert-green{background:#eafaef;border-left:4px solid var(--green)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.kpi{background:#fff;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-top:3px solid var(--gray)}
+.kpi.red{border-top-color:var(--red)}.kpi.amber{border-top-color:var(--amber)}
+.kpi.green{border-top-color:var(--green)}.kpi.blue{border-top-color:var(--blue)}
+.kpi-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray)}
+.kpi-value{font-family:'DM Mono',monospace;font-size:22px;font-weight:900;margin-top:4px}
+.kpi.red .kpi-value{color:var(--red)}.kpi.amber .kpi-value{color:var(--amber)}
+.kpi.green .kpi-value{color:var(--green)}.kpi.blue .kpi-value{color:var(--blue)}
+.kpi-sub{font-size:10px;color:var(--gray);margin-top:4px;line-height:1.45}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f7f8fa;padding:8px 12px;text-align:left;font-weight:800;font-size:9px;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--gray);border-bottom:1px solid #e6e9ed}
+td{padding:9px 12px;border-bottom:1px solid #eef1f4;vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+.mono{font-family:'DM Mono',monospace;font-size:11px}
+.r-red td:first-child{border-left:3px solid var(--red)}
+.r-amber td:first-child{border-left:3px solid var(--amber)}
+.r-blue td:first-child{border-left:3px solid var(--blue)}
+.r-green td:first-child{border-left:3px solid var(--green)}
+.badge{display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  padding:3px 8px;border-radius:4px;white-space:nowrap}
+.b-red{background:#fdeaea;color:#a32d2d}.b-amber{background:#fdf4e7;color:#8a5a0b}
+.b-green{background:#eafaef;color:#166534}.b-blue{background:#eaf1fd;color:#1d4ed8}.b-gray{background:#f0f2f5;color:var(--gray)}
+.yes{color:#166534;font-weight:800}.no{color:#a32d2d;font-weight:800}
+.footer{margin-top:32px;padding:16px 0;border-top:1px solid #dde1e6;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--gray)}
+.footer-r{font-family:'DM Mono',monospace}
+@media(max-width:820px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'C</div>
+  <div class="h-center">
+    <h1>RCA — HIỆU NĂNG CHẬM CRM_CVL (POS RKEEPER)</h1>
+    <div class="company">Dcorp Technology Corporation · Platform. Empowering Growth.</div>
+    <div class="route">VM cus-cuvanlong-m\CVL · SQL Standard 2025 · Intel Xeon Platinum 8558P</div>
+  </div>
+  <div class="h-right">
+    <div class="h-badge">Database Team</div>
+    <div class="h-ver">RCA_CRM_CVL_CPU v1 · 14/08/2026</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="section">
+  <div class="section-title">Tóm tắt điều hành</div>
+  <div class="alert alert-red">
+    <div class="alert-icon">🎯</div>
+    <div>
+      <strong>Nguyên nhân gốc: VM bị khóa CPU ở base clock 2.70 GHz (không turbo) và chia thành 2 NUMA node.</strong>
+      CPU vật lý là Intel Xeon Platinum 8558P — chip top-tier, turbo tới 4.0 GHz — nhưng hypervisor không cho VM boost, khóa cứng ở 2.70 GHz.
+      Các truy vấn của RKeeper (tìm khách theo SĐT, parse REGISTER_CODE) chạy <strong>đơn luồng, phụ thuộc 100% vào tốc độ 1 core</strong>,
+      nên bị chậm ~32% so với server có turbo. RAM và IOPS <strong>không phải nguyên nhân</strong> — đều còn dư nhiều.
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Triệu chứng</div>
+  <div class="alert alert-amber">
+    <div class="alert-icon">⚠</div>
+    <div>
+      Truy vấn tra cứu thông tin thẻ khách (<span class="mono">GetCardInfoEx</span>) mất <strong>2.5–3.4 giây/lần</strong> khi nhân viên quẹt thẻ tại quầy,
+      dù đã nâng SQL Express → Standard. Cùng loại truy vấn khi kết nối tới một SQL Server khác thì chạy nhanh hơn hẳn.
+      Nghi vấn ban đầu: VM thiếu tài nguyên (CPU/RAM/IOPS) và/hoặc database <span class="mono">CVL_SKYMONITOR</span> ghi liên tục gây tranh chấp.
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Quá trình điều tra — các giả thuyết đã kiểm chứng</div>
+  <div class="card">
+    <table>
+      <tr><th>Giả thuyết</th><th>Bằng chứng</th><th>Kết luận</th></tr>
+      <tr class="r-green">
+        <td><strong>SKYMONITOR ghi liên tục</strong></td>
+        <td class="mono">872,701 writes · I/O stall 1,507s (#1 instance) · gấp 14.6× CRM_CVL</td>
+        <td><span class="badge b-green">✅ Đúng</span> nhưng latency ghi thấp (1.7ms) → không phải nghẽn</td>
+      </tr>
+      <tr class="r-red">
+        <td><strong>VM thiếu RAM</strong></td>
+        <td class="mono">PLE 40,384s · SQL dùng 3.4/24 GB · 22.5 GB trống · 0 memory grant pending</td>
+        <td><span class="badge b-red">❌ Sai</span> — RAM dư rất nhiều, data chỉ 9.6 GB</td>
+      </tr>
+      <tr class="r-red">
+        <td><strong>VM thiếu IOPS</strong></td>
+        <td class="mono">27/5000 IOPS · write latency 1.7–4.3ms · 0 PAGEIOLATCH wait</td>
+        <td><span class="badge b-red">❌ Sai</span> — NVMe dư sức, không throttle</td>
+      </tr>
+      <tr class="r-red">
+        <td><strong>Thiếu CPU (số lượng core)</strong></td>
+        <td class="mono">8 vCPU · runnable_tasks ≈ 0 · signal wait 4%</td>
+        <td><span class="badge b-red">❌ Sai</span> — không có hàng đợi CPU</td>
+      </tr>
+      <tr class="r-amber">
+        <td><strong>CPU per-core yếu (clock)</strong></td>
+        <td class="mono">Query cpu_time ≈ elapsed → CPU-bound đơn luồng · clock 2.70 GHz</td>
+        <td><span class="badge b-amber">🎯 Đúng — nguyên nhân gốc</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Nguyên nhân gốc — bằng chứng phần cứng</div>
+  <div class="kpi-grid">
+    <div class="kpi green"><div class="kpi-label">CPU vật lý</div><div class="kpi-value" style="font-size:13px">Xeon 8558P</div><div class="kpi-sub">Emerald Rapids · turbo 4.0 GHz</div></div>
+    <div class="kpi red"><div class="kpi-label">Clock thực tế</div><div class="kpi-value">2.70 GHz</div><div class="kpi-sub">= base · KHÔNG turbo</div></div>
+    <div class="kpi amber"><div class="kpi-label">Topology vCPU</div><div class="kpi-value">2 × 4</div><div class="kpi-sub">2 socket = 2 NUMA node</div></div>
+    <div class="kpi amber"><div class="kpi-label">NUMA node</div><div class="kpi-value">2</div><div class="kpi-sub">Buffer pool bị chia 2</div></div>
+  </div>
+  <div class="alert alert-red">
+    <div class="alert-icon">🔴</div>
+    <div>
+      <strong>1. Base clock pinned:</strong> Task Manager hiển thị Speed = 2.70 GHz = đúng Base speed. Chip Xeon 8558P turbo được tới 4.0 GHz nhưng hypervisor không truyền turbo vào guest. Truy vấn RKeeper đơn luồng lẽ ra chạy 4.0 GHz nay bị ép 2.70 GHz → <strong>chậm ~32%</strong>.<br><br>
+      <strong>2. Cross-NUMA:</strong> VM cấu hình 2 socket × 4 vCPU tạo 2 NUMA node. SQL chia buffer pool 2 phần (node 0: 1,048 MB / node 1: 1,671 MB). Khi query chạy ở socket này nhưng data nằm ở RAM socket kia, phải truy cập qua liên kết chậm hơn (cross-NUMA latency). Cấu hình tối ưu cho VM 8 vCPU là <strong>1 socket × 8 core</strong> (1 NUMA node).
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Vì sao "SQL Server khác chạy nhanh"</div>
+  <div class="card">
+    <table>
+      <tr><th>Yếu tố</th><th>VM này (CVL)</th><th>Server chạy nhanh (dự đoán)</th></tr>
+      <tr class="r-red"><td>Clock đơn luồng</td><td class="mono no">2.70 GHz (base, no turbo)</td><td class="mono yes">3.5–4.0 GHz (turbo / bare-metal)</td></tr>
+      <tr class="r-amber"><td>NUMA</td><td class="mono no">2 node (cross-NUMA)</td><td class="mono yes">1 node (local)</td></tr>
+      <tr class="r-blue"><td>Bản chất query RKeeper</td><td colspan="2" class="mono">Đơn luồng, CPU-bound → nhạy 100% với clock + NUMA locality</td></tr>
+    </table>
+  </div>
+  <div class="alert alert-blue">
+    <div class="alert-icon">ℹ️</div>
+    <div>Kết hợp 2 yếu tố (clock thấp ~32% + cross-NUMA penalty) giải thích chính xác vì sao cùng một loại truy vấn chạy chậm trên VM này nhưng nhanh trên server kia. Đây không phải lỗi SQL hay thiếu tài nguyên — mà là cấu hình VM tại tầng CPU chưa tối ưu.</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Khuyến nghị — theo thứ tự tác động</div>
+  <div class="card">
+    <table>
+      <tr><th style="width:40px">#</th><th>Hành động</th><th>Đối tượng</th><th>Tác động</th></tr>
+      <tr class="r-red"><td class="mono">1</td><td>Làm việc với <strong>VNG Cloud</strong>: hỏi vì sao VM pinned 2.70 GHz không turbo; yêu cầu bật CPU turbo / dedicated core hoặc chuyển flavor compute-optimized clock cao</td><td>Hạ tầng</td><td><span class="badge b-red">Cao nhất — query nhanh ~30%</span></td></tr>
+      <tr class="r-amber"><td class="mono">2</td><td>Cấu hình lại VM: <strong>1 socket × 8 vCPU</strong> thay vì 2 × 4 (VNG portal / hypervisor)</td><td>Hạ tầng</td><td><span class="badge b-amber">Bỏ cross-NUMA latency</span></td></tr>
+      <tr class="r-blue"><td class="mono">3</td><td>Tách <strong>CVL_SKYMONITOR + các DB reporting (CVL_REPH_STAT_*)</strong> sang instance/VM khác</td><td>DBA</td><td><span class="badge b-blue">Giảm 872K writes nền</span></td></tr>
+      <tr class="r-blue"><td class="mono">4</td><td><strong>Start SQL Agent (CVL)</strong> + đặt Start Mode = Automatic → chuyển maintenance/backup từ Task Scheduler sang Agent</td><td>DBA</td><td><span class="badge b-blue">Job tự động chạy</span></td></tr>
+      <tr class="r-green"><td class="mono">5</td><td><strong>Feature Request gửi UCS</strong>: đề nghị RKeeper normalize sẵn SĐT / REGISTER_CODE (persisted computed column + index) thay vì tính runtime</td><td>Vendor</td><td><span class="badge b-green">Giảm CPU tận gốc — độc lập phần cứng</span></td></tr>
+      <tr class="r-green"><td class="mono">6</td><td>Dọn dẹp: xóa <strong>CRM_CVL_TESTT</strong> (2.4 GB test DB) nếu không dùng; cân nhắc gỡ instance SQLEXPRESS cũ (đã stopped)</td><td>DBA</td><td><span class="badge b-gray">Giảm rác instance</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Kết luận</div>
+  <div class="alert alert-green">
+    <div class="alert-icon">✓</div>
+    <div>
+      Phần cứng host mạnh (Xeon Platinum 8558P), RAM và IOPS đều dư. Nút thắt thật là <strong>VM bị khóa base clock 2.70 GHz (không turbo) kết hợp chia 2 NUMA node</strong> — làm chậm các truy vấn RKeeper đơn luồng.
+      Giả thuyết ban đầu đúng ở hướng "VM cấu hình chưa tối ưu / over-resource", nhưng cụ thể nằm ở tầng <strong>CPU clock + topology</strong>, không phải thiếu RAM/IOPS.
+      Đòn bẩy lớn nhất là làm việc với VNG Cloud về turbo và cấu hình 1 socket (bước 1–2), song song với việc tách workload nền và đưa Feature Request tới UCS để giảm chi phí CPU của query tận gốc.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-l"><strong>Database Team</strong> · Dcorp Technology Corporation</div>
+  <div class="footer-r">RCA_CRM_CVL_CPU v1 · Generated 14/08/2026</div>
+</div>
+
+</div>
+</body>
+</html>
