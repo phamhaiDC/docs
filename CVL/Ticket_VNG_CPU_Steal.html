@@ -103,7 +103,7 @@ tr:last-child td{border-bottom:none}
   </div>
   <div class="block">
     <span class="label status">Status</span>
-    <p>Đã loại trừ các nguyên nhân phía khách hàng: RAM còn dư (SQL dùng 3,4/24 GB, 22,5 GB trống, PLE hơn 40.000 giây), IOPS ổ NVMe chỉ dùng 25/5000 với latency 2 ms, không có blocking hay chờ I/O. Đã reboot VM ngày 15/08 nhưng CPU steal không thay đổi. Đo lại lúc 06:56 sáng (giờ vắng, gần như không có giao dịch) vẫn ghi nhận steal 74%, loại trừ khả năng do tải nội bộ của VM.</p>
+    <p>Đã loại trừ toàn bộ nguyên nhân phía khách hàng qua 5 lần đo độc lập từ tối 14/08 đến trưa 15/08. RAM còn dư (SQL dùng 3,4/24 GB, 22,5 GB trống, PLE hơn 40.000 giây). IOPS ổ NVMe chỉ dùng 25/5000 với latency 2 ms, không có blocking hay chờ I/O. Đã reboot VM ngày 15/08 nhưng CPU steal không thay đổi. Đo lúc 06:56 sáng giờ vắng vẫn steal 74%, loại trừ tải nội bộ. Đã đổi Windows power plan từ Balanced sang High Performance, đo lại vẫn steal 72,9%, loại trừ throttle của hệ điều hành. CPU steal ổn định trong khoảng 71,7–74,2% qua cả 5 lần.</p>
   </div>
   <div class="block">
     <span class="label action">Next Action (đề nghị VNG/GreenNode)</span>
@@ -125,13 +125,16 @@ WHERE HASHBYTES('SHA2_256',
   </div>
   <div class="card">
     <table>
-      <tr><th>Lần đo</th><th>Thời điểm</th><th>CPU time</th><th>Elapsed time</th><th>CPU / Elapsed</th><th>CPU Steal</th></tr>
-      <tr class="r-red"><td>Lần 1 (trước reboot)</td><td class="mono">14/08 ~21:38</td><td class="mono">19.218 ms</td><td class="mono hlred">73.901 ms</td><td class="mono">26 %</td><td class="mono hlred">74 %</td></tr>
-      <tr class="r-red"><td>Lần 2 (sau reboot, giờ vắng)</td><td class="mono">15/08 06:56</td><td class="mono">14.469 ms</td><td class="mono hlred">56.147 ms</td><td class="mono">25,8 %</td><td class="mono hlred">74,2 %</td></tr>
+      <tr><th>Lần</th><th>Thời điểm</th><th>Điều kiện</th><th>CPU time</th><th>Elapsed</th><th>CPU Steal</th></tr>
+      <tr class="r-red"><td>1</td><td class="mono">14/08 21:38</td><td>Trước reboot</td><td class="mono">19.218 ms</td><td class="mono hlred">73.901 ms</td><td class="mono hlred">74,0 %</td></tr>
+      <tr class="r-red"><td>2</td><td class="mono">15/08 06:56</td><td>Sau reboot, giờ vắng</td><td class="mono">14.469 ms</td><td class="mono hlred">56.147 ms</td><td class="mono hlred">74,2 %</td></tr>
+      <tr class="r-red"><td>3</td><td class="mono">15/08 07:52</td><td>Đầu giờ làm việc</td><td class="mono">26.829 ms</td><td class="mono hlred">102.104 ms</td><td class="mono hlred">73,7 %</td></tr>
+      <tr class="r-red"><td>4</td><td class="mono">15/08 09:58</td><td>Giờ làm việc</td><td class="mono">23.218 ms</td><td class="mono hlred">82.037 ms</td><td class="mono hlred">71,7 %</td></tr>
+      <tr class="r-red"><td>5</td><td class="mono">15/08 10:08</td><td>Sau đổi power plan High Performance</td><td class="mono">25.015 ms</td><td class="mono hlred">92.409 ms</td><td class="mono hlred">72,9 %</td></tr>
     </table>
   </div>
   <div class="block">
-    <p>Cùng một câu lệnh, cùng kết quả (192.349.161 dòng). Ở cả hai lần, thời gian thực thi gấp khoảng 3,8 lần thời gian CPU thực dùng. Phần chênh lệch (54.683 ms ở lần 1, 41.678 ms ở lần 2) là thời gian vCPU sẵn sàng chạy nhưng không được cấp core vật lý. Reboot không làm thay đổi tỷ lệ, cho thấy VM vẫn nằm trên host bị oversubscribe.</p>
+    <p>Cùng một câu lệnh, cùng kết quả (192.349.161 dòng), đo 5 lần trong 13 giờ. Thời gian thực thi luôn gấp khoảng 3,6–3,8 lần thời gian CPU thực dùng. CPU steal ổn định trong khoảng 71,7–74,2%, trung bình 73,3%. Mức steal không đổi qua reboot, qua giờ vắng và giờ làm việc, và sau khi đổi power plan sang High Performance. Tính ổn định này cho thấy đây là oversubscription cố định của host, không phải burst tạm thời.</p>
   </div>
 </div>
 
@@ -180,6 +183,8 @@ WHERE HASHBYTES('SHA2_256',
       <tr><td>Disk latency</td><td class="mono">read 2,0 ms · write 1,9 ms · 0 PAGEIOLATCH wait</td><td>Bình thường</td></tr>
       <tr><td>Blocking / Lock</td><td class="mono">0 blocking</td><td>Không</td></tr>
       <tr><td>Tải nội bộ VM</td><td class="mono">Đo lúc 06:56 giờ vắng vẫn steal 74%</td><td>Đã loại trừ</td></tr>
+      <tr><td>Reboot VM</td><td class="mono">Steal không đổi sau reboot 15/08</td><td>Đã loại trừ</td></tr>
+      <tr><td>Windows power plan</td><td class="mono">Balanced → High Performance, vẫn steal 72,9%</td><td>Đã loại trừ</td></tr>
     </table>
   </div>
 </div>
@@ -192,14 +197,17 @@ VM: CUS_CUVANLONG_MASTER_DB_SRV | HCM-1A | s2-standard-8x32 | Windows Server 202
 Private IP 10.9.26.6 | Public IP 61.28.233.13
 CPU host: Intel Xeon Platinum 8558P
 
-Van de: VM chay SQL Server production (POS RKeeper). Benchmark CPU thuan (single-thread, khong I/O, tinh trong RAM) cho thay wall-clock gap ~3,8 lan CPU time -> CPU steal ~74%.
+Van de: VM chay SQL Server production (POS RKeeper). Benchmark CPU thuan (single-thread, khong I/O, tinh trong RAM) cho thay wall-clock gap ~3,7 lan CPU time -> CPU steal on dinh 71,7-74,2% (trung binh 73,3%) qua 5 lan do.
 
-Bang chung:
-- Lan 1 (14/08 21:38): CPU time 19.218 ms / elapsed 73.901 ms -> steal 74%
-- Lan 2 (15/08 06:56, gio vang, sau reboot): CPU time 14.469 ms / elapsed 56.147 ms -> steal 74,2%
+Bang chung (5 lan do trong 13 gio, steal on dinh 71,7-74,2%):
+- Lan 1 (14/08 21:38, truoc reboot): CPU 19.218 ms / elapsed 73.901 ms -> steal 74,0%
+- Lan 2 (15/08 06:56, sau reboot, gio vang): CPU 14.469 ms / elapsed 56.147 ms -> steal 74,2%
+- Lan 3 (15/08 07:52, dau gio lam viec): CPU 26.829 ms / elapsed 102.104 ms -> steal 73,7%
+- Lan 4 (15/08 09:58, gio lam viec): CPU 23.218 ms / elapsed 82.037 ms -> steal 71,7%
+- Lan 5 (15/08 10:08, sau doi power plan High Performance): CPU 25.015 ms / elapsed 92.409 ms -> steal 72,9%
 - Server doi chung bare-metal (Xeon E5450 2008): CPU 15.766 ms / elapsed 15.802 ms -> steal ~0%
 
-Da loai tru phia khach hang: RAM du (22,5 GB trong, PLE >40.000s), IOPS 25/5000 latency 2ms, 0 blocking. Reboot khong thay doi. Do luc gio vang van steal 74%.
+Da loai tru phia khach hang: RAM du (22,5 GB trong, PLE >40.000s), IOPS 25/5000 latency 2ms, 0 blocking. Reboot khong thay doi. Do gio vang van steal 74%. Da doi power plan sang High Performance, steal khong thay doi -> khong phai throttle cua Windows.
 
 De nghi:
 1. Kiem tra CPU steal/ready time + muc oversubscription cua host chua VM nay (khung 14-15/08).
