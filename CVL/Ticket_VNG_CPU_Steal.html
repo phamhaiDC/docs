@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket VNG/GreenNode — CPU Steal CUS_CUVANLONG_MASTER_DB_SRV</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613; --black:#000; --white:#fff; --gray:#727171;
+  --bg:#f0f2f5; --dark:#1a1f2e;
+  --amber:#d97706; --green:#16a34a; --blue:#2563eb;
+  --radius:10px; --shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:13px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 60px}
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:12px 20px;margin:0 -20px 0}
+.logo{height:38px;width:38px;border-radius:6px;background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;letter-spacing:-.5px}
+.h-center h1{font-size:15px;font-weight:800;letter-spacing:.3px}
+.h-center .company{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:2px}
+.h-center .route{font-size:9px;color:#9aa0ac;font-family:'DM Mono',monospace;margin-top:1px}
+.h-right{text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.h-badge{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;background:var(--red);color:#fff;padding:3px 9px;border-radius:4px}
+.h-ver{font-size:8px;color:#9aa0ac;font-family:'DM Mono',monospace}
+.section{margin-top:24px}
+.section-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:#dde1e6}
+.block{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px}
+.block p{margin-bottom:8px}
+.block p:last-child{margin-bottom:0}
+.label{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  color:#fff;background:var(--gray);padding:2px 8px;border-radius:4px;margin-bottom:6px}
+.label.issue{background:var(--red)}.label.impact{background:var(--amber)}
+.label.status{background:var(--blue)}.label.action{background:var(--green)}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f7f8fa;padding:8px 12px;text-align:left;font-weight:800;font-size:9px;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--gray);border-bottom:1px solid #e6e9ed}
+td{padding:9px 12px;border-bottom:1px solid #eef1f4;vertical-align:top;line-height:1.5}
+tr:last-child td{border-bottom:none}
+.mono{font-family:'DM Mono',monospace;font-size:11px}
+.r-red td:first-child{border-left:3px solid var(--red)}
+.r-green td:first-child{border-left:3px solid var(--green)}
+.hlred{color:var(--red);font-weight:800}
+.hlgreen{color:var(--green);font-weight:800}
+.barwrap{margin:8px 0}
+.barlabel{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.bartrack{height:24px;border-radius:5px;background:#f0f2f5;overflow:hidden;display:flex}
+.seg{height:100%;display:flex;align-items:center;padding:0 8px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap}
+.footer{margin-top:28px;padding:16px 0;border-top:1px solid #dde1e6;display:flex;justify-content:space-between;font-size:10px;color:var(--gray)}
+.footer-r{font-family:'DM Mono',monospace}
+.copybox{background:#f7f8fa;border:1px dashed #c8ccd2;border-radius:8px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.6;white-space:pre-wrap;color:#1a1f2e}
+@media(max-width:820px){.grid2{grid-template-columns:1fr!important}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'C</div>
+  <div class="h-center">
+    <h1>TICKET HẠ TẦNG — CPU STEAL TRÊN VM DATABASE</h1>
+    <div class="company">Dcorp Technology Corporation → VNG Cloud / GreenNode</div>
+    <div class="route">CUS_CUVANLONG_MASTER_DB_SRV · HCM-1A · s2-standard-8x32</div>
+  </div>
+  <div class="h-right">
+    <div class="h-badge">Database Team</div>
+    <div class="h-ver">CPU_STEAL v1 · 15/08/2026</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="section">
+  <div class="section-title">Thông tin VM</div>
+  <div class="card">
+    <table>
+      <tr><td style="width:200px"><strong>Tên VM</strong></td><td class="mono">CUS_CUVANLONG_MASTER_DB_SRV</td></tr>
+      <tr><td><strong>Instance ID</strong></td><td class="mono">ins-79bd3ee2-28f9-43ea-b167-ead0d3926458</td></tr>
+      <tr><td><strong>Private IP</strong></td><td class="mono">10.9.26.6</td></tr>
+      <tr><td><strong>Public IP</strong></td><td class="mono">61.28.233.13</td></tr>
+      <tr><td><strong>Zone</strong></td><td class="mono">HCM-1A</td></tr>
+      <tr><td><strong>Flavor</strong></td><td class="mono">s2-standard-8x32 (8 vCPU / 32 GB RAM)</td></tr>
+      <tr><td><strong>OS</strong></td><td class="mono">Windows Server 2022 Standard x64</td></tr>
+      <tr><td><strong>CPU host</strong></td><td class="mono">Intel Xeon Platinum 8558P · 2 socket × 4 vCPU · base 2.70 GHz</td></tr>
+      <tr><td><strong>Hypervisor</strong></td><td class="mono">KVM/QEMU (phát hiện qemu-ga.exe trong guest)</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Mô tả sự cố</div>
+  <div class="block">
+    <span class="label issue">Issue</span>
+    <p>VM này chạy SQL Server (database production của hệ thống POS RKeeper). Các tác vụ tính toán trên CPU chạy chậm bất thường. Đo bằng benchmark CPU thuần (không đọc/ghi disk, không truy cập dữ liệu nghiệp vụ, chạy đơn luồng trong RAM), thời gian thực thi (wall-clock) gấp gần 4 lần thời gian CPU thực dùng. Chênh lệch này cho thấy vCPU của VM bị chiếm dụng ở tầng hypervisor (CPU steal / CPU ready time) khoảng 74%, tức VM chỉ nhận được khoảng 26% thời gian CPU vật lý khi cần chạy.</p>
+  </div>
+  <div class="block">
+    <span class="label impact">Impact</span>
+    <p>Truy vấn tra cứu thông tin thẻ khách tại quầy thu ngân mất 2,5–3,4 giây mỗi lần thay vì dưới 100 ms. Nhân viên thu ngân và khách hàng chịu độ trễ trực tiếp khi thanh toán. Sự cố ảnh hưởng toàn bộ giao dịch có tra cứu thẻ thành viên trên hệ thống cửa hàng.</p>
+  </div>
+  <div class="block">
+    <span class="label status">Status</span>
+    <p>Đã loại trừ các nguyên nhân phía khách hàng: RAM còn dư (SQL dùng 3,4/24 GB, 22,5 GB trống, PLE hơn 40.000 giây), IOPS ổ NVMe chỉ dùng 25/5000 với latency 2 ms, không có blocking hay chờ I/O. Đã reboot VM ngày 15/08 nhưng CPU steal không thay đổi. Đo lại lúc 06:56 sáng (giờ vắng, gần như không có giao dịch) vẫn ghi nhận steal 74%, loại trừ khả năng do tải nội bộ của VM.</p>
+  </div>
+  <div class="block">
+    <span class="label action">Next Action (đề nghị VNG/GreenNode)</span>
+    <p>1. Kiểm tra CPU steal time / CPU ready time / mức oversubscription của host vật lý đang chứa VM <span class="mono">ins-79bd3ee2-28f9-43ea-b167-ead0d3926458</span> trong khung 14–15/08.</p>
+    <p>2. Di chuyển (live migrate) VM sang host có mức tải thấp hơn, hoặc cấp CPU pinning / dedicated vCPU để đảm bảo VM nhận đủ thời gian CPU vật lý.</p>
+    <p>3. Xác nhận flavor s2-standard-8x32 có cam kết vCPU tối thiểu (guaranteed) hay là shared-core best-effort. Nếu là shared-core, tư vấn flavor có dedicated CPU phù hợp cho workload database.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Bằng chứng 1 — Benchmark CPU thuần trên VM (2 lần đo)</div>
+  <div class="block">
+    <p style="margin-bottom:10px">Câu lệnh đo (SQL Server, đơn luồng, chỉ tính hash trong RAM, không đọc dữ liệu nghiệp vụ, không I/O disk):</p>
+    <div class="copybox">SET STATISTICS TIME ON;
+SELECT COUNT_BIG(*)
+FROM sys.all_columns a CROSS JOIN sys.all_columns b
+WHERE HASHBYTES('SHA2_256',
+      CAST(a.object_id AS VARCHAR(20)) + CAST(b.column_id AS VARCHAR(20))) > 0x00;</div>
+  </div>
+  <div class="card">
+    <table>
+      <tr><th>Lần đo</th><th>Thời điểm</th><th>CPU time</th><th>Elapsed time</th><th>CPU / Elapsed</th><th>CPU Steal</th></tr>
+      <tr class="r-red"><td>Lần 1 (trước reboot)</td><td class="mono">14/08 ~21:38</td><td class="mono">19.218 ms</td><td class="mono hlred">73.901 ms</td><td class="mono">26 %</td><td class="mono hlred">74 %</td></tr>
+      <tr class="r-red"><td>Lần 2 (sau reboot, giờ vắng)</td><td class="mono">15/08 06:56</td><td class="mono">14.469 ms</td><td class="mono hlred">56.147 ms</td><td class="mono">25,8 %</td><td class="mono hlred">74,2 %</td></tr>
+    </table>
+  </div>
+  <div class="block">
+    <p>Cùng một câu lệnh, cùng kết quả (192.349.161 dòng). Ở cả hai lần, thời gian thực thi gấp khoảng 3,8 lần thời gian CPU thực dùng. Phần chênh lệch (54.683 ms ở lần 1, 41.678 ms ở lần 2) là thời gian vCPU sẵn sàng chạy nhưng không được cấp core vật lý. Reboot không làm thay đổi tỷ lệ, cho thấy VM vẫn nằm trên host bị oversubscribe.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Bằng chứng 2 — So sánh với server bare-metal</div>
+  <div class="block">
+    <p style="margin-bottom:10px">Cùng câu lệnh chạy trên một server khác dùng CPU đời cũ hơn nhiều (Intel Xeon E5450, sản xuất 2008), không ảo hóa (Virtualization Disabled):</p>
+  </div>
+  <div class="card">
+    <table>
+      <tr><th>Server</th><th>CPU</th><th>Ảo hóa</th><th>CPU time</th><th>Elapsed</th><th>CPU Steal</th></tr>
+      <tr class="r-green"><td>Server đối chứng</td><td class="mono">Xeon E5450 (2008)</td><td class="mono">Bare-metal</td><td class="mono">15.766 ms</td><td class="mono hlgreen">15.802 ms</td><td class="mono hlgreen">~0 %</td></tr>
+      <tr class="r-red"><td>VM cần xử lý</td><td class="mono">Xeon 8558P (2024)</td><td class="mono">KVM/QEMU</td><td class="mono">19.218 ms</td><td class="mono hlred">73.901 ms</td><td class="mono hlred">74 %</td></tr>
+    </table>
+  </div>
+  <div class="block">
+    <p>Server đối chứng có CPU time gần bằng elapsed time (steal ~0%). CPU vật lý của VM (Xeon 8558P) mạnh hơn nhiều thế hệ so với E5450, nhưng do bị steal 74% nên thời gian thực thi thực tế chậm hơn 4,7 lần. Điều này xác nhận nút thắt không nằm ở năng lực CPU vật lý mà ở việc VM không được cấp đủ thời gian CPU.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Trực quan CPU thực chạy vs bị steal (lần 1)</div>
+  <div class="block">
+    <div class="barwrap">
+      <div class="barlabel"><span>Server đối chứng E5450 (bare-metal)</span><span class="mono">15,8s</span></div>
+      <div class="bartrack"><div class="seg" style="background:#16a34a;width:99.8%">CPU chạy thật 15.766 ms</div></div>
+    </div>
+    <div class="barwrap">
+      <div class="barlabel"><span>VM 8558P (steal 74%)</span><span class="mono">73,9s</span></div>
+      <div class="bartrack">
+        <div class="seg" style="background:#16a34a;width:26%">CPU 19.218</div>
+        <div class="seg" style="background:#e30613;width:74%">Bị steal 54.683 ms</div>
+      </div>
+    </div>
+    <p style="font-size:10px;color:var(--gray);margin-top:6px">Cùng thang thời gian. Thanh VM dài gấp 4,7 lần dù làm cùng khối lượng tính toán.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Các chỉ số đã loại trừ (không phải nguyên nhân)</div>
+  <div class="card">
+    <table>
+      <tr><th>Hạng mục</th><th>Giá trị đo được</th><th>Kết luận</th></tr>
+      <tr><td>RAM</td><td class="mono">SQL dùng 3,4/24 GB · 22,5 GB trống · PLE &gt; 40.000s</td><td>Không thiếu</td></tr>
+      <tr><td>IOPS NVMe</td><td class="mono">25/5000 IOPS · throughput 0,12 MB/s</td><td>Không nghẽn</td></tr>
+      <tr><td>Disk latency</td><td class="mono">read 2,0 ms · write 1,9 ms · 0 PAGEIOLATCH wait</td><td>Bình thường</td></tr>
+      <tr><td>Blocking / Lock</td><td class="mono">0 blocking</td><td>Không</td></tr>
+      <tr><td>Tải nội bộ VM</td><td class="mono">Đo lúc 06:56 giờ vắng vẫn steal 74%</td><td>Đã loại trừ</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Nội dung tóm tắt để dán vào ô ticket</div>
+  <div class="copybox">Tiêu đề: [P1] CPU steal ~74% tren VM CUS_CUVANLONG_MASTER_DB_SRV (ins-79bd3ee2-28f9-43ea-b167-ead0d3926458)
+
+VM: CUS_CUVANLONG_MASTER_DB_SRV | HCM-1A | s2-standard-8x32 | Windows Server 2022
+Private IP 10.9.26.6 | Public IP 61.28.233.13
+CPU host: Intel Xeon Platinum 8558P
+
+Van de: VM chay SQL Server production (POS RKeeper). Benchmark CPU thuan (single-thread, khong I/O, tinh trong RAM) cho thay wall-clock gap ~3,8 lan CPU time -> CPU steal ~74%.
+
+Bang chung:
+- Lan 1 (14/08 21:38): CPU time 19.218 ms / elapsed 73.901 ms -> steal 74%
+- Lan 2 (15/08 06:56, gio vang, sau reboot): CPU time 14.469 ms / elapsed 56.147 ms -> steal 74,2%
+- Server doi chung bare-metal (Xeon E5450 2008): CPU 15.766 ms / elapsed 15.802 ms -> steal ~0%
+
+Da loai tru phia khach hang: RAM du (22,5 GB trong, PLE >40.000s), IOPS 25/5000 latency 2ms, 0 blocking. Reboot khong thay doi. Do luc gio vang van steal 74%.
+
+De nghi:
+1. Kiem tra CPU steal/ready time + muc oversubscription cua host chua VM nay (khung 14-15/08).
+2. Live migrate VM sang host tai thap hon, hoac cap CPU pinning/dedicated vCPU.
+3. Xac nhan flavor s2-standard-8x32 co guaranteed vCPU hay shared-core best-effort; tu van flavor dedicated CPU cho workload database neu can.</div>
+    <p style="font-size:10px;color:var(--gray);margin-top:8px">Phần trên bỏ dấu tiếng Việt để dán an toàn vào form ticket không hỗ trợ Unicode. Nếu form hỗ trợ tiếng Việt có dấu, dùng nội dung các mục Issue/Impact/Status/Next Action ở trên.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-l"><strong>Database Team</strong> · Dcorp Technology Corporation</div>
+  <div class="footer-r">CPU_STEAL_ticket v1 · 15/08/2026</div>
+</div>
+
+</div>
+</body>
+</html>
