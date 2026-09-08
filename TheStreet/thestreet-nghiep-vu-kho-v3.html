@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Street - Nghiep vu kho (v3.0)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#F2F2F6;
+  --surface:#FFFFFF;
+  --surface-2:#F7F7FB;
+  --surface-3:#EDEDF3;
+  --ink:#0C0C14;
+  --body:#3C3C50;
+  --muted:#6C6C80;
+  --line:rgba(0,0,0,.09);
+  --line-soft:rgba(0,0,0,.05);
+  --line-strong:rgba(0,0,0,.18);
+  --red:#C01A1F;
+  --red-text:#961418;
+  --red-soft:rgba(192,26,31,.08);
+  --red-border:rgba(192,26,31,.22);
+  --dark:#1C1C1E;
+  --amber:#8A4F00;
+  --amber-soft:rgba(160,90,0,.09);
+  --green:#0A6E2E;
+  --green-soft:rgba(10,120,50,.09);
+  --blue:#1540A8;
+  --blue-soft:rgba(20,70,180,.09);
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--page);color:var(--body);
+  font-family:'Montserrat',sans-serif;font-size:14px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'DM Mono',monospace;}
+
+/* ---------- header ---------- */
+header{
+  background:var(--dark);color:#fff;padding:2.6rem 5vw 2.2rem;
+  border-bottom:4px solid var(--red);
+}
+.eyebrow{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:#F05458;margin:0 0 .9rem;
+}
+header h1{
+  font-size:clamp(1.5rem,3.2vw,2.15rem);font-weight:800;line-height:1.18;
+  margin:0 0 .7rem;color:#fff;letter-spacing:-.01em;max-width:900px;
+}
+header p.sub{margin:0;color:#C9C9D4;font-size:14px;max-width:780px;}
+.meta-row{
+  display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem;
+}
+.meta{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+  border-radius:5px;padding:.32rem .7rem;color:#E5E5EA;
+}
+.meta b{color:#fff;font-weight:500;}
+
+/* ---------- layout ---------- */
+main{padding:0 5vw 4rem;max-width:1500px;margin:0 auto;}
+section{padding:2.6rem 0 .6rem;border-bottom:1px solid var(--line);}
+section:last-of-type{border-bottom:none;}
+h2{
+  font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--ink);margin:0 0 1.1rem;display:flex;align-items:center;gap:.7rem;
+}
+h2 .num{
+  font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
+  background:var(--red);color:#fff;border-radius:4px;
+  padding:.18rem .5rem;letter-spacing:.02em;
+}
+h3{
+  font-size:13px;font-weight:800;color:var(--ink);margin:1.9rem 0 .7rem;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+p{margin:0 0 .9rem;}
+ul{margin:0 0 .9rem;padding-left:1.15rem;}
+li{margin-bottom:.32rem;}
+
+/* ---------- tables ---------- */
+table{
+  width:100%;border-collapse:collapse;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;margin:0 0 1.2rem;font-size:13px;
+}
+thead th{
+  background:var(--surface-3);color:var(--ink);text-align:left;
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  padding:.65rem .8rem;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+tbody td{padding:.62rem .8rem;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--surface-2);}
+td.id,th.id{font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap;color:var(--red-text);font-weight:500;}
+td.num{font-family:'DM Mono',monospace;text-align:right;white-space:nowrap;}
+td.ctr{text-align:center;}
+
+/* ---------- callouts ---------- */
+.callout{
+  border-radius:var(--radius);padding:.85rem 1.05rem;margin:0 0 1.2rem;
+  font-size:13px;border:1px solid;
+}
+.callout .cap{
+  display:block;font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.09em;margin-bottom:.3rem;
+}
+.c-red{background:var(--red-soft);border-color:var(--red-border);color:var(--red-text);}
+.c-red .cap{color:var(--red);}
+.c-amber{background:var(--amber-soft);border-color:rgba(160,90,0,.25);color:var(--amber);}
+.c-blue{background:var(--blue-soft);border-color:rgba(20,70,180,.22);color:var(--blue);}
+.c-green{background:var(--green-soft);border-color:rgba(10,120,50,.22);color:var(--green);}
+.callout p{margin:0 0 .4rem;}
+.callout p:last-child{margin:0;}
+
+/* ---------- step cards ---------- */
+.step{
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--red);
+  border-radius:var(--radius);padding:1.1rem 1.25rem 1rem;margin:0 0 1rem;
+}
+.step-head{
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin-bottom:.75rem;
+  padding-bottom:.6rem;border-bottom:1px solid var(--line-soft);
+}
+.step-no{
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:#fff;
+  background:var(--dark);border-radius:4px;padding:.16rem .5rem;letter-spacing:.03em;
+}
+.step-title{font-size:14px;font-weight:800;color:var(--ink);}
+.step-actor{
+  font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--muted);margin-left:auto;
+}
+.kv{display:grid;grid-template-columns:104px 1fr;gap:.35rem .9rem;font-size:13px;}
+.kv dt{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted);padding-top:.18rem;
+}
+.kv dd{margin:0;}
+.kv dd ul{margin:0;padding-left:1.05rem;}
+.tag{
+  display:inline-block;font-family:'DM Mono',monospace;font-size:10px;
+  background:var(--surface-3);border:1px solid var(--line);border-radius:4px;
+  padding:.1rem .4rem;margin:0 .25rem .25rem 0;color:var(--body);
+}
+.tag.sky{background:var(--red-soft);border-color:var(--red-border);color:var(--red-text);}
+.tag.sh5{background:var(--blue-soft);border-color:rgba(20,70,180,.22);color:var(--blue);}
+
+/* ---------- diagram ---------- */
+.dgm{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1rem;margin:0 0 .8rem;
+}
+.dgm-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.dgm svg{display:block;height:auto;}
+.dgm-cap{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);
+  margin:0 0 1.4rem;padding-left:.2rem;
+}
+.legend{display:flex;flex-wrap:wrap;gap:1.2rem;padding:.9rem .2rem 0;font-size:11px;color:var(--muted);}
+.legend span{display:inline-flex;align-items:center;gap:.45rem;}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line-strong);}
+
+/* svg text classes */
+.s-lane{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:500;}
+.s-step{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;}
+.s-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;}
+.s-sub{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:500;}
+.s-edge{font-family:'DM Mono',monospace;font-size:10.5px;}
+.s-badge{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.05em;}
+
+/* ---------- warehouse chips ---------- */
+.wh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.1rem;margin-bottom:1.2rem;}
+.wh-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.05rem 1.15rem 1.2rem;}
+.wh-head{
+  display:flex;align-items:center;gap:.55rem;font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink);
+  padding-bottom:.6rem;margin-bottom:.85rem;border-bottom:1px solid var(--line-soft);
+}
+.wh-head .cnt{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;}
+.chip{
+  font-size:12px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:6px;padding:.32rem .6rem;flex:1 1 120px;text-align:center;color:var(--body);
+}
+.wh-card.ho .wh-head{color:var(--red-text);}
+.wh-card.ho .chip{border-color:var(--red-border);}
+.wh-card.st .wh-head{color:var(--blue);}
+.wh-card.st .chip{border-color:rgba(20,70,180,.2);}
+
+/* ---------- footer ---------- */
+footer{
+  background:var(--dark);color:#9898AA;padding:1.8rem 5vw;
+  font-family:'DM Mono',monospace;font-size:11px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.7rem;
+}
+footer b{color:#E5E5EA;font-weight:400;}
+@media print{
+  body{background:#fff;}
+  header{padding:1.4rem 0;}
+  main{padding:0;}
+  .dgm-scroll{overflow:visible;}
+}
+
+/* ---------- part navigation ---------- */
+.partnav{
+  position:sticky;top:0;z-index:60;background:var(--dark);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  display:flex;flex-wrap:wrap;gap:.15rem;padding:.45rem 5vw;
+}
+.partnav a{
+  font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.05em;
+  color:#B9B9C6;text-decoration:none;padding:.32rem .6rem;border-radius:5px;
+  white-space:nowrap;
+}
+.partnav a:hover{background:rgba(255,255,255,.09);color:#fff;}
+.partnav a b{color:#F05458;font-weight:500;margin-right:.35rem;}
+
+/* ---------- part divider ---------- */
+.part{
+  margin:3.4rem 0 .4rem;padding:1.5rem 1.6rem 1.35rem;
+  background:var(--dark);border-radius:var(--radius);
+  border-left:5px solid var(--red);scroll-margin-top:56px;
+}
+.part:first-of-type{margin-top:2rem;}
+.part .pno{
+  font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+  color:#F05458;text-transform:uppercase;display:block;margin-bottom:.45rem;
+}
+.part h1{
+  font-size:1.22rem;font-weight:800;color:#fff;margin:0 0 .5rem;letter-spacing:-.01em;
+}
+.part p{margin:0;color:#B9B9C6;font-size:12.5px;max-width:820px;}
+.part .plist{
+  margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.12);
+  display:flex;flex-wrap:wrap;gap:.35rem .5rem;
+}
+.part .plist span{
+  font-family:'DM Mono',monospace;font-size:10.5px;color:#9E9EAC;
+  background:rgba(255,255,255,.06);border-radius:4px;padding:.2rem .5rem;
+}
+section{scroll-margin-top:56px;}
+h2 .num{min-width:34px;text-align:center;}
+
+/* ---------- toc ---------- */
+.toc{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:1.15rem 1.3rem;margin:1.6rem 0 .5rem;
+}
+.toc h4{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--red);margin:0 0 .8rem;
+}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.9rem 1.6rem;}
+.toc-col b{
+  display:block;font-size:11px;font-weight:800;color:var(--ink);
+  padding-bottom:.3rem;margin-bottom:.35rem;border-bottom:1px solid var(--line-soft);
+}
+.toc-col a{
+  display:block;font-size:12.5px;color:var(--body);text-decoration:none;
+  padding:.13rem 0;
+}
+.toc-col a:hover{color:var(--red);}
+.toc-col a i{
+  font-family:'DM Mono',monospace;font-style:normal;color:var(--muted);
+  font-size:11px;margin-right:.4rem;
+}
+.new-badge{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;
+  background:var(--red-soft);color:var(--red-text);border:1px solid var(--red-border);
+  border-radius:3px;padding:.05rem .3rem;margin-left:.4rem;vertical-align:.08em;
+}
+@media print{.partnav{display:none;}.part{break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">The Street &middot; SkyStorehouseV2 / StoreHouse 5 &middot; Ban giao phat trien</p>
+  <h1>Nghiệp vụ kho &mdash; The Street</h1>
+  <p class="sub">Mô tả nghiệp vụ kho tại cửa hàng và tại kho trung tâm, bao gồm luồng đặt hàng và cấp hàng (PR, Consolidate, PO), nhập xuất kho, sản xuất theo BOM, xuất huỷ, kiểm kê và hai loại điều chuyển. Tài liệu chỉ mô tả nghiệp vụ, không bao gồm thiết kế cơ sở dữ liệu hay giải pháp kỹ thuật.</p>
+  <div class="meta-row">
+    <span class="meta">Phiên bản <b>v3.0</b></span>
+    <span class="meta">Khách hàng <b>The Street</b></span>
+    <span class="meta">Hệ thống <b>SkySHV2 + SH5</b></span>
+    <span class="meta">Quy tắc <b>46 BR</b></span>
+    <span class="meta">Điểm mở <b>22 OQ</b></span>
+    <span class="meta">Phòng <b>Core Technology - Dcorp</b></span>
+  </div>
+</header>
+<nav class="partnav"><a href="#p1"><b>P1</b>Tổng quan</a><a href="#p2"><b>P2</b>Đặt hàng và cấp hàng từ kho trung tâm</a><a href="#p3"><b>P3</b>Nghiệp vụ kho tại cửa hàng</a><a href="#p4"><b>P4</b>Nghiệp vụ tại kho trung tâm</a><a href="#p5"><b>P5</b>Quy định chung</a><a href="#p6"><b>P6</b>Quản trị tài liệu</a></nav>
+
+<main>
+<div class="toc"><h4>Mục lục</h4><div class="toc-grid"><div class="toc-col"><b>PHẦN 1 · Tổng quan</b><a href="#p1">1.1 Phạm vi</a><a href="#p1">1.2 Ranh giới hệ thống</a><a href="#p1">1.3 Tổ chức kho</a><a href="#p1">1.4 Vai trò</a><a href="#p1">1.5 Bản đồ nghiệp vụ</a></div><div class="toc-col"><b>PHẦN 2 · Đặt hàng và cấp hàng từ kho trung tâm</b><a href="#p2">2.1 Bối cảnh đặt hàng</a><a href="#p2">2.2 Sơ đồ luồng chính</a><a href="#p2">2.3 Các bước B1-B7</a><a href="#p2">2.4 Phiếu Consolidate</a><a href="#p2">2.5 Bốn nhánh nguồn hàng</a><a href="#p2">2.6 Trạng thái chứng từ</a></div><div class="toc-col"><b>PHẦN 3 · Nghiệp vụ kho tại cửa hàng</b><a href="#p3">3.1 Bốn nhóm chứng từ</a><a href="#p3">3.2 Nhập kho</a><a href="#p3">3.3 Bán hàng trừ kho</a><a href="#p3">3.4 Sản xuất BOM</a><a href="#p3">3.5 Xuất huỷ</a><a href="#p3">3.6 Kiểm kê</a><a href="#p3">3.7 Điều chuyển nội bộ</a><a href="#p3">3.8 Điều chuyển liên cửa hàng</a></div><div class="toc-col"><b>PHẦN 4 · Nghiệp vụ tại kho trung tâm</b><a href="#p4">4.1 Mua hàng và PO</a><a href="#p4">4.2 Nhập kho DC</a><a href="#p4">4.3 Sản xuất tại DC</a><a href="#p4">4.4 Xuất kho xuống cửa hàng</a><a href="#p4">4.5 Huỷ và kiểm kê</a></div><div class="toc-col"><b>PHẦN 5 · Quy định chung</b><a href="#p5">5.1 Giá và VAT</a><a href="#p5">5.2 Internal Logistic</a><a href="#p5">5.3 Quy tắc nghiệp vụ</a><a href="#p5">5.4 Cải tiến giao diện</a></div><div class="toc-col"><b>PHẦN 6 · Quản trị tài liệu</b><a href="#p6">6.1 Giả định và điểm mở</a><a href="#p6">6.2 Khuyến nghị Dcorp</a><a href="#p6">6.3 Đối chiếu SOW_Kho</a><a href="#p6">6.4 Lịch sử phiên bản</a></div></div></div>
+<div class="part" id="p1">
+  <span class="pno">PHẦN 1</span>
+  <h1>Tổng quan</h1>
+  <p>Phạm vi tài liệu, ranh giới giữa SkySHV2 và SH5, tổ chức kho, vai trò tham gia và bản đồ toàn bộ nghiệp vụ kho.</p>
+  <div class="plist"><span>1.1 Phạm vi</span><span>1.2 Ranh giới hệ thống</span><span>1.3 Tổ chức kho</span><span>1.4 Vai trò</span><span>1.5 Bản đồ nghiệp vụ</span></div>
+</div>
+
+<section>
+  <h2><span class="num">1.1</span> Phạm vi và mục đích</h2>
+<p>Tài liệu mô tả quy trình đặt hàng của cửa hàng The Street lên văn phòng trung tâm, cách văn phòng trung tâm tổng hợp và phân bổ nguồn hàng, và các chứng từ kho phát sinh cho tới khi hàng nhập vào kho cửa hàng.</p>
+  <p>Đối tượng sử dụng: đội phát triển SkyStorehouseV2, BA, QC, và đội triển khai.</p>
+
+  <h3>Nằm trong phạm vi</h3>
+  <ul>
+    <li>Lập và gửi phiếu yêu cầu hàng (PR) từ cửa hàng.</li>
+    <li>Tổng hợp nhiều PR thành phiếu Consolidate PR tại văn phòng trung tâm.</li>
+    <li>Phân bổ thủ công theo hai nguồn: điều chuyển từ kho DC và mua từ nhà cung cấp.</li>
+    <li>Lập PO gửi nhà cung cấp.</li>
+    <li>Sinh phiếu xuất kho DC và phiếu nhập kho tại cửa hàng.</li>
+  </ul>
+
+  <h3>Nằm ngoài phạm vi (phase này)</h3>
+  <ul>
+    <li>Quản lý phiếu sản xuất tại kho DC. Nhân viên HO thao tác trực tiếp trên SH5.</li>
+    <li>Xử lý giao thiếu, giao thừa, hàng hỏng, trả hàng nhà cung cấp.</li>
+    <li>Làm tròn theo quy cách đóng gói của nhà cung cấp.</li>
+    <li>Công nợ và đối chiếu hóa đơn nhà cung cấp.</li>
+    <li>Xử lý chứng từ lập trễ sau khi SH5 đã đóng kỳ kho.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="num">1.2</span> Ranh giới hệ thống</h2>
+<p>SkyStorehouseV2 (viết tắt SkySHV2) là phiên bản mở rộng, dùng lõi StoreHouse 5 (SH5). SH5 giữ toàn bộ master data, chứng từ kho, tồn kho và giá vốn. SH5 không có phân hệ PR và PO, nên hai phân hệ này được xây trên SkySHV2.</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:50%">SkySHV2 - lớp mở rộng</th><th>SH5 - lõi</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <span class="tag sky">Phiếu yêu cầu hàng (PR)</span>
+          <span class="tag sky">Phiếu Consolidate PR</span>
+          <span class="tag sky">Bảng phân bổ DC / NCC</span>
+          <span class="tag sky">Phiếu đặt hàng nhà cung cấp (PO)</span>
+        </td>
+        <td>
+          <span class="tag sh5">Master data (hàng hóa, kho, Correspondent)</span>
+          <span class="tag sh5">Phiếu nhập kho</span>
+          <span class="tag sh5">Phiếu xuất kho</span>
+          <span class="tag sh5">Phiếu sản xuất</span>
+          <span class="tag sh5">Phiếu xuất hủy</span>
+          <span class="tag sh5">Tồn kho và giá vốn</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-amber">
+    <span class="cap">Giả định cần xác nhận</span>
+    <p>Tài liệu giả định SkySHV2 truy cập trực tiếp cùng nguồn dữ liệu SH5, không qua tầng đồng bộ trung gian. Nếu giả định này sai, cần bổ sung phần kiến trúc tích hợp (độ trễ tồn kho, đồng bộ master data, trường tham chiếu) trước khi phát triển.</p>
+  </div>
+
+  <p>Giá hàng hóa do SH5 tính theo giá vốn tại thời điểm ghi nhận chứng từ. SkySHV2 không tính và không quyết định giá.</p>
+</section>
+
+<section>
+  <h2><span class="num">1.3</span> Tổ chức kho và mô hình Correspondent</h2>
+<p>Correspondent trong SH5 là mô hình đối tác. Mỗi đơn vị trong hệ thống được xem là nhà cung cấp của đơn vị còn lại. Mỗi cửa hàng là một Correspondent. Toàn bộ kho trung tâm là một Correspondent duy nhất, không tách theo từng kho.</p>
+
+  <div class="wh-grid">
+    <div class="wh-card ho">
+      <div class="wh-head">Kho trung tâm (DC) <span class="cnt">10 kho &middot; 1 Correspondent</span></div>
+      <div class="chips">
+        <span class="chip">Kho đông</span><span class="chip">Kho sauce</span><span class="chip">Kho rượu</span>
+        <span class="chip">Kho rau</span><span class="chip">Kho gia vị</span><span class="chip">Kho hóa phẩm</span>
+        <span class="chip">Kho CCDC</span><span class="chip">Kho MKT</span><span class="chip">Kho R&amp;D</span><span class="chip">Kho QC</span>
+      </div>
+    </div>
+    <div class="wh-card st">
+      <div class="wh-head">Kho cửa hàng (mỗi Location) <span class="cnt">8 kho &middot; 1 Correspondent / cửa hàng</span></div>
+      <div class="chips">
+        <span class="chip">Kho bia rượu</span><span class="chip">Kho chất đốt</span><span class="chip">Kho công cụ</span>
+        <span class="chip">Kho gia vị</span><span class="chip">Kho hóa phẩm</span><span class="chip">Kho marketing</span>
+        <span class="chip">Kho quầy</span><span class="chip">Kho thực phẩm</span>
+      </div>
+    </div>
+  </div>
+
+  <p>Kho trung tâm có hoạt động chế biến. Bán thành phẩm được xử lý như một mặt hàng bình thường. Khác biệt duy nhất là phiếu sản xuất đặt tại kho DC, không đặt tại kho cửa hàng. Khi xuống cửa hàng, bán thành phẩm được dùng làm nguyên vật liệu chế biến món.</p>
+</section>
+
+<section>
+  <h2><span class="num">1.4</span> Vai trò tham gia</h2>
+<table>
+    <thead>
+      <tr><th style="width:210px">Vai trò</th><th style="width:150px">Đơn vị</th><th>Trách nhiệm</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Nhân viên bar / bếp</b></td><td>Cửa hàng</td><td>Lập PR theo tồn kho local. Lập phiếu nhập khi hàng về.</td></tr>
+      <tr><td><b>Nhân viên thu mua</b></td><td>Văn phòng trung tâm</td><td>Chọn PR để consolidate. Sửa số lượng trước khi xác nhận. Phân bổ nguồn hàng thủ công. Lập PO.</td></tr>
+      <tr><td><b>Nhân viên kho DC</b></td><td>Văn phòng trung tâm</td><td>Lập phiếu sản xuất, phiếu nhập từ NCC, phiếu xuất hủy trên SH5. Quản lý tồn kho DC.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="num">1.5</span> Bản đồ nghiệp vụ kho</h2>
+
+<div class="dgm">
+  <div class="dgm-scroll">
+<svg viewBox="0 0 1420 620" width="1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ban do nghiep vu kho">
+  <defs>
+    <marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3C3C50"/>
+    </marker>
+    <marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C01A1F"/>
+    </marker>
+  </defs>
+
+  <rect x="40" y="60" width="600" height="500" rx="12" fill="#F7F7FB" stroke="#1540A8" stroke-width="1.4"/>
+  <text class="s-lane" x="60" y="90" fill="#1540A8">Cửa hàng &middot; Phần 3</text>
+
+  <rect x="790" y="60" width="590" height="500" rx="12" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+  <text class="s-lane" x="810" y="90" fill="#C01A1F">Kho trung tâm &middot; Phần 4</text>
+
+  <g>
+    <rect x="70" y="112" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="86" y="138" fill="#0C0C14">3.2 Nhập kho</text>
+    <text class="s-sub" x="86" y="158" fill="#6C6C80">Từ DC · từ NCC · từ cửa hàng khác</text>
+
+    <rect x="360" y="112" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="376" y="138" fill="#0C0C14">3.3 Bán hàng</text>
+    <text class="s-sub" x="376" y="158" fill="#6C6C80">Trừ NVL theo BOM</text>
+
+    <rect x="70" y="200" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="86" y="226" fill="#0C0C14">3.4 Sản xuất BOM</text>
+    <text class="s-sub" x="86" y="246" fill="#6C6C80">Tạo bán thành phẩm</text>
+
+    <rect x="360" y="200" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="376" y="226" fill="#0C0C14">3.5 Xuất huỷ</text>
+    <text class="s-sub" x="376" y="246" fill="#6C6C80">Đối tác = Huỷ, kèm lý do</text>
+
+    <rect x="70" y="288" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="86" y="314" fill="#0C0C14">3.6 Kiểm kê</text>
+    <text class="s-sub" x="86" y="334" fill="#6C6C80">Ngày / tuần / tháng</text>
+
+    <rect x="360" y="288" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="376" y="314" fill="#0C0C14">3.7 Điều chuyển nội bộ</text>
+    <text class="s-sub" x="376" y="334" fill="#6C6C80">Giữa 8 kho cùng cửa hàng</text>
+
+    <rect x="70" y="376" width="540" height="62" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.5"/>
+    <text class="s-title" x="86" y="402" fill="#0C0C14">3.8 Điều chuyển liên cửa hàng</text>
+    <text class="s-sub" x="86" y="422" fill="#6C6C80">Cửa hàng A mượn hàng của cửa hàng B · có tính năng hỏi tồn</text>
+
+    <rect x="70" y="464" width="540" height="62" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.6"/>
+    <text class="s-title" x="86" y="490" fill="#0C0C14">Phần 2 · Lập phiếu yêu cầu hàng (PR)</text>
+    <text class="s-sub" x="86" y="510" fill="#961418">Điểm khởi đầu của luồng đặt hàng lên kho trung tâm</text>
+  </g>
+
+  <g>
+    <rect x="820" y="112" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="836" y="138" fill="#0C0C14">4.1 Mua hàng &middot; PO</text>
+    <text class="s-sub" x="836" y="158" fill="#6C6C80">Phân bổ DC / NCC</text>
+
+    <rect x="1100" y="112" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="1116" y="138" fill="#0C0C14">4.2 Nhập kho DC</text>
+    <text class="s-sub" x="1116" y="158" fill="#6C6C80">Từ nhà cung cấp</text>
+
+    <rect x="820" y="200" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="836" y="226" fill="#0C0C14">4.3 Sản xuất tại DC</text>
+    <text class="s-sub" x="836" y="246" fill="#6C6C80">Bán thành phẩm</text>
+
+    <rect x="1100" y="200" width="250" height="62" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="1116" y="226" fill="#0C0C14">4.5 Huỷ &amp; kiểm kê</text>
+    <text class="s-sub" x="1116" y="246" fill="#6C6C80">Vận hành kho DC</text>
+
+    <rect x="820" y="288" width="530" height="62" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.6"/>
+    <text class="s-title" x="836" y="314" fill="#0C0C14">4.4 Xuất kho xuống cửa hàng</text>
+    <text class="s-sub" x="836" y="334" fill="#961418">Correspondent = cửa hàng · kèm Giá, VAT, Tổng</text>
+
+    <rect x="820" y="464" width="530" height="62" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.6"/>
+    <text class="s-title" x="836" y="490" fill="#0C0C14">Phần 2 · Consolidate &amp; phân bổ</text>
+    <text class="s-sub" x="836" y="510" fill="#961418">Xử lý PR của nhiều cửa hàng</text>
+  </g>
+
+  <path d="M610,495 H812" stroke="#C01A1F" stroke-width="2" fill="none" marker-end="url(#m2)"/>
+  <text class="s-edge" x="640" y="486" fill="#C01A1F">PR gửi lên</text>
+
+  <path d="M1085,319 H1075 M1085,319 V400 H700 V180" stroke="#C01A1F" stroke-width="1.8" fill="none" marker-end="url(#m2)"/>
+  <text class="s-edge" x="712" y="392" fill="#C01A1F">Hàng về &rarr; 3.2 Nhập kho</text>
+
+  <path d="M320,143 H352" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#m1)"/>
+  <path d="M195,174 V192" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#m1)"/>
+  <path d="M485,262 V280" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#m1)"/>
+  <path d="M195,350 V368" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#m1)"/>
+
+  <text class="s-badge" x="40" y="600" fill="#6C6C80">Mũi tên đỏ: luồng giữa cửa hàng và kho trung tâm (Phần 2). Mũi tên xám: quan hệ giữa các nghiệp vụ trong cùng một cửa hàng.</text>
+</svg>
+  </div>
+</div>
+<p class="dgm-cap">Hình 1. Bản đồ nghiệp vụ kho &mdash; vị trí của từng mục trong tài liệu.</p>
+
+<p>Tài liệu chia thành sáu phần. Phần 2 mô tả luồng đặt hàng và cấp hàng giữa cửa hàng và kho trung tâm. Phần 3 và Phần 4 mô tả các nghiệp vụ kho diễn ra bên trong từng đơn vị.</p>
+
+<table>
+  <thead><tr><th style="width:70px">Mục</th><th style="width:230px">Nghiệp vụ</th><th style="width:150px">Hệ thống</th><th>Chứng từ chính</th></tr></thead>
+  <tbody>
+    <tr><td class="id">2.x</td><td>Đặt hàng và cấp hàng từ kho trung tâm</td><td>SkySHV2 + SH5</td><td>PR, Consolidate PR, PO, phiếu xuất DC, phiếu nhập cửa hàng</td></tr>
+    <tr><td class="id">3.2</td><td>Nhập kho tại cửa hàng</td><td>SH5</td><td>Phiếu nhập</td></tr>
+    <tr><td class="id">3.3</td><td>Bán hàng và trừ kho</td><td>POS + SH5</td><td>Trừ nguyên vật liệu theo BOM</td></tr>
+    <tr><td class="id">3.4</td><td>Sản xuất theo BOM tại cửa hàng</td><td>SH5</td><td>Phiếu sản xuất</td></tr>
+    <tr><td class="id">3.5</td><td>Xuất huỷ</td><td>SH5</td><td>Phiếu xuất, đối tác là Huỷ</td></tr>
+    <tr><td class="id">3.6</td><td>Kiểm kê</td><td>SH5</td><td>Phiếu kiểm kê, sinh phiếu nhập khác hoặc xuất khác</td></tr>
+    <tr><td class="id">3.7</td><td>Điều chuyển kho nội bộ</td><td>SH5</td><td>Phiếu điều chuyển nội bộ</td></tr>
+    <tr><td class="id">3.8</td><td>Điều chuyển liên cửa hàng</td><td>SkySHV2 + SH5</td><td>Phiếu yêu cầu, phiếu xuất, phiếu nhập</td></tr>
+    <tr><td class="id">4.1</td><td>Mua hàng tại kho trung tâm</td><td>SkySHV2</td><td>PO</td></tr>
+    <tr><td class="id">4.2</td><td>Nhập kho DC</td><td>SH5</td><td>Phiếu nhập</td></tr>
+    <tr><td class="id">4.3</td><td>Sản xuất bán thành phẩm tại DC</td><td>SH5</td><td>Phiếu sản xuất</td></tr>
+    <tr><td class="id">4.4</td><td>Xuất kho xuống cửa hàng</td><td>SH5</td><td>Phiếu xuất, Correspondent là cửa hàng</td></tr>
+    <tr><td class="id">4.5</td><td>Xuất huỷ và kiểm kê tại DC</td><td>SH5</td><td>Phiếu xuất, phiếu kiểm kê</td></tr>
+  </tbody>
+</table>
+
+</section>
+
+<div class="part" id="p2">
+  <span class="pno">PHẦN 2</span>
+  <h1>Đặt hàng và cấp hàng từ kho trung tâm</h1>
+  <p>Luồng PR, Consolidate, phân bổ, PO và xuất nhập kho giữa cửa hàng và kho trung tâm. Nội dung giữ nguyên từ bản v2.1.</p>
+  <div class="plist"><span>2.1 Bối cảnh đặt hàng</span><span>2.2 Sơ đồ luồng chính</span><span>2.3 Các bước B1-B7</span><span>2.4 Phiếu Consolidate</span><span>2.5 Bốn nhánh nguồn hàng</span><span>2.6 Trạng thái chứng từ</span></div>
+</div>
+
+<section>
+  <h2><span class="num">2.1</span> Bối cảnh vận hành đặt hàng tại cửa hàng</h2>
+<div class="callout c-blue">
+    <span class="cap">Nguồn</span>
+    <p>Mục 13 đến mục 20 bổ sung từ sheet <b>SOW_Kho</b> (Dcorp x The Street, 05/09/2026). Toàn bộ nội dung mục 01 đến mục 12 giữ nguyên không sửa.</p>
+  </div>
+
+  <h3>Nhịp đặt hàng hàng ngày</h3>
+  <table>
+    <thead><tr><th style="width:190px">Yếu tố</th><th>Nội dung</th></tr></thead>
+    <tbody>
+      <tr><td><b>Thời điểm cắt sổ</b></td><td>22h30 hàng ngày. Bộ phận bếp ngừng ra món và bắt đầu kiểm kê tồn kho.</td></tr>
+      <tr><td><b>Mục đích</b></td><td>Lập phiếu order cho nhu cầu của ngày hôm sau.</td></tr>
+      <tr><td><b>Người phụ trách</b></td><td>Mỗi cửa hàng có 2 người: một phụ trách bếp, một phụ trách bar.</td></tr>
+      <tr><td><b>Công cụ đặt hàng</b></td><td>Dù cửa hàng có 8 kho, việc order chỉ thực hiện qua <b>4 mẫu template</b> có sẵn.</td></tr>
+      <tr><td><b>Số phiếu trong ngày</b></td><td>Có thể tạo nhiều phiếu trong một ngày, tương ứng với các kho cần order.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Yêu cầu hỗ trợ người lập phiếu</h3>
+  <ul>
+    <li>Hệ thống chạy báo cáo tồn kho để bếp trưởng xem trước, làm căn cứ tính số lượng cần order.</li>
+    <li>Phiếu PR hiển thị tồn theo kho đang chọn.</li>
+    <li>Số lượng tự điền theo <b>tồn min/max</b> của kho, người lập được phép sửa lại (BR-34).</li>
+    <li>Template order mặc định số lượng bằng 0 thay vì bằng 1 (BR-36).</li>
+  </ul>
+
+  <div class="callout c-amber">
+    <span class="cap">Chưa chốt</span>
+    <p>Ba mô hình phiếu PR đang tồn tại song song: mỗi kho một phiếu, một phiếu trên kho ảo "Kho nhà hàng xxx", hoặc một phiếu chứa nhiều kho đích theo BR-02. Thực tế vận hành lại dùng 4 template cho 8 kho. Xem OQ-10.</p>
+  </div>
+
+  <h3>Phân luồng tiếp nhận tại văn phòng trung tâm</h3>
+  <p>Bộ phận Mua hàng và bộ phận Kho cần phân biệt được phiếu nào, mặt hàng nào phải đặt từ nhà cung cấp và mặt hàng nào xuất từ Kho trung tâm. Ví dụ khách hàng đưa ra: hàng rau do Thu mua tiếp nhận, bán thành phẩm và các mặt hàng còn lại do bộ phận Kho tiếp nhận.</p>
+  <div class="callout c-red">
+    <span class="cap">Đang thiếu đầu vào</span>
+    <p>Khách hàng <b>chưa cung cấp</b> bộ quy tắc và tiêu chí phân loại. Chừng nào chưa có, BR-12 giữ nguyên: nhân viên HO phân bổ thủ công, không có thuật toán. Xem OQ-09.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">2.2</span> Sơ đồ luồng chính</h2>
+<div class="dgm">
+    <div class="dgm-scroll">
+<svg viewBox="0 0 1700 800" width="1660" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="So do luong chinh quy trinh PR den phan bo">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3C3C50"/>
+    </marker>
+    <marker id="ar-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C01A1F"/>
+    </marker>
+    <marker id="ar-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1540A8"/>
+    </marker>
+  </defs>
+
+  <!-- lane bands -->
+  <rect x="0" y="70"  width="1700" height="180" fill="#F7F7FB"/>
+  <rect x="0" y="250" width="1700" height="260" fill="#FFFFFF"/>
+  <rect x="0" y="510" width="1700" height="230" fill="#F7F7FB"/>
+  <line x1="0" y1="70"  x2="1700" y2="70"  stroke="rgba(0,0,0,.09)"/>
+  <line x1="0" y1="250" x2="1700" y2="250" stroke="rgba(0,0,0,.09)"/>
+  <line x1="0" y1="510" x2="1700" y2="510" stroke="rgba(0,0,0,.09)"/>
+  <line x1="0" y1="740" x2="1700" y2="740" stroke="rgba(0,0,0,.09)"/>
+  <line x1="140" y1="70" x2="140" y2="740" stroke="rgba(0,0,0,.09)"/>
+
+  <!-- lane labels -->
+  <text class="s-lane" fill="#1540A8" transform="translate(38,215) rotate(-90)">Cửa hàng</text>
+  <text class="s-lane" fill="#C01A1F" transform="translate(38,430) rotate(-90)">SkySHV2 / HO</text>
+  <text class="s-lane" fill="#6C6C80" transform="translate(38,690) rotate(-90)">SH5</text>
+
+  <!-- A1 -->
+  <g>
+    <text class="s-step" x="170" y="118" fill="#6C6C80">Bước 1</text>
+    <rect x="170" y="128" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.4"/>
+    <text class="s-title" x="186" y="157" fill="#0C0C14">Lập phiếu PR</text>
+    <text class="s-sub" x="186" y="177" fill="#3C3C50">Dựa trên tồn kho local</text>
+    <text class="s-sub" x="186" y="194" fill="#6C6C80">1 hoặc nhiều kho đích</text>
+  </g>
+  <!-- A2 -->
+  <g>
+    <text class="s-step" x="410" y="118" fill="#6C6C80">Bước 2</text>
+    <rect x="410" y="128" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.4"/>
+    <text class="s-title" x="426" y="157" fill="#0C0C14">Xác nhận và gửi</text>
+    <text class="s-sub" x="426" y="177" fill="#3C3C50">PR chuyển trạng thái Mở</text>
+    <text class="s-sub" x="426" y="194" fill="#6C6C80">Chờ HO xử lý</text>
+  </g>
+  <!-- A3 -->
+  <g>
+    <text class="s-step" x="1410" y="118" fill="#6C6C80">Bước 7</text>
+    <rect x="1410" y="128" width="220" height="80" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.4"/>
+    <text class="s-title" x="1426" y="157" fill="#0C0C14">Lập phiếu nhập</text>
+    <text class="s-sub" x="1426" y="177" fill="#3C3C50">Kế thừa từ PR</text>
+    <text class="s-sub" x="1426" y="194" fill="#6C6C80">Mỗi kho một phiếu</text>
+  </g>
+
+  <!-- B1 -->
+  <g>
+    <text class="s-step" x="650" y="298" fill="#6C6C80">Bước 3</text>
+    <rect x="650" y="308" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="666" y="337" fill="#0C0C14">Tạo Consolidate PR</text>
+    <text class="s-sub" x="666" y="357" fill="#3C3C50">Chọn các PR đang Mở</text>
+    <text class="s-sub" x="666" y="374" fill="#6C6C80">Trạng thái Nháp</text>
+  </g>
+  <!-- B2 -->
+  <g>
+    <text class="s-step" x="890" y="298" fill="#6C6C80">Bước 4</text>
+    <rect x="890" y="308" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="906" y="337" fill="#0C0C14">Phân bổ nguồn hàng</text>
+    <text class="s-sub" x="906" y="357" fill="#3C3C50">Thủ công, hai tầng</text>
+    <text class="s-sub" x="906" y="374" fill="#6C6C80">Cột DC và cột NCC</text>
+  </g>
+  <!-- B3 -->
+  <g>
+    <text class="s-step" x="1130" y="298" fill="#6C6C80">Bước 5</text>
+    <rect x="1130" y="308" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#C01A1F" stroke-width="1.8"/>
+    <text class="s-title" x="1146" y="337" fill="#0C0C14">Chuyển Process</text>
+    <text class="s-sub" x="1146" y="357" fill="#3C3C50">Khóa phiếu vĩnh viễn</text>
+    <text class="s-sub" x="1146" y="374" fill="#6C6C80">Sinh chứng từ</text>
+  </g>
+  <!-- B4 : PO -->
+  <g>
+    <text class="s-step" x="1410" y="298" fill="#6C6C80">Bước 6b</text>
+    <rect x="1410" y="308" width="220" height="80" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="1426" y="337" fill="#0C0C14">Lập PO gửi NCC</text>
+    <text class="s-sub" x="1426" y="357" fill="#3C3C50">Gộp dòng NCC nhiều PR</text>
+    <text class="s-sub" x="1426" y="374" fill="#6C6C80">Có thể thêm dòng bù DC</text>
+  </g>
+
+  <!-- C0 : ton kho -->
+  <g>
+    <rect x="890" y="580" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text class="s-title" x="906" y="609" fill="#0C0C14">Tồn kho DC</text>
+    <text class="s-sub" x="906" y="629" fill="#3C3C50">Nguồn duy nhất: SH5</text>
+    <text class="s-sub" x="906" y="646" fill="#6C6C80">Không giữ chỗ</text>
+  </g>
+  <!-- C1 : phieu xuat -->
+  <g>
+    <text class="s-step" x="1410" y="570" fill="#6C6C80">Bước 6a</text>
+    <rect x="1410" y="580" width="220" height="80" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.4"/>
+    <text class="s-title" x="1426" y="609" fill="#0C0C14">Phiếu xuất kho DC</text>
+    <text class="s-sub" x="1426" y="629" fill="#3C3C50">Correspondent = Cửa hàng</text>
+    <text class="s-sub" x="1426" y="646" fill="#6C6C80">Theo kho nguồn đã chọn</text>
+  </g>
+  <!-- C2 : san xuat -->
+  <g>
+    <rect x="620" y="580" width="200" height="80" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text class="s-title" x="636" y="609" fill="#0C0C14">Phiếu sản xuất</text>
+    <text class="s-sub" x="636" y="629" fill="#3C3C50">NV HO chủ động lập</text>
+    <text class="s-sub" x="636" y="646" fill="#6C6C80">Ngoài phạm vi SkySHV2</text>
+  </g>
+
+  <!-- edges -->
+  <path d="M370,168 H402" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <path d="M510,208 V348 H642" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <text class="s-edge" x="522" y="292" fill="#6C6C80">PR đang Mở</text>
+
+  <path d="M850,348 H882" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <path d="M1090,348 H1122" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <path d="M1330,348 H1402" stroke="#C01A1F" stroke-width="1.8" fill="none" marker-end="url(#ar-r)"/>
+  <text class="s-edge" x="1336" y="336" fill="#C01A1F">Dòng NCC</text>
+
+  <path d="M1230,388 V620 H1402" stroke="#C01A1F" stroke-width="1.8" fill="none" marker-end="url(#ar-r)"/>
+  <text class="s-edge" x="1240" y="500" fill="#C01A1F">Dòng DC</text>
+
+  <path d="M990,580 V396" stroke="#6C6C80" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text class="s-edge" x="1000" y="490" fill="#6C6C80">Đọc tồn tại thời điểm mở phiếu</text>
+
+  <path d="M820,620 H882" stroke="#6C6C80" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+
+  <path d="M1410,620 H1385 V190 H1402" stroke="#1540A8" stroke-width="1.6" fill="none" marker-end="url(#ar-b)"/>
+  <text class="s-edge" x="1372" y="262" fill="#1540A8" text-anchor="end">Correspondent = Kho DC</text>
+  <path d="M1630,348 H1668 V168 H1638" stroke="#1540A8" stroke-width="1.6" fill="none" marker-end="url(#ar-b)"/>
+  <text class="s-edge" x="1660" y="240" fill="#1540A8" text-anchor="end">Giao thẳng: Correspondent = NCC</text>
+</svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:#fff;border-color:#1540A8"></i> Thao tác tại cửa hàng</span>
+      <span><i class="sw" style="background:#fff;border-color:#C01A1F"></i> Thao tác trên SkySHV2</span>
+      <span><i class="sw" style="background:#fff;border-color:#6C6C80"></i> Chứng từ và tồn kho SH5</span>
+      <span><i class="sw" style="background:#fff;border-color:#6C6C80;border-style:dashed"></i> Ngoài phạm vi SkySHV2</span>
+    </div>
+  </div>
+  <p class="dgm-cap">Hình 2. Luồng chính từ lập PR đến sinh chứng từ. Nhánh PO giao về kho DC xem Hình 3.</p>
+</section>
+
+<section>
+  <h2><span class="num">2.3</span> Mô tả chi tiết các bước</h2>
+<div class="step">
+    <div class="step-head">
+      <span class="step-no">B1</span><span class="step-title">Lập phiếu yêu cầu hàng (PR)</span>
+      <span class="step-actor">Nhân viên bar / bếp &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Đầu vào</dt><dd>Tồn kho local của cửa hàng, lấy từ SH5.</dd>
+      <dt>Thao tác</dt><dd>Nhân viên tạo phiếu mới, chọn mặt hàng và nhập số lượng yêu cầu. Mỗi dòng chỉ định một kho đích tại cửa hàng. Một phiếu có thể chứa nhiều kho đích khác nhau.</dd>
+      <dt>Đầu ra</dt><dd>Phiếu PR ở trạng thái Nháp.</dd>
+      <dt>Quy tắc</dt><dd>BR-01, BR-02</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B2</span><span class="step-title">Xác nhận và gửi lên văn phòng trung tâm</span>
+      <span class="step-actor">Nhân viên bar / bếp &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Thao tác</dt><dd>Nhân viên xác nhận phiếu. Phiếu chuyển sang trạng thái Mở và xuất hiện trong danh sách chờ xử lý của thu mua.</dd>
+      <dt>Đầu ra</dt><dd>PR trạng thái Mở.</dd>
+      <dt>Quy tắc</dt><dd>BR-04</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B3</span><span class="step-title">Tạo phiếu Consolidate PR</span>
+      <span class="step-actor">Nhân viên thu mua &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Đầu vào</dt><dd>Danh sách PR đang ở trạng thái Mở.</dd>
+      <dt>Thao tác</dt><dd>Nhân viên chọn một số PR và tạo phiếu Consolidate. Phiếu ở trạng thái Nháp cho phép thêm hoặc gỡ PR. Khi có PR mới gửi lên, nhân viên có thể gộp thêm vào phiếu Nháp đang mở mà không mất phần phân bổ đã nhập cho các PR khác.</dd>
+      <dt>Đầu ra</dt><dd>Phiếu Consolidate PR trạng thái Nháp, có tham chiếu hai chiều với các PR thành phần.</dd>
+      <dt>Quy tắc</dt><dd>BR-03, BR-04, BR-05, BR-06</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B4</span><span class="step-title">Xác nhận số lượng và phân bổ nguồn hàng</span>
+      <span class="step-actor">Nhân viên thu mua &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Đầu vào</dt><dd>Phiếu Consolidate Nháp, tồn kho DC lấy tại thời điểm mở phiếu.</dd>
+      <dt>Thao tác</dt><dd>Nhân viên rà từng mặt hàng, có thể sửa số lượng yêu cầu, sau đó nhập số lượng lấy từ kho DC và số lượng cần mua từ nhà cung cấp cho từng dòng. Kho nguồn trong DC do nhân viên chọn thủ công. Không có thuật toán phân bổ tự động.</dd>
+      <dt>Đầu ra</dt><dd>Bảng phân bổ hoàn chỉnh, mỗi dòng PR được phủ đủ 100 phần trăm.</dd>
+      <dt>Quy tắc</dt><dd>BR-08, BR-09, BR-10, BR-11, BR-12</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B5</span><span class="step-title">Chuyển phiếu sang trạng thái Process</span>
+      <span class="step-actor">Nhân viên thu mua &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Thao tác</dt><dd>Nhân viên chuyển phiếu sang Process. Phiếu bị khóa hoàn toàn: không sửa, không thêm hoặc gỡ PR, không bóc lại.</dd>
+      <dt>Đầu ra</dt><dd>Phiếu xuất kho DC cho phần điều chuyển và PO cho phần mua ngoài.</dd>
+      <dt>Quy tắc</dt><dd>BR-07</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B6a</span><span class="step-title">Phiếu xuất kho DC</span>
+      <span class="step-actor">SH5</span>
+    </div>
+    <dl class="kv">
+      <dt>Nội dung</dt><dd>Xuất theo kho nguồn đã chọn trong DC. Correspondent là cửa hàng nhận hàng. Giá do SH5 tính theo giá vốn tại thời điểm ghi nhận.</dd>
+      <dt>Quy tắc</dt><dd>BR-14, BR-18</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B6b</span><span class="step-title">Lập PO gửi nhà cung cấp</span>
+      <span class="step-actor">Nhân viên thu mua &middot; SkySHV2</span>
+    </div>
+    <dl class="kv">
+      <dt>Nội dung</dt><dd>Một PO có thể gộp phần mua của nhiều PR. PO có thể chứa thêm dòng mua bù tồn cho kho DC, không thuộc PR nào. PO xác định đích giao: về kho DC hoặc giao thẳng cửa hàng.</dd>
+      <dt>Quy tắc</dt><dd>BR-15, BR-16</dd>
+    </dl>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <span class="step-no">B7</span><span class="step-title">Lập phiếu nhập tại cửa hàng</span>
+      <span class="step-actor">Nhân viên bar / bếp &middot; SH5</span>
+    </div>
+    <dl class="kv">
+      <dt>Thao tác</dt><dd>Khi hàng về, cửa hàng tự lập phiếu nhập, thường kế thừa từ PR tương ứng. Với hàng điều chuyển, phiếu được chuyển từ phiếu xuất của kho DC và Correspondent ghi là kho DC. Với hàng giao thẳng, Correspondent là nhà cung cấp.</dd>
+      <dt>Ràng buộc</dt><dd>Mỗi kho lập một phiếu nhập riêng, nên một PO có thể tách thành nhiều phiếu nhập. Tổng số lượng các phiếu nhập của một dòng PR không vượt quá số lượng của dòng PR đó.</dd>
+      <dt>Quy tắc</dt><dd>BR-17, BR-18, BR-19, BR-20</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">2.4</span> Phiếu Consolidate PR - cấu trúc hai tầng</h2>
+<p>Phiếu hiển thị theo hai tầng. Tầng trên là mặt hàng, kèm tổng số lượng yêu cầu và tồn kho DC. Tầng dưới là các dòng yêu cầu chi tiết theo từng cửa hàng và từng kho đích, mỗi dòng có hai cột phân bổ.</p>
+
+  <h3>Ví dụ minh họa</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:34%">Mặt hàng / Dòng yêu cầu</th>
+        <th class="id" style="width:12%">Tồn DC</th>
+        <th class="id" style="width:12%">SL yêu cầu</th>
+        <th class="id" style="width:14%">Từ kho DC</th>
+        <th class="id" style="width:14%">Mua từ NCC</th>
+        <th>Kho nguồn DC</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:var(--surface-3)">
+        <td><b>Cafe hạt</b></td>
+        <td class="num"><b>20 kg</b></td>
+        <td class="num"><b>80 kg</b></td>
+        <td class="num"><b>20 kg</b></td>
+        <td class="num"><b>60 kg</b></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td style="padding-left:1.9rem">PR01 &middot; Cửa hàng 1 &middot; Kho cafe</td>
+        <td class="num">&ndash;</td>
+        <td class="num">30 kg</td>
+        <td class="num">20 kg</td>
+        <td class="num">10 kg</td>
+        <td>Kho đông</td>
+      </tr>
+      <tr>
+        <td style="padding-left:1.9rem">PR03 &middot; Cửa hàng 2 &middot; Kho cafe</td>
+        <td class="num">&ndash;</td>
+        <td class="num">50 kg</td>
+        <td class="num">0 kg</td>
+        <td class="num">50 kg</td>
+        <td>&ndash;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-blue">
+    <span class="cap">Cách đọc</span>
+    <p>Dòng PR01 yêu cầu 30 kg, được phủ bằng 20 kg điều chuyển từ DC cộng 10 kg mua từ nhà cung cấp. Không tồn tại khái niệm phần còn thiếu. Mọi dòng luôn được phủ đủ 100 phần trăm ngay tại bước phân bổ.</p>
+  </div>
+
+  <div class="callout c-amber">
+    <span class="cap">Kiểm soát tồn - cần xác nhận</span>
+    <p>Tổng số lượng phân bổ từ DC của một mặt hàng được đối chiếu với tồn DC. Khi vượt tồn, hệ thống hiển thị cảnh báo nhưng vẫn cho phép tiếp tục, vì SH5 cho phép tồn âm và nhân viên HO sẽ lập phiếu sản xuất bổ sung sau. Phương án này đang chờ xác nhận cuối, xem mục 11 điểm OQ-01.</p>
+  </div>
+
+  <p>Tồn kho hiển thị lấy tại thời điểm mở phiếu và không được giữ chỗ. Hai nhân viên cùng làm hai phiếu Consolidate sẽ thấy cùng một con số tồn cho hai mục đích khác nhau. Chênh lệch phát sinh được chấp nhận, vì tồn kho quản lý từ một nguồn duy nhất là SH5.</p>
+</section>
+
+<section>
+  <h2><span class="num">2.5</span> Bốn nhánh nguồn hàng</h2>
+<p>Sau khi phiếu Consolidate chuyển sang Process, hàng đến cửa hàng theo một trong bốn nhánh. Các nhánh có thể cùng tồn tại trên một dòng PR.</p>
+
+  <div class="dgm">
+    <div class="dgm-scroll">
+<svg viewBox="0 0 1420 580" width="1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bon nhanh nguon hang">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6C6C80"/>
+    </marker>
+  </defs>
+
+  <!-- column headers -->
+  <text class="s-step" x="30"  y="34" fill="#6C6C80">Điều kiện</text>
+  <text class="s-step" x="300" y="34" fill="#6C6C80">Chứng từ 1</text>
+  <text class="s-step" x="580" y="34" fill="#6C6C80">Chứng từ 2</text>
+  <text class="s-step" x="860" y="34" fill="#6C6C80">Chứng từ 3</text>
+  <text class="s-step" x="1140" y="34" fill="#6C6C80">Chứng từ 4</text>
+  <line x1="20" y1="46" x2="1400" y2="46" stroke="rgba(0,0,0,.09)"/>
+
+  <!-- ROW A -->
+  <g>
+    <rect x="20" y="66" width="250" height="70" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="36" y="94" fill="#961418">A &middot; Đủ tồn tại DC</text>
+    <text class="s-sub" x="36" y="114" fill="#3C3C50">Điều chuyển nội bộ</text>
+
+    <rect x="300" y="66" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="316" y="94" fill="#0C0C14">Phiếu xuất kho DC</text>
+    <text class="s-sub" x="316" y="114" fill="#6C6C80">SH5 &middot; Corr = Cửa hàng</text>
+
+    <rect x="580" y="66" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.3"/>
+    <text class="s-title" x="596" y="94" fill="#0C0C14">Phiếu nhập cửa hàng</text>
+    <text class="s-sub" x="596" y="114" fill="#6C6C80">SH5 &middot; Corr = Kho DC</text>
+
+    <path d="M270,101 H292" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M550,101 H572" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+  </g>
+
+  <!-- ROW B -->
+  <g>
+    <rect x="20" y="186" width="250" height="70" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="36" y="214" fill="#961418">B &middot; Thiếu, mua về DC</text>
+    <text class="s-sub" x="36" y="234" fill="#3C3C50">NCC giao kho trung tâm</text>
+
+    <rect x="300" y="186" width="250" height="70" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.3"/>
+    <text class="s-title" x="316" y="214" fill="#0C0C14">PO gửi NCC</text>
+    <text class="s-sub" x="316" y="234" fill="#961418">SkySHV2 &middot; Đích giao: DC</text>
+
+    <rect x="580" y="186" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="596" y="214" fill="#0C0C14">Phiếu nhập kho DC</text>
+    <text class="s-sub" x="596" y="234" fill="#6C6C80">SH5 &middot; Corr = NCC</text>
+
+    <rect x="860" y="186" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="876" y="214" fill="#0C0C14">Phiếu xuất kho DC</text>
+    <text class="s-sub" x="876" y="234" fill="#6C6C80">SH5 &middot; Corr = Cửa hàng</text>
+
+    <rect x="1140" y="186" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.3"/>
+    <text class="s-title" x="1156" y="214" fill="#0C0C14">Phiếu nhập cửa hàng</text>
+    <text class="s-sub" x="1156" y="234" fill="#6C6C80">SH5 &middot; Corr = Kho DC</text>
+
+    <path d="M270,221 H292" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M550,221 H572" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M830,221 H852" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M1110,221 H1132" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+  </g>
+
+  <!-- ROW C -->
+  <g>
+    <rect x="20" y="306" width="250" height="70" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="36" y="334" fill="#961418">C &middot; Thiếu, giao thẳng</text>
+    <text class="s-sub" x="36" y="354" fill="#3C3C50">NCC giao cửa hàng</text>
+
+    <rect x="300" y="306" width="250" height="70" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.3"/>
+    <text class="s-title" x="316" y="334" fill="#0C0C14">PO gửi NCC</text>
+    <text class="s-sub" x="316" y="354" fill="#961418">SkySHV2 &middot; Đích: Cửa hàng</text>
+
+    <rect x="580" y="306" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.3"/>
+    <text class="s-title" x="596" y="334" fill="#0C0C14">Phiếu nhập cửa hàng</text>
+    <text class="s-sub" x="596" y="354" fill="#6C6C80">SH5 &middot; Corr = NCC</text>
+
+    <path d="M270,341 H292" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M550,341 H572" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+  </g>
+
+  <!-- ROW D -->
+  <g>
+    <rect x="20" y="426" width="250" height="70" rx="8" fill="#F7F7FB" stroke="#6C6C80" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text class="s-title" x="36" y="454" fill="#0C0C14">D &middot; Bán thành phẩm</text>
+    <text class="s-sub" x="36" y="474" fill="#6C6C80">Ngoài phạm vi SkySHV2</text>
+
+    <rect x="300" y="426" width="250" height="70" rx="8" fill="#F7F7FB" stroke="#6C6C80" stroke-width="1.3" stroke-dasharray="4 3"/>
+    <text class="s-title" x="316" y="454" fill="#0C0C14">Phiếu sản xuất tại DC</text>
+    <text class="s-sub" x="316" y="474" fill="#6C6C80">SH5 &middot; NV HO chủ động</text>
+
+    <rect x="580" y="426" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="596" y="454" fill="#0C0C14">Phiếu xuất kho DC</text>
+    <text class="s-sub" x="596" y="474" fill="#6C6C80">SH5 &middot; Corr = Cửa hàng</text>
+
+    <rect x="860" y="426" width="250" height="70" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.3"/>
+    <text class="s-title" x="876" y="454" fill="#0C0C14">Phiếu nhập cửa hàng</text>
+    <text class="s-sub" x="876" y="474" fill="#6C6C80">SH5 &middot; Corr = Kho DC</text>
+
+    <path d="M270,461 H292" stroke="#6C6C80" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#a2)"/>
+    <path d="M550,461 H572" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+    <path d="M830,461 H852" stroke="#6C6C80" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+  </g>
+
+  <text class="s-badge" x="20" y="540" fill="#6C6C80">Nhánh D: SkySHV2 không kích hoạt và không theo dõi phiếu sản xuất. Hệ thống chỉ nhìn thấy con số tồn DC đã được cập nhật.</text>
+</svg>
+    </div>
+  </div>
+  <p class="dgm-cap">Hình 3. Bốn nhánh nguồn hàng và chuỗi chứng từ tương ứng.</p>
+</section>
+
+<section>
+  <h2><span class="num">2.6</span> Trạng thái chứng từ</h2>
+<div class="dgm">
+    <div class="dgm-scroll">
+<svg viewBox="0 0 1420 330" width="1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="So do trang thai PR va Consolidate PR">
+  <defs>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3C3C50"/>
+    </marker>
+    <marker id="a3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C01A1F"/>
+    </marker>
+  </defs>
+
+  <text class="s-lane" x="20" y="34" fill="#1540A8">Phiếu PR</text>
+  <g>
+    <rect x="20"  y="58" width="170" height="52" rx="26" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="105" y="90" fill="#0C0C14" text-anchor="middle">Nháp</text>
+    <rect x="270" y="58" width="170" height="52" rx="26" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.5"/>
+    <text class="s-title" x="355" y="90" fill="#0C0C14" text-anchor="middle">Mở</text>
+    <rect x="520" y="58" width="200" height="52" rx="26" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.5"/>
+    <text class="s-title" x="620" y="90" fill="#0C0C14" text-anchor="middle">Đã consolidate</text>
+    <rect x="800" y="58" width="190" height="52" rx="26" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.5"/>
+    <text class="s-title" x="895" y="90" fill="#0C0C14" text-anchor="middle">Đã xử lý</text>
+    <rect x="1070" y="58" width="170" height="52" rx="26" fill="#F7F7FB" stroke="#6C6C80" stroke-width="1.3"/>
+    <text class="s-title" x="1155" y="90" fill="#0C0C14" text-anchor="middle">Đóng</text>
+
+    <path d="M190,84 H262" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+    <text class="s-edge" x="196" y="76" fill="#6C6C80">xác nhận</text>
+    <path d="M440,84 H512" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+    <text class="s-edge" x="444" y="76" fill="#6C6C80">đưa vào phiếu</text>
+    <path d="M720,84 H792" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+    <text class="s-edge" x="722" y="76" fill="#6C6C80">Process</text>
+    <path d="M990,84 H1062" stroke="#3C3C50" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+    <text class="s-edge" x="994" y="76" fill="#6C6C80">nhập đủ</text>
+
+    <path d="M620,110 V148 H355 V118" stroke="#C01A1F" stroke-width="1.5" fill="none" marker-end="url(#a3r)"/>
+    <text class="s-edge" x="400" y="166" fill="#C01A1F">gỡ khỏi phiếu Nháp &middot; phân bổ của PR bị xóa</text>
+  </g>
+
+  <line x1="20" y1="196" x2="1400" y2="196" stroke="rgba(0,0,0,.09)"/>
+
+  <text class="s-lane" x="20" y="230" fill="#C01A1F">Phiếu Consolidate PR</text>
+  <g>
+    <rect x="20"  y="252" width="200" height="52" rx="26" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.5"/>
+    <text class="s-title" x="120" y="284" fill="#0C0C14" text-anchor="middle">Nháp</text>
+    <rect x="360" y="252" width="200" height="52" rx="26" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.9"/>
+    <text class="s-title" x="460" y="284" fill="#0C0C14" text-anchor="middle">Process</text>
+
+    <path d="M220,278 H352" stroke="#C01A1F" stroke-width="1.7" fill="none" marker-end="url(#a3r)"/>
+    <text class="s-edge" x="228" y="270" fill="#C01A1F">khóa vĩnh viễn</text>
+
+    <text class="s-sub" x="600" y="272" fill="#3C3C50">Nháp: thêm hoặc gỡ PR, sửa số lượng, nhập phân bổ.</text>
+    <text class="s-sub" x="600" y="292" fill="#3C3C50">Process: không sửa, không bóc lại, sinh chứng từ.</text>
+  </g>
+</svg>
+    </div>
+  </div>
+  <p class="dgm-cap">Hình 4. Trạng thái phiếu PR và phiếu Consolidate PR. Tên trạng thái PR là đề xuất, cần xác nhận (OQ-04).</p>
+</section>
+
+<div class="part" id="p3">
+  <span class="pno">PHẦN 3</span>
+  <h1>Nghiệp vụ kho tại cửa hàng</h1>
+  <p>Các nghiệp vụ kho diễn ra bên trong một cửa hàng: nhập kho, bán hàng trừ kho, sản xuất, xuất huỷ, kiểm kê và hai loại điều chuyển.</p>
+  <div class="plist"><span>3.1 Bốn nhóm chứng từ</span><span>3.2 Nhập kho</span><span>3.3 Bán hàng trừ kho</span><span>3.4 Sản xuất BOM</span><span>3.5 Xuất huỷ</span><span>3.6 Kiểm kê</span><span>3.7 Điều chuyển nội bộ</span><span>3.8 Điều chuyển liên cửa hàng</span></div>
+</div>
+
+<section>
+  <h2><span class="num">3.1</span> Bốn nhóm nghiệp vụ chứng từ</h2>
+
+<p>Mọi biến động kho đều đi qua một chứng từ cụ thể. Phiếu chỉ ghi nhận vào tồn kho sau khi được kích hoạt (BR-37).</p>
+
+<table>
+  <thead><tr><th style="width:52px">#</th><th style="width:260px">Nhóm nghiệp vụ</th><th style="width:190px">Chứng từ</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr">1</td><td><b>Nhập mua hàng</b></td><td>Phiếu nhập</td><td>Ghi nhận hàng hoá từ nhà cung cấp vào kho. Bảng giá dùng để liên kết và gợi ý giá mua (BR-44). Thu mua kích hoạt phiếu để ghi nhận số lượng vào kho.</td></tr>
+    <tr><td class="ctr">2</td><td><b>Xuất sử dụng / Nhập bán thành phẩm</b></td><td>Phiếu sản xuất</td><td>Nhân viên nhập danh sách bán thành phẩm, chọn kho lấy nguyên vật liệu, kho nhập thành phẩm và phiên bản BOM. Hệ thống gợi ý danh sách nguyên vật liệu cần tiêu hao. Kích hoạt phiếu thì sinh bán thành phẩm và trừ nguyên vật liệu.</td></tr>
+    <tr><td class="ctr">3</td><td><b>Xuất huỷ</b></td><td>Phiếu xuất</td><td>Dùng phiếu xuất với đối tác là Huỷ, kèm lý do cụ thể.</td></tr>
+    <tr><td class="ctr">4</td><td><b>Xuất khác / Nhập khác</b></td><td>Phiếu kiểm kê</td><td>Kiểm kê mặt hàng trong kho theo nhu cầu ngày, tuần hoặc tháng. Nhập số lượng thực tế, hệ thống tự tính chênh lệch. Kích hoạt: thừa thì sinh phiếu nhập khác, thiếu thì sinh phiếu xuất khác.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-blue">
+  <span class="cap">Nguồn</span>
+  <p>Mục 3.1 đến 3.6 lấy từ tài liệu <b>Nghiệp vụ kho tại cửa hàng</b> (Dcorp, nội bộ vận hành cửa hàng) và sheet <b>SOW_Kho</b>.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">3.2</span> Nhập kho tại cửa hàng</h2>
+
+<p>Phiếu nhập ghi nhận nguyên vật liệu vào kho của cửa hàng, làm tăng tồn kho. Là chứng từ trên SH5.</p>
+
+<h3>Nguồn hàng và nguồn tạo phiếu</h3>
+<table>
+  <thead><tr><th style="width:250px">Nguồn hàng</th><th style="width:220px">Correspondent</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr><td>Từ kho trung tâm</td><td>Kho DC</td><td>Chuyển từ phiếu xuất của kho DC (BR-18)</td></tr>
+    <tr><td>Từ nhà cung cấp giao thẳng</td><td>Nhà cung cấp</td><td>Ví dụ khách hàng đưa ra: hàng hải sản, thu mua đặt và nhà cung cấp giao trực tiếp xuống cửa hàng</td></tr>
+    <tr><td>Từ cửa hàng khác</td><td>Cửa hàng đã xuất</td><td>Luồng điều chuyển liên cửa hàng, xem mục 3.8</td></tr>
+  </tbody>
+</table>
+
+<p>Phiếu nhập lập được từ bốn nguồn: phiếu PR, phiếu PO, phiếu điều chuyển liên cửa hàng, hoặc thủ công (BR-38). Với các phiếu không phải thủ công, danh mục và số lượng nguyên vật liệu tự động điền theo phiếu cha.</p>
+
+<h3>Trường dữ liệu — tab Tiêu đề</h3>
+<table>
+  <thead><tr><th style="width:210px">Trường</th><th style="width:330px">Diễn giải</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr><td><b>Số</b></td><td>Số chứng từ, hệ thống tự nhảy</td><td>Thiết lập prefix theo format</td></tr>
+    <tr><td><b>Ngày</b></td><td>Ngày của chứng từ nhập kho, hệ thống ghi nhận theo ngày này</td><td>Không giới hạn ngày trước hoặc sau ngày hiện tại</td></tr>
+    <tr><td><b>Nhà cung cấp</b></td><td>Chọn từ danh mục nhà cung cấp</td><td></td></tr>
+    <tr><td><b>Kho nhận</b></td><td>Kho nhận hàng, chọn từ danh sách kho của địa điểm bán hàng</td><td>Có kho mặc định trong setting</td></tr>
+    <tr><td><b>Nghiệp vụ kế toán</b></td><td>Chọn lý do Nhập mua hoặc Khác tuỳ nhu cầu</td><td></td></tr>
+    <tr><td><b>Người nhận</b></td><td>Ghi chú bổ sung, thường là tên người nhận hàng</td><td></td></tr>
+    <tr><td><b>Kích hoạt</b></td><td>Trạng thái phiếu</td><td>Kích hoạt là đã ghi nhận, không kích hoạt là nháp</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-amber">
+  <span class="cap">Yêu cầu từ SOW &mdash; chờ chốt phạm vi</span>
+  <p>Cho phép nhập giá và VAT khi tạo phiếu nhập. Hiển thị đơn giá, VAT và thành tiền trên phiếu. Việc đối chiếu với BR-14 xem mục 5.1 và OQ-13.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">3.3</span> Bán hàng và trừ kho</h2>
+
+<p>Khi bán hàng, hệ thống trừ nguyên vật liệu khỏi kho theo công thức định lượng (BOM) của món.</p>
+
+<div class="callout c-red">
+  <span class="cap">Chưa đủ dữ liệu để đặc tả</span>
+  <p>Sáu sơ đồ luồng vận hành hàng ngày trong tài liệu nguồn nằm trong ảnh, chưa có mô tả bằng chữ. Phần dưới đây ghi ở mức nguyên tắc, chưa đủ để dev triển khai.</p>
+  <p>Ba câu hỏi cần trả lời: thời điểm trừ kho là ngay khi ra món hay gộp vào day-end; trừ ở kho nào khi cửa hàng có 8 kho; xử lý ra sao khi kho bị âm. Xem OQ-18.</p>
+</div>
+
+<table>
+  <thead><tr><th style="width:230px">Hạng mục</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td><b>Nguồn phát sinh</b></td><td>Giao dịch bán hàng trên POS</td></tr>
+    <tr><td><b>Căn cứ trừ kho</b></td><td>Công thức định lượng (BOM) của món</td></tr>
+    <tr><td><b>Đối tượng bị trừ</b></td><td>Nguyên vật liệu và bán thành phẩm</td></tr>
+    <tr><td><b>Thời điểm trừ</b></td><td class="ctr"><b style="color:var(--red)">Chưa chốt &mdash; OQ-18</b></td></tr>
+    <tr><td><b>Kho bị trừ</b></td><td class="ctr"><b style="color:var(--red)">Chưa chốt &mdash; OQ-18</b></td></tr>
+  </tbody>
+</table>
+
+</section>
+
+<section>
+  <h2><span class="num">3.4</span> Sản xuất theo BOM tại cửa hàng</h2>
+
+<p>Cửa hàng tự sản xuất bán thành phẩm từ công thức định lượng có sẵn. Là phiếu sản xuất trên SH5. Khác với sản xuất tại kho trung tâm (mục 4.3) ở chỗ kho lấy nguyên vật liệu và kho nhập thành phẩm đều thuộc cửa hàng.</p>
+
+<h3>Cách hoạt động</h3>
+<ul>
+  <li>Nhân viên nhập danh sách bán thành phẩm cần sản xuất.</li>
+  <li>Chọn kho lấy nguyên vật liệu, kho nhập bán thành phẩm và phiên bản BOM.</li>
+  <li>Hệ thống gợi ý danh sách nguyên vật liệu cần tiêu hao, cho toàn bộ phiếu hoặc từng món.</li>
+  <li>Kích hoạt phiếu: nhập bán thành phẩm vào kho đích, trừ nguyên vật liệu ở kho nguồn (BR-39).</li>
+</ul>
+
+<h3>Trường dữ liệu</h3>
+<table>
+  <thead><tr><th style="width:120px">Tab</th><th style="width:230px">Trường</th><th>Diễn giải</th></tr></thead>
+  <tbody>
+    <tr><td>Tiêu đề</td><td><b>Số</b></td><td>Số chứng từ, hệ thống tự nhảy</td></tr>
+    <tr><td>Tiêu đề</td><td><b>Ngày</b></td><td>Ngày phiếu chứng từ</td></tr>
+    <tr><td>Tiêu đề</td><td><b>Nhà cung cấp</b></td><td>Chọn kho xuất nguyên vật liệu. Trường dùng chung giao diện, không phải nhà cung cấp thật (BR-45)</td></tr>
+    <tr><td>Tiêu đề</td><td><b>Kho nhận</b></td><td>Chọn kho nhập thành phẩm</td></tr>
+    <tr><td>Hàng hoá</td><td><b>Mã, DVT, Số lượng</b></td><td>Mã sản phẩm, đơn vị tính, số lượng cần sản xuất</td></tr>
+    <tr><td>Hàng hoá</td><td><b>Giá vốn</b></td><td>Giá, Tổng kt, VAT, Tổng c/t theo giá vốn trung bình của hệ thống</td></tr>
+    <tr><td>Hàng hoá</td><td><b>Định lượng</b></td><td>Tên công thức (BOM) và phiên bản công thức sử dụng</td></tr>
+    <tr><td>Hàng hoá</td><td><b>Tồn, Extend code, ExpDate</b></td><td>Tồn còn lại trong kho, mã mở rộng, ngày hết hạn</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-amber">
+  <span class="cap">Chưa chốt</span>
+  <p>BOM quản lý tập trung ở văn phòng trung tâm hay cửa hàng được sửa. Có kế hoạch sản xuất theo lịch hay chỉ làm phát sinh theo nhu cầu. Xem OQ-19.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">3.5</span> Xuất huỷ</h2>
+
+<p>Dùng cho hàng bể, đổ vỡ, hết hạn hoặc không còn sử dụng được. Là phiếu xuất trên SH5 với đối tác là Huỷ, bắt buộc kèm lý do cụ thể (BR-40).</p>
+
+<h3>Trường dữ liệu — tab Tiêu đề</h3>
+<table>
+  <thead><tr><th style="width:210px">Trường</th><th style="width:330px">Diễn giải</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr><td><b>Số</b></td><td>Số chứng từ, hệ thống tự nhảy</td><td></td></tr>
+    <tr><td><b>Ngày</b></td><td>Ngày phiếu chứng từ</td><td></td></tr>
+    <tr><td><b>Nhà cung cấp</b></td><td>Chọn kho xuất</td><td>Trường dùng chung giao diện (BR-45)</td></tr>
+    <tr><td><b>Nơi nhận / Lý do xuất</b></td><td>Đối tác hoặc lý do xuất hàng</td><td>Thuộc danh mục đối tác. Yêu cầu bổ sung trường Lý do xuất riêng, lấy từ master data, không dùng ô ghi chú (BR-33)</td></tr>
+    <tr><td><b>Kích hoạt</b></td><td>Trạng thái phiếu</td><td>Kích hoạt là đã ghi nhận, không kích hoạt là nháp</td></tr>
+  </tbody>
+</table>
+
+<p>Tab Hàng hoá của phiếu xuất có đầy đủ nhóm cột: Giá, Tỷ lệ VAT, Tỷ lệ TBH, Tổng k/t, nhóm Tổng trên tiền tệ cơ bản, nhóm Giá vốn, nhóm Số lượng và giá trị bù âm, Tồn và ExpDate.</p>
+
+<div class="callout c-amber">
+  <span class="cap">Chưa chốt</span>
+  <p>Danh mục lý do huỷ lấy từ master data nào, ai duyệt phiếu huỷ, có hạn mức giá trị cần phê duyệt hay không. Xem OQ-20.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">3.6</span> Kiểm kê ngày, tuần, tháng</h2>
+
+<p>Kiểm kê các mặt hàng trong kho theo nhu cầu ngày, tuần hoặc tháng. Là phiếu kiểm kê trên SH5.</p>
+
+<h3>Cách hoạt động</h3>
+<ol style="margin:0 0 .9rem;padding-left:1.3rem;">
+  <li>Chọn kho cần kiểm kê và nhập số lượng tồn thực tế.</li>
+  <li>Hệ thống tự động tính chênh lệch giữa tồn thực tế và tồn sổ sách (BR-41).</li>
+  <li>Kích hoạt phiếu: thừa thì tự nhập kho tương ứng <b>phiếu nhập khác</b>, thiếu thì tự trừ kho tương ứng <b>phiếu xuất khác</b> (BR-42).</li>
+</ol>
+
+<h3>Ba tab của phiếu</h3>
+<table>
+  <thead><tr><th style="width:210px">Tab</th><th style="width:300px">Trường</th><th>Diễn giải</th></tr></thead>
+  <tbody>
+    <tr><td><b>Hàng hoá</b></td><td>Mã, DVT, Số lượng, Định lượng (Tên và Phiên bản), Tồn, ExpDate</td><td>Số lượng là số kiểm kê thực tế</td></tr>
+    <tr><td><b>Thừa/thiếu</b></td><td>Mã, Hàng hoá, DVT, Tồn thực tế, Tồn sổ sách, Thừa/thiếu</td><td>Thừa là số dương, thiếu là số âm</td></tr>
+    <tr><td><b>Số lượng sau kiểm kê</b></td><td>Mã, Hàng hoá, DVT, Số lượng, Extend Code</td><td>Số lượng tồn sau khi kích hoạt phiếu</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-amber">
+  <span class="cap">Chưa chốt</span>
+  <p>Tần suất kiểm kê bắt buộc theo từng kho, ai duyệt chênh lệch, có ngưỡng cảnh báo hay không, và chênh lệch giá trị hạch toán vào đâu. Xem OQ-21.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">3.7</span> Điều chuyển kho nội bộ trong cửa hàng</h2>
+<p>Nghiệp vụ mới, chưa có trong mục 01 đến 12. Khi cần mượn hàng giữa các kho trong cùng một cửa hàng, nhân viên lập phiếu điều chuyển nội bộ.</p>
+
+  <table>
+    <thead><tr><th style="width:190px">Hạng mục</th><th>Nội dung</th></tr></thead>
+    <tbody>
+      <tr><td><b>Chứng từ</b></td><td>Phiếu điều chuyển nội bộ &mdash; là phiếu trên hệ thống SH5</td></tr>
+      <tr><td><b>Phạm vi</b></td><td>Giữa các kho trong cùng một cửa hàng</td></tr>
+      <tr><td><b>Giá trị ghi nhận</b></td><td>Theo giá vốn (BR-24)</td></tr>
+      <tr><td><b>Xác nhận</b></td><td>Hai chiều: kho xuất đánh dấu đã chuyển, kho nhận đánh dấu đã nhận (BR-25, chờ chốt)</td></tr>
+      <tr><td><b>Người thực hiện</b></td><td>Nhân viên tại cửa hàng</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-green">
+    <span class="cap">Khuyến nghị của Dcorp đã ghi trong SOW</span>
+    <p>Nếu chuyển kho nội bộ trong cùng một cửa hàng mà vẫn cần quy trình xác nhận Xuất và Nhận thì sẽ phát sinh nhiều thao tác, làm chậm công việc. Đề nghị khách hàng xem xét lại mức độ cần thiết của bước xác nhận này. Xem OQ-14.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">3.8</span> Điều chuyển liên cửa hàng</h2>
+<p>Nghiệp vụ mới. Khi một cửa hàng hết hàng, thay vì chờ Kho trung tâm, cửa hàng đó mượn hàng từ cửa hàng khác. Phiếu thực hiện trên SkySHV2, chứng từ kho ghi nhận trên SH5.</p>
+
+  <div class="dgm">
+    <div class="dgm-scroll">
+<svg viewBox="0 0 1420 400" width="1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Luong dieu chuyen lien cua hang">
+  <defs>
+    <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3C3C50"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="46"  width="1420" height="150" fill="#FFFFFF"/>
+  <rect x="0" y="196" width="1420" height="150" fill="#F7F7FB"/>
+  <line x1="0" y1="46"  x2="1420" y2="46"  stroke="rgba(0,0,0,.09)"/>
+  <line x1="0" y1="196" x2="1420" y2="196" stroke="rgba(0,0,0,.09)"/>
+  <line x1="0" y1="346" x2="1420" y2="346" stroke="rgba(0,0,0,.09)"/>
+  <line x1="150" y1="46" x2="150" y2="346" stroke="rgba(0,0,0,.09)"/>
+
+  <text class="s-lane" fill="#1540A8" transform="translate(38,168) rotate(-90)">Cửa hàng A</text>
+  <text class="s-lane" fill="#C01A1F" transform="translate(38,318) rotate(-90)">Cửa hàng B</text>
+  <text class="s-badge" x="160" y="34" fill="#6C6C80">A = cửa hàng thiếu hàng · B = cửa hàng còn hàng</text>
+
+  <g>
+    <rect x="180" y="82" width="220" height="78" rx="8" fill="#FFFFFF" stroke="#1540A8" stroke-width="1.4"/>
+    <text class="s-title" x="196" y="110" fill="#0C0C14">1 · Lập phiếu yêu cầu</text>
+    <text class="s-sub" x="196" y="130" fill="#3C3C50">Gửi từ A sang B</text>
+    <text class="s-sub" x="196" y="147" fill="#6C6C80">Template hoặc thủ công</text>
+  </g>
+  <g>
+    <rect x="480" y="232" width="220" height="78" rx="8" fill="#FBF0F0" stroke="#C01A1F" stroke-width="1.4"/>
+    <text class="s-title" x="496" y="260" fill="#0C0C14">2 · Xác nhận số lượng</text>
+    <text class="s-sub" x="496" y="280" fill="#3C3C50">B kiểm tra và chốt SL</text>
+    <text class="s-sub" x="496" y="297" fill="#6C6C80">Có thể chốt thấp hơn</text>
+  </g>
+  <g>
+    <rect x="780" y="232" width="220" height="78" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.4"/>
+    <text class="s-title" x="796" y="260" fill="#0C0C14">3 · Phiếu xuất</text>
+    <text class="s-sub" x="796" y="280" fill="#3C3C50">Đối tác = Cửa hàng A</text>
+    <text class="s-sub" x="796" y="297" fill="#6C6C80">Kèm Giá, VAT, Tổng</text>
+  </g>
+  <g>
+    <rect x="1080" y="82" width="220" height="78" rx="8" fill="#FFFFFF" stroke="#6C6C80" stroke-width="1.4"/>
+    <text class="s-title" x="1096" y="110" fill="#0C0C14">4 · Phiếu nhập</text>
+    <text class="s-sub" x="1096" y="130" fill="#3C3C50">Đối tác = Cửa hàng B</text>
+    <text class="s-sub" x="1096" y="147" fill="#6C6C80">Kèm Giá, VAT, Tổng</text>
+  </g>
+
+  <path d="M290,160 V262 H472" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#a4)"/>
+  <text class="s-edge" x="300" y="212" fill="#6C6C80">Phiếu yêu cầu hàng</text>
+  <path d="M700,271 H772" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#a4)"/>
+  <path d="M1000,271 H1190 V168" stroke="#3C3C50" stroke-width="1.6" fill="none" marker-end="url(#a4)"/>
+  <text class="s-edge" x="1200" y="212" fill="#6C6C80">Hàng về A</text>
+
+  <text class="s-badge" x="180" y="378" fill="#6C6C80">Tính năng hỗ trợ: A hỏi "Ai còn mặt hàng X với số lượng N?" · Các cửa hàng khác kiểm tra và trả lời trước khi A lập phiếu.</text>
+</svg>
+    </div>
+  </div>
+  <p class="dgm-cap">Hình 5. Luồng điều chuyển liên cửa hàng.</p>
+
+  <h3>Quy tắc</h3>
+  <table>
+    <thead><tr><th class="id" style="width:76px">Mã</th><th>Nội dung</th></tr></thead>
+    <tbody>
+      <tr><td class="id">BR-26</td><td>Cửa hàng thiếu hàng lập phiếu yêu cầu hàng gửi tới cửa hàng còn hàng. Phiếu thực hiện trên SkySHV2.</td></tr>
+      <tr><td class="id">BR-27</td><td>Cửa hàng được yêu cầu xác nhận số lượng trước khi xuất hàng.</td></tr>
+      <tr><td class="id">BR-28</td><td>Cửa hàng được yêu cầu lập phiếu xuất với đối tác là cửa hàng yêu cầu, kèm giá.</td></tr>
+      <tr><td class="id">BR-29</td><td>Cửa hàng yêu cầu lập phiếu nhập với đối tác là cửa hàng đã xuất, kèm giá.</td></tr>
+      <tr><td class="id">BR-30</td><td>Mọi phiếu xuất và phiếu nhập trong luồng điều chuyển phải thể hiện Giá, VAT và Tổng tiền cho từng mặt hàng.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Tính năng hỗ trợ</h3>
+  <p>Cửa hàng A đặt câu hỏi "Ai còn mặt hàng X với số lượng N?". Các cửa hàng khác kiểm tra tồn và trả lời có đủ hay không, trước khi A lập phiếu yêu cầu. Đây là bước tra cứu, không sinh chứng từ.</p>
+
+  <div class="callout c-amber">
+    <span class="cap">Chưa chốt</span>
+    <p>Người thực hiện điều chuyển là kế toán chi nhánh hay nhân viên tại nhà hàng. Xem OQ-15.</p>
+  </div>
+</section>
+
+<div class="part" id="p4">
+  <span class="pno">PHẦN 4</span>
+  <h1>Nghiệp vụ tại kho trung tâm</h1>
+  <p>Các nghiệp vụ kho tại kho trung tâm: mua hàng, nhập kho, sản xuất bán thành phẩm, xuất kho xuống cửa hàng, huỷ và kiểm kê.</p>
+  <div class="plist"><span>4.1 Mua hàng và PO</span><span>4.2 Nhập kho DC</span><span>4.3 Sản xuất tại DC</span><span>4.4 Xuất kho xuống cửa hàng</span><span>4.5 Huỷ và kiểm kê</span></div>
+</div>
+
+<section>
+  <h2><span class="num">4.1</span> Mua hàng và phiếu PO</h2>
+
+<p>Kho trung tâm dựa vào số lượng order từ các cửa hàng để mua hàng và nhập vào kho, phục vụ chế biến và cấp xuống cửa hàng. Quy trình mua hàng thực hiện trên SkySHV2. Luồng đầy đủ từ PR đến PO xem Phần 2.</p>
+
+<h3>Các bước</h3>
+<ul>
+  <li>Xác nhận phiếu PR của các cửa hàng.</li>
+  <li>Tổng hợp thành phiếu Consolidate (mục 2.4).</li>
+  <li>Phân bổ hàng hoá: phần điều chuyển từ kho trung tâm và phần đặt nhà cung cấp (mục 2.5).</li>
+  <li>Chọn nhà cung cấp: mặc định theo bảng giá, cho phép đổi sang nhà cung cấp khác (BR-32).</li>
+  <li>Lập PO, phân tách từng dòng theo từng cửa hàng (BR-31).</li>
+</ul>
+
+<table>
+  <thead><tr><th style="width:230px">Hạng mục</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td><b>Chứng từ</b></td><td>Phiếu PO trên SkySHV2</td></tr>
+    <tr><td><b>Gộp phiếu</b></td><td>Một PO gộp được phần mua ngoài của nhiều PR (BR-15)</td></tr>
+    <tr><td><b>Mua bù tồn</b></td><td>PO chứa thêm dòng mua bù tồn cho kho DC, không thuộc PR nào (BR-15)</td></tr>
+    <tr><td><b>Đích giao hàng</b></td><td>Về kho DC, hoặc giao thẳng cửa hàng (BR-16)</td></tr>
+    <tr><td><b>Đơn giá</b></td><td>Nạp từ bảng giá nhà cung cấp</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-green">
+  <span class="cap">Khuyến nghị của Dcorp</span>
+  <p>Không để hệ thống tự động chọn nhà cung cấp theo giá thấp nhất. Chi tiết xem mục 6.2 và OQ-17.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">4.2</span> Nhập kho tại kho trung tâm</h2>
+
+<p>Bộ phận thu mua liên hệ nhà cung cấp để đặt hàng. Khi nhận hàng thì lập phiếu nhập để ghi nhận tồn kho. Là phiếu nhập trên SH5.</p>
+
+<table>
+  <thead><tr><th style="width:230px">Hạng mục</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td><b>Chứng từ</b></td><td>Phiếu nhập kho trên SH5</td></tr>
+    <tr><td><b>Nguồn tạo phiếu</b></td><td>Từ phiếu PR, từ phiếu PO, hoặc thủ công</td></tr>
+    <tr><td><b>Correspondent</b></td><td>Nhà cung cấp</td></tr>
+    <tr><td><b>Giá và VAT</b></td><td>Cho phép nhập giá và VAT khi tạo phiếu. Hiển thị đơn giá, VAT, thành tiền. Xem mục 5.1 và OQ-13</td></tr>
+  </tbody>
+</table>
+
+<p>Trường dữ liệu tương tự phiếu nhập tại cửa hàng, xem mục 3.2.</p>
+
+</section>
+
+<section>
+  <h2><span class="num">4.3</span> Sản xuất bán thành phẩm tại kho trung tâm</h2>
+
+<p>Kho trung tâm sản xuất bán thành phẩm và thành phẩm. Sau khi sản xuất xong thì nhập vào các kho để xuất xuống cửa hàng.</p>
+
+<table>
+  <thead><tr><th style="width:230px">Hạng mục</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td><b>Chứng từ</b></td><td>Phiếu sản xuất theo định mức, là phiếu trên SH5</td></tr>
+    <tr><td><b>Người phụ trách</b></td><td>Nhân viên HO</td></tr>
+    <tr><td><b>Phạm vi hệ thống</b></td><td>SkySHV2 không kích hoạt và không theo dõi phiếu sản xuất (BR-21). Hệ thống chỉ nhìn thấy con số tồn DC đã được cập nhật</td></tr>
+    <tr><td><b>Quan hệ với phân bổ</b></td><td>Khi bán thành phẩm thiếu tồn, hệ thống cho phép tồn âm và nhân viên HO lập phiếu sản xuất bổ sung sau (BR-11, BR-22)</td></tr>
+  </tbody>
+</table>
+
+<p>Bán thành phẩm được xử lý như một mặt hàng bình thường. Khác biệt duy nhất là phiếu sản xuất đặt tại kho DC, không đặt tại kho cửa hàng. Khi xuống cửa hàng, bán thành phẩm được dùng làm nguyên vật liệu chế biến món.</p>
+
+</section>
+
+<section>
+  <h2><span class="num">4.4</span> Xuất kho xuống cửa hàng</h2>
+
+<p>Kho trung tâm xuất kho cho các cửa hàng dựa theo số lượng đã phân bổ trên phiếu Consolidate. Trường hợp thiếu hàng thì bộ phận thu mua liên hệ nhà cung cấp để bổ sung (nhánh B và C ở mục 2.5).</p>
+
+<table>
+  <thead><tr><th style="width:230px">Hạng mục</th><th>Nội dung</th></tr></thead>
+  <tbody>
+    <tr><td><b>Chứng từ</b></td><td>Phiếu xuất trên SH5</td></tr>
+    <tr><td><b>Kho xuất</b></td><td>Kho nguồn trong DC do nhân viên HO chọn thủ công (BR-12)</td></tr>
+    <tr><td><b>Correspondent</b></td><td>Cửa hàng nhận hàng (BR-18, BR-23)</td></tr>
+    <tr><td><b>Giá</b></td><td>Có giá của từng mặt hàng: Giá, VAT, Tổng tiền</td></tr>
+    <tr><td><b>Lý do xuất</b></td><td>Trường riêng lấy từ master data, không dùng ô ghi chú (BR-33)</td></tr>
+  </tbody>
+</table>
+
+<div class="callout c-amber">
+  <span class="cap">Đang cân nhắc &mdash; ghi nhận từ SOW</span>
+  <p>Chưa chốt giữa hai loại chứng từ: phiếu xuất bán nội bộ, hoặc phiếu xuất cho đối tác là cửa hàng tương ứng. Kèm theo là câu hỏi đối tác là cửa hàng hay kho của cửa hàng, xem OQ-12.</p>
+</div>
+
+</section>
+
+<section>
+  <h2><span class="num">4.5</span> Xuất huỷ và kiểm kê tại kho trung tâm</h2>
+
+<p>Ngoài luồng cấp hàng cho cửa hàng, kho trung tâm vận hành đầy đủ các nghiệp vụ kho như một đơn vị độc lập (BR-43).</p>
+
+<table>
+  <thead><tr><th style="width:230px">Nghiệp vụ</th><th style="width:230px">Chứng từ</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <tr><td><b>Sản xuất</b></td><td>Phiếu sản xuất</td><td>Xem mục 4.3</td></tr>
+    <tr><td><b>Xuất cho đối tác</b></td><td>Phiếu xuất</td><td>Đối tác là các cửa hàng. Xem mục 4.4</td></tr>
+    <tr><td><b>Xuất huỷ</b></td><td>Phiếu xuất, đối tác là Huỷ</td><td>Cùng cơ chế với cửa hàng, xem mục 3.5</td></tr>
+    <tr><td><b>Kiểm kê</b></td><td>Phiếu kiểm kê</td><td>Cùng cơ chế với cửa hàng, xem mục 3.6</td></tr>
+    <tr><td><b>Mua hàng</b></td><td>PO cho nhà cung cấp</td><td>Xem mục 4.1</td></tr>
+  </tbody>
+</table>
+
+<p>Các nghiệp vụ này thực hiện trực tiếp trên SH5, không nằm trong phạm vi phát triển của SkySHV2 ở phase hiện tại.</p>
+
+</section>
+
+<div class="part" id="p5">
+  <span class="pno">PHẦN 5</span>
+  <h1>Quy định chung</h1>
+  <p>Các quy định áp dụng xuyên suốt: giá và VAT trên chứng từ, khung Internal Logistic, toàn bộ quy tắc nghiệp vụ và yêu cầu giao diện.</p>
+  <div class="plist"><span>5.1 Giá và VAT</span><span>5.2 Internal Logistic</span><span>5.3 Quy tắc nghiệp vụ</span><span>5.4 Cải tiến giao diện</span></div>
+</div>
+
+<section>
+  <h2><span class="num">5.1</span> Yêu cầu về giá và VAT trên chứng từ</h2>
+<p>SOW_Kho đưa ra một số yêu cầu về hiển thị và nhập giá trên chứng từ. Phần này ghi nhận nguyên trạng yêu cầu; việc đối chiếu với BR-14 để ra đặc tả cuối cùng đang chờ chốt.</p>
+
+  <table>
+    <thead><tr><th style="width:240px">Chứng từ</th><th style="width:230px">Yêu cầu trong SOW</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+      <tr><td><b>Phiếu nhập tại cửa hàng</b></td><td>Cho phép nhập giá và VAT khi tạo phiếu. Hiển thị đơn giá, VAT, thành tiền.</td><td>Áp dụng cho cả nhập từ Kho trung tâm và nhập từ nhà cung cấp</td></tr>
+      <tr><td><b>Phiếu nhập tại Kho trung tâm</b></td><td>Cho phép nhập giá và VAT khi tạo phiếu.</td><td>Giá mua từ nhà cung cấp</td></tr>
+      <tr><td><b>Phiếu xuất từ Kho trung tâm</b></td><td>Có giá của từng mặt hàng: Giá, VAT, Tổng tiền.</td><td>SOW ghi đang cân nhắc giữa phiếu xuất bán nội bộ và phiếu xuất cho đối tác</td></tr>
+      <tr><td><b>Phiếu điều chuyển liên cửa hàng</b></td><td>Cả phiếu xuất và phiếu nhập đều phải có Giá, VAT, Tổng.</td><td>BR-30</td></tr>
+      <tr><td><b>Phiếu điều chuyển nội bộ</b></td><td>Ghi nhận theo giá vốn.</td><td>BR-24</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-amber">
+    <span class="cap">Cần đối chiếu &mdash; chưa chốt</span>
+    <p>BR-14 ở mục 10 chốt giá do SH5 tính theo giá vốn tại thời điểm ghi nhận, SkySHV2 không tính giá. Các yêu cầu trên không đương nhiên mâu thuẫn, nhưng cần tách rõ ba loại giá: giá mua từ nhà cung cấp (người dùng nhập), giá vốn xuất nội bộ (SH5 tính), và giá trên phiếu điều chuyển liên cửa hàng. Xem OQ-13.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">5.2</span> Khung Internal Logistic</h2>
+<p>SOW_Kho đặt toàn bộ các luồng trên vào một khung chung gọi là Internal Logistic, phục vụ việc lập phiếu yêu cầu hàng giữa Store và Central Warehouse, và giữa các Store với nhau.</p>
+
+  <table>
+    <thead><tr><th style="width:52px">#</th><th style="width:260px">Thành phần</th><th style="width:140px">Trạng thái</th><th>Ghi chú</th></tr></thead>
+    <tbody>
+      <tr><td class="ctr">1</td><td>Lập PR giữa đơn vị gửi và đơn vị nhận</td><td class="ctr"><b style="color:var(--green)">Đã mô tả</b></td><td>Mục 05, 06</td></tr>
+      <tr><td class="ctr">2</td><td>Tổng hợp PR và phân tích để tạo phiếu xuất hoặc tạo PO</td><td class="ctr"><b style="color:var(--green)">Đã mô tả</b></td><td>Mục 06, 07, 08</td></tr>
+      <tr><td class="ctr">3</td><td>Gửi và nhận giữa các Store</td><td class="ctr"><b style="color:var(--green)">Đã mô tả</b></td><td>Mục 15</td></tr>
+      <tr><td class="ctr">4</td><td>Tính năng hỏi Store còn hàng hay không</td><td class="ctr"><b style="color:var(--green)">Đã mô tả</b></td><td>Mục 15</td></tr>
+      <tr><td class="ctr">5</td><td>Trạng thái hàng đang trên đường đi</td><td class="ctr"><b style="color:var(--muted)">Ngoài phạm vi</b></td><td>Xem OQ-16</td></tr>
+      <tr><td class="ctr">6</td><td>Ghi nhận và xử lý chênh lệch giữa số gửi và số nhận</td><td class="ctr"><b style="color:var(--muted)">Ngoài phạm vi</b></td><td>Xem OQ-16</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-red">
+    <span class="cap">Giữ nguyên giả định của phase hiện tại</span>
+    <p>Phase này tiếp tục giữ giả định nhà cung cấp luôn giao đủ số lượng đã đặt. Vì vậy hai thành phần số 5 và số 6 của khung Internal Logistic <b>không nằm trong phạm vi</b>, thống nhất với phần Giả định vận hành ở mục 11 và với F-91, F-92 trong danh sách tính năng.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">5.3</span> Quy tắc nghiệp vụ</h2>
+<table>
+    <thead>
+      <tr><th class="id" style="width:76px">Mã</th><th style="width:190px">Nhóm</th><th>Nội dung</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="id">BR-01</td><td>Phiếu PR</td><td>PR chỉ chứa yêu cầu hàng. PR không chứa thông tin kho nguồn. Kho nguồn do nhân viên HO quyết định ở bước phân bổ.</td></tr>
+      <tr><td class="id">BR-02</td><td>Phiếu PR</td><td>Mỗi dòng PR chỉ định một kho đích tại cửa hàng. Một phiếu PR có thể chứa nhiều kho đích khác nhau trong cùng cửa hàng.</td></tr>
+      <tr><td class="id">BR-03</td><td>Consolidate</td><td>Một PR chỉ thuộc tối đa một phiếu Consolidate PR.</td></tr>
+      <tr><td class="id">BR-04</td><td>Consolidate</td><td>Chỉ PR ở trạng thái Mở mới được đưa vào phiếu Consolidate.</td></tr>
+      <tr><td class="id">BR-05</td><td>Consolidate</td><td>Phiếu Consolidate ở trạng thái Nháp cho phép thêm hoặc gỡ PR. Việc thêm PR mới không ghi đè phần phân bổ đã nhập cho các PR khác.</td></tr>
+      <tr><td class="id">BR-06</td><td>Consolidate</td><td>Khi gỡ một PR khỏi phiếu Nháp, PR quay về trạng thái Mở và phần phân bổ đã nhập cho PR đó bị xóa.</td></tr>
+      <tr><td class="id">BR-07</td><td>Consolidate</td><td>Phiếu Consolidate chuyển sang Process thì bị khóa: không sửa, không thêm hoặc gỡ PR, không bóc lại.</td></tr>
+      <tr><td class="id">BR-08</td><td>Phân bổ</td><td>Nhân viên HO được sửa số lượng yêu cầu trước khi phiếu chuyển sang trạng thái xác nhận.</td></tr>
+      <tr><td class="id">BR-09</td><td>Phân bổ</td><td>Mỗi dòng PR được phủ đủ 100 phần trăm: số lượng từ DC cộng số lượng mua từ NCC bằng số lượng yêu cầu. Không tồn tại phần còn thiếu.</td></tr>
+      <tr><td class="id">BR-10</td><td>Phân bổ</td><td>Tồn kho DC hiển thị lấy tại thời điểm mở phiếu. Hệ thống không giữ chỗ. Chấp nhận chênh lệch khi nhiều nhân viên cùng làm nhiều phiếu.</td></tr>
+      <tr><td class="id">BR-11</td><td>Phân bổ</td><td>Khi tổng số lượng phân bổ từ DC vượt tồn DC, hệ thống cảnh báo và vẫn cho phép tiếp tục. SH5 cho phép tồn âm, nhân viên HO lập phiếu sản xuất bổ sung sau. <b>Chờ xác nhận, xem OQ-01.</b></td></tr>
+      <tr><td class="id">BR-12</td><td>Phân bổ</td><td>Kho nguồn trong DC do nhân viên HO chọn thủ công. Không có bảng mapping tự động và không có thuật toán phân bổ.</td></tr>
+      <tr><td class="id">BR-13</td><td>Đơn vị tính</td><td>Đơn vị tính quy chuẩn thống nhất từ PR sang PO. Làm tròn theo quy cách đóng gói không xử lý ở phase này.</td></tr>
+      <tr><td class="id">BR-14</td><td>Giá</td><td>Giá do SH5 tính theo giá vốn tại thời điểm ghi nhận chứng từ. SkySHV2 không tính giá.</td></tr>
+      <tr><td class="id">BR-15</td><td>Phiếu PO</td><td>Một PO có thể gộp phần mua ngoài của nhiều PR, và có thể chứa thêm dòng mua bù tồn cho kho DC không thuộc PR nào.</td></tr>
+      <tr><td class="id">BR-16</td><td>Phiếu PO</td><td>PO xác định đích giao hàng: về kho DC hoặc giao thẳng cửa hàng.</td></tr>
+      <tr><td class="id">BR-17</td><td>Phiếu nhập</td><td>Phiếu nhập tại cửa hàng do cửa hàng tự lập, thường kế thừa từ PR tương ứng.</td></tr>
+      <tr><td class="id">BR-18</td><td>Phiếu nhập</td><td>Correspondent trên phiếu nhập là kho DC nếu hàng điều chuyển từ kho trung tâm, là nhà cung cấp nếu hàng giao thẳng.</td></tr>
+      <tr><td class="id">BR-19</td><td>Phiếu nhập</td><td>Tổng số lượng các phiếu nhập của một dòng PR không vượt quá số lượng của dòng PR đó.</td></tr>
+      <tr><td class="id">BR-20</td><td>Phiếu nhập</td><td>Mỗi kho lập một phiếu nhập riêng. Một PO có thể tách thành nhiều phiếu nhập.</td></tr>
+      <tr><td class="id">BR-21</td><td>Sản xuất</td><td>Phiếu sản xuất do nhân viên HO lập trực tiếp trên SH5. SkySHV2 không kích hoạt và không theo dõi phiếu sản xuất.</td></tr>
+      <tr><td class="id">BR-22</td><td>Tồn kho</td><td>Hệ thống cho phép tồn âm tại kho DC. Nhân viên HO lập phiếu sản xuất bổ sung sau khi phát sinh.</td></tr>
+      <tr><td class="id">BR-23</td><td>Correspondent</td><td>Mỗi cửa hàng là một Correspondent. Toàn bộ kho trung tâm là một Correspondent duy nhất.</td></tr><tr><td class="id">BR-24</td><td>Điều chuyển nội bộ</td><td>Điều chuyển hàng giữa các kho trong cùng một cửa hàng ghi nhận theo giá vốn. Là phiếu điều chuyển nội bộ trên SH5.</td></tr><tr><td class="id">BR-25</td><td>Điều chuyển nội bộ</td><td>Phiếu điều chuyển nội bộ cần xác nhận hai chiều: kho xuất đánh dấu đã chuyển, kho nhận đánh dấu đã nhận. <b>Chờ xác nhận, xem OQ-14.</b></td></tr><tr><td class="id">BR-26</td><td>Liên cửa hàng</td><td>Cửa hàng thiếu hàng lập phiếu yêu cầu hàng gửi tới cửa hàng còn hàng. Phiếu thực hiện trên SkySHV2.</td></tr><tr><td class="id">BR-27</td><td>Liên cửa hàng</td><td>Cửa hàng được yêu cầu xác nhận số lượng trước khi xuất hàng.</td></tr><tr><td class="id">BR-28</td><td>Liên cửa hàng</td><td>Cửa hàng được yêu cầu lập phiếu xuất với đối tác là cửa hàng yêu cầu, kèm giá.</td></tr><tr><td class="id">BR-29</td><td>Liên cửa hàng</td><td>Cửa hàng yêu cầu lập phiếu nhập với đối tác là cửa hàng đã xuất, kèm giá.</td></tr><tr><td class="id">BR-30</td><td>Giá và VAT</td><td>Mọi phiếu xuất và phiếu nhập trong luồng điều chuyển phải thể hiện Giá, VAT và Tổng tiền cho từng mặt hàng.</td></tr><tr><td class="id">BR-31</td><td>Phiếu PO</td><td>PO gửi nhà cung cấp phân tách từng dòng theo từng cửa hàng.</td></tr><tr><td class="id">BR-32</td><td>Phiếu PO</td><td>Nhà cung cấp trên PO lấy mặc định theo bảng giá, người dùng được phép đổi sang nhà cung cấp khác.</td></tr><tr><td class="id">BR-33</td><td>Phiếu xuất</td><td>Phiếu xuất có trường Lý do xuất lấy từ master data, không dùng ô ghi chú tự do.</td></tr><tr><td class="id">BR-34</td><td>Phiếu PR</td><td>PR tự điền số lượng đề xuất theo tồn min/max của kho đang chọn. Người lập được phép sửa số lượng.</td></tr><tr><td class="id">BR-35</td><td>Vận hành</td><td>Cắt sổ đặt hàng lúc 22h30 hàng ngày. PR lập trong ca tối phục vụ nhu cầu của ngày hôm sau.</td></tr><tr><td class="id">BR-36</td><td>Vận hành</td><td>Template order mặc định số lượng bằng 0, không phải bằng 1.</td></tr><tr><td class="id" colspan="3" style="background:var(--surface-3)">BỔ SUNG KHI MỞ RỘNG SANG NGHIỆP VỤ KHO TẠI CỬA HÀNG</td></tr><tr><td class="id">BR-37</td><td>Nguyên tắc chung</td><td>Mọi phiếu kho chỉ ghi nhận vào tồn kho sau khi được kích hoạt. Phiếu chưa kích hoạt là nháp, không ảnh hưởng tồn.</td></tr><tr><td class="id">BR-38</td><td>Phiếu nhập</td><td>Phiếu nhập tại cửa hàng lập được từ bốn nguồn: phiếu PR, phiếu PO, phiếu điều chuyển liên cửa hàng, hoặc thủ công. Với nguồn không thủ công, danh mục và số lượng tự điền theo phiếu cha.</td></tr><tr><td class="id">BR-39</td><td>Sản xuất</td><td>Phiếu sản xuất tại cửa hàng chọn kho lấy nguyên vật liệu, kho nhập bán thành phẩm và phiên bản BOM. Kích hoạt phiếu thì nhập bán thành phẩm và trừ nguyên vật liệu.</td></tr><tr><td class="id">BR-40</td><td>Xuất huỷ</td><td>Xuất huỷ dùng phiếu xuất với đối tác là Huỷ, bắt buộc kèm lý do cụ thể.</td></tr><tr><td class="id">BR-41</td><td>Kiểm kê</td><td>Phiếu kiểm kê nhận số lượng tồn thực tế, hệ thống tự động tính chênh lệch so với tồn sổ sách.</td></tr><tr><td class="id">BR-42</td><td>Kiểm kê</td><td>Kích hoạt phiếu kiểm kê: phần thừa sinh phiếu nhập khác, phần thiếu sinh phiếu xuất khác.</td></tr><tr><td class="id">BR-43</td><td>Kho trung tâm</td><td>Kho trung tâm vận hành đầy đủ nghiệp vụ kho: sản xuất, xuất cho đối tác, xuất huỷ, kiểm kê và mua hàng từ nhà cung cấp.</td></tr><tr><td class="id">BR-44</td><td>Phiếu nhập</td><td>Bảng giá dùng để liên kết và gợi ý giá mua hàng khi lập phiếu nhập.</td></tr><tr><td class="id">BR-45</td><td>Giao diện</td><td>Trên phiếu điều chuyển nội bộ, phiếu sản xuất và phiếu xuất, trường mang nhãn "Nhà cung cấp" thực chất dùng để chọn kho xuất, không phải nhà cung cấp thật.</td></tr><tr><td class="id">BR-46</td><td>Bán hàng</td><td>Bán hàng trên POS trừ nguyên vật liệu khỏi kho theo công thức định lượng của món. <b>Chờ xác nhận thời điểm và kho bị trừ, xem OQ-18.</b></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="num">5.4</span> Yêu cầu cải tiến giao diện và tiện ích</h2>
+<table>
+    <thead><tr><th style="width:52px">#</th><th style="width:220px">Nghiệp vụ</th><th>Yêu cầu</th></tr></thead>
+    <tbody>
+      <tr><td class="ctr">1</td><td>Yêu cầu hàng</td><td>Template import đang mặc định số lượng bằng 1. Mong muốn mặc định bằng 0 (BR-36).</td></tr>
+      <tr><td class="ctr">2</td><td>Yêu cầu hàng</td><td>Số lượng tự điền theo tồn min/max của kho đang chọn, cho phép sửa (BR-34).</td></tr>
+      <tr><td class="ctr">3</td><td>Yêu cầu hàng</td><td>Hiển thị tồn theo kho hiện tại ngay trên phiếu.</td></tr>
+      <tr><td class="ctr">4</td><td>Nhập kho</td><td>Nếu tạo từ phiếu đặt hàng thì tự động nạp danh sách mặt hàng và số lượng từ phiếu gốc.</td></tr>
+      <tr><td class="ctr">5</td><td>Xuất kho</td><td>Bổ sung trường Lý do xuất, là trường riêng lấy từ master data, không dùng ô ghi chú (BR-33).</td></tr>
+      <tr><td class="ctr">6</td><td>Mua hàng</td><td>Nạp giá từ nhà cung cấp theo bảng giá, cho phép đổi nhà cung cấp (BR-32).</td></tr>
+      <tr><td class="ctr">7</td><td>Điều chuyển liên cửa hàng</td><td>Tạo phiếu từ template có sẵn hoặc tạo thủ công.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="part" id="p6">
+  <span class="pno">PHẦN 6</span>
+  <h1>Quản trị tài liệu</h1>
+  <p>Giả định, điểm còn mở, khuyến nghị của Dcorp, đối chiếu với SOW_Kho và lịch sử phiên bản.</p>
+  <div class="plist"><span>6.1 Giả định và điểm mở</span><span>6.2 Khuyến nghị Dcorp</span><span>6.3 Đối chiếu SOW_Kho</span><span>6.4 Lịch sử phiên bản</span></div>
+</div>
+
+<section>
+  <h2><span class="num">6.1</span> Giả định và điểm còn mở</h2>
+<h3>Giả định vận hành</h3>
+  <div class="callout c-red">
+    <span class="cap">Giả định cốt lõi - cần ghi rõ trong SOW</span>
+    <p>Nhà cung cấp luôn giao đủ số lượng đã đặt. Trên giả định này, phase hiện tại không xây dựng luồng nhận thiếu, nhận thừa, hàng hỏng và trả hàng. Khi vận hành thực tế phát sinh giao thiếu, quy trình sẽ cần bổ sung và cần được xử lý như một hạng mục phát triển riêng.</p>
+  </div>
+
+  <h3>Điểm còn mở</h3>
+  <table>
+    <thead>
+      <tr><th class="id" style="width:76px">Mã</th><th style="width:230px">Nội dung</th><th style="width:110px">Mức chặn</th><th>Ghi chú</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="id">OQ-01</td>
+        <td>Xử lý khi phân bổ DC vượt tồn: chặn cứng, cảnh báo cho qua, hay phân biệt theo nhóm hàng mua và hàng sản xuất</td>
+        <td class="ctr"><b style="color:var(--red)">Cao</b></td>
+        <td>Tài liệu đang mô tả theo phương án cảnh báo cho qua (BR-11). Cần xác nhận trước khi phát triển màn hình phân bổ.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-02</td>
+        <td>Cách SH5 tính giá vốn khi xuất từ tồn âm, và khả năng tính lại sau khi phiếu sản xuất bổ sung được lập</td>
+        <td class="ctr"><b style="color:var(--red)">Cao</b></td>
+        <td>Ảnh hưởng trực tiếp giá vốn cửa hàng. Cần xác minh với đội hiểu lõi SH5. Nếu SH5 không tính lại hồi tố, cần quy định vận hành sản xuất trước và xuất sau với nhóm bán thành phẩm.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-03</td>
+        <td>Nơi lập phiếu nhập tại cửa hàng: trên màn hình SkySHV2 hay trực tiếp trên SH5</td>
+        <td class="ctr"><b style="color:var(--amber)">Trung bình</b></td>
+        <td>Quyết định nơi kiểm soát ràng buộc BR-19. Lập trên SkySHV2 thì kiểm soát được ngay khi nhập liệu; lập trên SH5 thì ràng buộc trở thành hậu kiểm.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-04</td>
+        <td>Bộ tên trạng thái của phiếu PR</td>
+        <td class="ctr"><b style="color:var(--amber)">Trung bình</b></td>
+        <td>Hình 3 đang dùng bộ đề xuất: Nháp, Mở, Đã consolidate, Đã xử lý, Đóng. Cần chốt tên chính thức và điều kiện chuyển sang Đóng.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-05</td>
+        <td>Nguồn đơn giá trên PO: nhập tay, giá mua gần nhất, hay bảng giá hợp đồng nhà cung cấp trong SH5</td>
+        <td class="ctr"><b style="color:var(--amber)">Trung bình</b></td>
+        <td>Cần xác định SH5 có sẵn bảng giá nhà cung cấp để SkySHV2 đọc hay không.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-06</td>
+        <td>Có lưu vết số lượng cửa hàng yêu cầu ban đầu song song với số lượng HO duyệt hay không</td>
+        <td class="ctr">Thấp</td>
+        <td>Phục vụ đối chiếu và đánh giá độ chính xác đặt hàng của cửa hàng.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-07</td>
+        <td>Xử lý chứng từ lập trễ sau khi SH5 đã đóng kỳ kho</td>
+        <td class="ctr">Thấp</td>
+        <td>Hiện nằm ngoài phạm vi. Cần quy định vận hành thay vì xử lý bằng phần mềm.</td>
+      </tr>
+      <tr>
+        <td class="id">OQ-08</td>
+        <td>Công nợ và đối chiếu hóa đơn nhà cung cấp ở nhánh giao thẳng cửa hàng</td>
+        <td class="ctr">Thấp</td>
+        <td>Cửa hàng lập phiếu nhập nhưng công nợ do HO quản lý. Cần tách rõ chứng từ kho và ghi nhận công nợ.</td>
+      </tr><tr><td class="id" colspan="4" style="background:var(--surface-3)">BỔ SUNG TỪ SOW_KHO &middot; 05/09/2026</td></tr><tr><td class="id">OQ-09</td><td>Bộ quy tắc phân loại hàng nào lấy từ Kho trung tâm, hàng nào đặt từ nhà cung cấp, và phiếu gửi tới bộ phận nào (Thu mua hay Quản lý kho)</td><td class="ctr"><b style="color:var(--red)">Cao</b></td><td>SOW nêu ví dụ: rau do Thu mua tiếp nhận, bán thành phẩm và các mặt hàng còn lại do bộ phận Kho tiếp nhận. Khách hàng <b>chưa cung cấp</b> bộ quy tắc đầy đủ. Chừng nào chưa có, BR-12 giữ nguyên: nhân viên HO phân bổ thủ công.</td></tr><tr><td class="id">OQ-10</td><td>Mô hình phiếu PR tại cửa hàng &mdash; ba phương án đang tồn tại song song</td><td class="ctr"><b style="color:var(--red)">Cao</b></td><td>PA1: mỗi kho một phiếu PR. PA2: một phiếu PR trên kho ảo "Kho nhà hàng xxx". PA3 (theo BR-02): một phiếu PR chứa nhiều kho đích. Thực tế vận hành lại đặt hàng qua 4 template dù cửa hàng có 8 kho. Cần chốt một mô hình.</td></tr><tr><td class="id">OQ-11</td><td>Tách PR thành hai đơn hàng, hay giữ mô hình phân bổ hai cột trên cùng phiếu Consolidate</td><td class="ctr"><b style="color:var(--red)">Cao</b></td><td>SOW: "Hệ thống sẽ tách PR thành 2 đơn hàng cho kho trung tâm nội bộ và thu mua". v2.0 BR-09: một dòng PR được phủ bằng cột DC cộng cột NCC trên cùng một phiếu. Hai mô hình chứng từ khác nhau, chưa chốt.</td></tr><tr><td class="id">OQ-12</td><td>Đối tác trên phiếu xuất từ Kho trung tâm là cửa hàng hay kho của cửa hàng</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>SOW ghi "Đối tác: là kho cửa hàng mong muốn". BR-23 chốt mỗi cửa hàng là một Correspondent, không tách theo kho. Ảnh hưởng master data Correspondent trong SH5.</td></tr><tr><td class="id">OQ-13</td><td>Phạm vi nhập tay và phạm vi SH5 tự tính đối với Giá, VAT, Thành tiền trên từng loại chứng từ</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>SOW yêu cầu cho phép nhập giá và VAT khi tạo phiếu nhập, và hiển thị đơn giá, VAT, thành tiền trên phiếu nhập. BR-14 chốt giá do SH5 tính theo giá vốn. Cần tách rõ ba loại: giá mua từ nhà cung cấp, giá vốn xuất nội bộ, giá trên phiếu điều chuyển liên cửa hàng.</td></tr><tr><td class="id">OQ-14</td><td>Điều chuyển nội bộ trong cùng cửa hàng có cần quy trình xác nhận hai chiều hay không</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>Khách hàng yêu cầu xác nhận đã chuyển và đã nhận. Dcorp khuyến nghị xem lại vì phát sinh nhiều thao tác cho một nghiệp vụ nội bộ trong cùng một cửa hàng.</td></tr><tr><td class="id">OQ-15</td><td>Ai thực hiện điều chuyển liên cửa hàng: kế toán chi nhánh hay nhân viên tại nhà hàng</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>SOW để mở. Ảnh hưởng phân quyền của tính năng.</td></tr><tr><td class="id">OQ-16</td><td>Trạng thái hàng đang trên đường đi và xử lý chênh lệch giữa số gửi và số nhận</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>Khung Internal Logistic trong SOW có yêu cầu này. Phase hiện tại vẫn giữ giả định nhà cung cấp luôn giao đủ nên hai hạng mục này <b>nằm ngoài phạm vi</b>. Cần chốt có đưa vào phase sau hay không.</td></tr><tr><td class="id">OQ-17</td><td>Đánh giá và so sánh nhà cung cấp: tách thành chức năng riêng hay tích hợp trong phiếu mua hàng</td><td class="ctr"><b style="color:var(--muted)">Thấp</b></td><td>Dcorp khuyến nghị tách riêng, dùng bộ tiêu chí ngoài giá, quản lý cấp cao ấn định nhà cung cấp cho từng giai đoạn. SOW ghi phần chọn giá có thể lùi sang phase 2.</td></tr><tr><td class="id" colspan="4" style="background:var(--surface-3)">BỔ SUNG KHI MỞ RỘNG SANG NGHIỆP VỤ KHO TẠI CỬA HÀNG</td></tr><tr><td class="id">OQ-18</td><td>Bán hàng trừ kho: thời điểm trừ nguyên vật liệu, kho bị trừ, và xử lý khi kho âm</td><td class="ctr"><b style="color:var(--red)">Cao</b></td><td>Trừ ngay khi ra món hay gộp vào day-end. Cửa hàng có 8 kho nên cần xác định kho nào bị trừ cho từng nguyên vật liệu. Chưa có đủ thông tin để đặc tả mục 3.3.</td></tr><tr><td class="id">OQ-19</td><td>BOM tại cửa hàng: quản lý tập trung ở HO hay cửa hàng sửa được, và có kế hoạch sản xuất hay không</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>Ảnh hưởng phân quyền và cách đồng bộ công thức định lượng. Liên quan mục 3.4.</td></tr><tr><td class="id">OQ-20</td><td>Xuất huỷ: danh mục lý do lấy từ master data nào, ai duyệt, có hạn mức giá trị cần phê duyệt không</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>Liên quan mục 3.5 và BR-33.</td></tr><tr><td class="id">OQ-21</td><td>Kiểm kê: tần suất bắt buộc theo kho, người duyệt chênh lệch, ngưỡng cảnh báo, hạch toán chênh lệch giá trị</td><td class="ctr"><b style="color:var(--amber)">Trung bình</b></td><td>Liên quan mục 3.6. Hiện mới có cơ chế chứng từ, chưa có quy tắc vận hành.</td></tr><tr><td class="id">OQ-22</td><td>Nội dung sáu sơ đồ luồng vận hành hàng ngày trong tài liệu Nghiệp vụ kho</td><td class="ctr"><b style="color:var(--muted)">Thấp</b></td><td>Sáu sơ đồ (nhập đầu ngày, bán hàng, điều chuyển nội bộ, sản xuất BOM, huỷ hàng, kiểm kê) nằm trong ảnh, chưa có mô tả bằng chữ để đưa vào tài liệu này.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout c-green">
+    <span class="cap">Đề xuất bổ sung ngoài yêu cầu đã chốt</span>
+    <p>Hai điểm chi phí phát triển thấp nhưng giảm rủi ro vận hành, đề xuất cân nhắc đưa vào phase này:</p>
+    <p>1. Kiểm tra lại tồn DC tại thời điểm chuyển sang Process và hiển thị cảnh báo nếu tồn đã thay đổi so với lúc nhập liệu.</p>
+    <p>2. Hiển thị thời điểm lấy tồn ngay trên phiếu Consolidate, kèm nút làm mới tồn, để nhân viên biết số đang xem đã cũ bao lâu.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">6.2</span> Khuyến nghị của Dcorp</h2>
+<p>Ba khuyến nghị đã ghi trong SOW_Kho, chưa có phản hồi của khách hàng.</p>
+
+  <div class="callout c-green">
+    <span class="cap">1. Tách đánh giá nhà cung cấp thành chức năng riêng</span>
+    <p>Không để hệ thống tự động chọn nhà cung cấp theo giá thấp nhất trong phiếu mua hàng. Lý do: việc chọn nhà cung cấp còn phụ thuộc chất lượng, độ ổn định, độ tin cậy và tính bền vững, không chỉ giá.</p>
+    <p>Đề xuất: xây một chức năng đánh giá nhà cung cấp với bộ tiêu chí cơ bản. Quản lý cấp cao ấn định nhà cung cấp cho từng giai đoạn. Hệ thống truy vấn danh mục nhà cung cấp đã được chỉ định thay vì tự chọn giá rẻ nhất. Xem OQ-17.</p>
+  </div>
+
+  <div class="callout c-green">
+    <span class="cap">2. Xem lại bước xác nhận khi điều chuyển nội bộ</span>
+    <p>Điều chuyển giữa các kho trong cùng một cửa hàng mà vẫn yêu cầu xác nhận Xuất và Nhận sẽ phát sinh nhiều thao tác và làm chậm công việc. Xem OQ-14.</p>
+  </div>
+
+  <div class="callout c-green">
+    <span class="cap">3. Khách hàng cần cung cấp bộ quy tắc phân loại hàng hóa</span>
+    <p>Cần bộ quy tắc và tiêu chí để xác định mặt hàng nào đặt từ nhà cung cấp, mặt hàng nào xuất từ Kho trung tâm, và phiếu gửi tới bộ phận nào. Thiếu đầu vào này thì việc phân bổ vẫn phải làm thủ công. Xem OQ-09.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">6.3</span> Đối chiếu SOW_Kho với mục 01 đến 12</h2>
+<p>Bảng này ghi lại quan hệ giữa nội dung SOW_Kho và các quyết định đã chốt ở phần đầu tài liệu. Không có quyết định nào ở mục 01 đến 12 bị thay đổi trong bản v2.1.</p>
+
+  <table>
+    <thead>
+      <tr><th style="width:220px">Nội dung SOW_Kho</th><th style="width:190px">Đối chiếu</th><th style="width:130px">Xử lý ở v2.1</th><th>Ghi chú</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Giai đoạn 1: Confirm PR rồi phân bổ, chưa có Consolidate. Giai đoạn 2 mới có Consolidate</td>
+        <td>Mục 05 đến 07 xây quanh phiếu Consolidate</td>
+        <td class="ctr"><b>Giữ nguyên v2.0</b></td>
+        <td>Luồng chốt ở mục 05 đến 08 là luồng chuẩn. Ghi nhận cách chia giai đoạn của SOW ở đây để tham chiếu, không đổi thiết kế.</td>
+      </tr>
+      <tr>
+        <td>Hệ thống tách PR thành 2 đơn hàng cho kho trung tâm nội bộ và thu mua</td>
+        <td>BR-09: phủ một dòng PR bằng cột DC cộng cột NCC</td>
+        <td class="ctr"><b style="color:var(--amber)">Chờ chốt</b></td>
+        <td>OQ-11</td>
+      </tr>
+      <tr>
+        <td>Cần bộ quy tắc phân loại hàng NCC và hàng Kho trung tâm, và bộ phận tiếp nhận</td>
+        <td>BR-12: không có mapping tự động, HO chọn tay</td>
+        <td class="ctr"><b style="color:var(--red)">Thiếu đầu vào</b></td>
+        <td>OQ-09. Khách hàng chưa cung cấp. BR-12 giữ nguyên.</td>
+      </tr>
+      <tr>
+        <td>Cho phép nhập giá và VAT trên phiếu nhập, hiển thị đơn giá, VAT, thành tiền</td>
+        <td>BR-14: giá do SH5 tính</td>
+        <td class="ctr"><b style="color:var(--amber)">Chờ chốt</b></td>
+        <td>OQ-13. Mục 17 ghi nhận nguyên trạng yêu cầu.</td>
+      </tr>
+      <tr>
+        <td>Ghi nhận và xử lý chênh lệch giữa số gửi và số nhận; trạng thái trên đường đi</td>
+        <td>Giả định mục 11: nhà cung cấp luôn giao đủ</td>
+        <td class="ctr"><b style="color:var(--muted)">Ngoài phạm vi</b></td>
+        <td>Giữ giả định cũ. OQ-16 để ngỏ cho phase sau.</td>
+      </tr>
+      <tr>
+        <td>Đối tác trên phiếu xuất là kho của cửa hàng</td>
+        <td>BR-23: mỗi cửa hàng là một Correspondent</td>
+        <td class="ctr"><b style="color:var(--amber)">Chờ chốt</b></td>
+        <td>OQ-12</td>
+      </tr>
+      <tr>
+        <td>Ba mô hình phiếu PR: theo từng kho, một kho ảo, hoặc nhiều kho đích</td>
+        <td>BR-02: một phiếu chứa nhiều kho đích</td>
+        <td class="ctr"><b style="color:var(--amber)">Chờ chốt</b></td>
+        <td>OQ-10</td>
+      </tr>
+      <tr>
+        <td>Điều chuyển kho nội bộ trong cửa hàng</td>
+        <td>Chưa có trong mục 01 đến 12</td>
+        <td class="ctr"><b style="color:var(--green)">Bổ sung mới</b></td>
+        <td>Mục 14, BR-24, BR-25</td>
+      </tr>
+      <tr>
+        <td>Điều chuyển liên cửa hàng và tính năng hỏi tồn</td>
+        <td>Chưa có trong mục 01 đến 12</td>
+        <td class="ctr"><b style="color:var(--green)">Bổ sung mới</b></td>
+        <td>Mục 15, BR-26 đến BR-30</td>
+      </tr>
+      <tr>
+        <td>Cắt sổ 22h30, 2 người order, 4 template cho 8 kho</td>
+        <td>Chưa có trong mục 01 đến 12</td>
+        <td class="ctr"><b style="color:var(--green)">Bổ sung mới</b></td>
+        <td>Mục 13, BR-35, BR-36</td>
+      </tr>
+      <tr>
+        <td>PO tách line theo từng cửa hàng; NCC mặc định theo bảng giá</td>
+        <td>Bổ sung cho BR-15, BR-16; giải quyết OQ-05</td>
+        <td class="ctr"><b style="color:var(--green)">Bổ sung mới</b></td>
+        <td>BR-31, BR-32</td>
+      </tr>
+      <tr>
+        <td>Trường Lý do xuất lấy từ master data</td>
+        <td>Bổ sung cho phiếu xuất ở mục 06</td>
+        <td class="ctr"><b style="color:var(--green)">Bổ sung mới</b></td>
+        <td>BR-33</td>
+      </tr>
+      <tr>
+        <td>Phiếu xuất từ trung tâm sinh ra phiếu nhập, chi nhánh chỉ xác nhận</td>
+        <td>BR-17: cửa hàng tự lập phiếu nhập</td>
+        <td class="ctr"><b style="color:var(--muted)">Không đưa vào</b></td>
+        <td>Đã thống nhất bỏ nội dung này khỏi tài liệu.</td>
+      </tr>
+      <tr>
+        <td>Trạng thái PR: Nháp, Confirm tại cửa hàng, Confirm của purchasing</td>
+        <td>OQ-04 đang để mở bộ trạng thái</td>
+        <td class="ctr"><b style="color:var(--muted)">Không đưa vào</b></td>
+        <td>Giữ nguyên OQ-04 như cũ.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2><span class="num">6.4</span> Lịch sử phiên bản</h2>
+<table>
+    <thead>
+      <tr><th class="id" style="width:90px">Phiên bản</th><th style="width:150px">Nội dung</th><th>Thay đổi chính</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="id">v1.0</td><td>Sơ đồ luồng ban đầu</td><td>Ba nhánh nguồn hàng, mỗi PR gắn một kho, quyết định đủ hoặc không đủ hàng theo dạng nhị phân.</td></tr>
+      <tr><td class="id">v2.0</td><td>Bản hiện tại</td><td>Bổ sung phiếu Consolidate PR hai tầng, phân bổ đồng thời từ DC và NCC trên cùng một dòng, nhánh bán thành phẩm sản xuất tại DC, mô hình Correspondent, ranh giới SkySHV2 và SH5, 23 quy tắc nghiệp vụ.</td></tr><tr><td class="id">v2.1</td><td>Bổ sung từ SOW_Kho</td><td>Giữ nguyên mục 01 đến 12. Thêm mục 13 đến 20: bối cảnh vận hành đặt hàng, điều chuyển kho nội bộ, điều chuyển liên cửa hàng, khung Internal Logistic, yêu cầu giá và VAT, cải tiến giao diện, khuyến nghị của Dcorp, bảng đối chiếu. Thêm BR-24 đến BR-36 và OQ-09 đến OQ-17.</td></tr><tr><td class="id">v3.0</td><td>Bản hiện tại</td><td>Sắp xếp lại thành 6 phần. Bổ sung Phần 3 nghiệp vụ kho tại cửa hàng (bốn nhóm chứng từ, nhập kho, bán hàng trừ kho, sản xuất BOM, xuất huỷ, kiểm kê) và Phần 4 nghiệp vụ tại kho trung tâm. Thêm bản đồ nghiệp vụ ở mục 1.5, BR-37 đến BR-46, OQ-18 đến OQ-22. Nội dung các mục cũ giữ nguyên, chỉ đổi vị trí và số mục.</td></tr>
+    </tbody>
+  </table>
+<h3>Ánh xạ số mục v2.1 sang v3.0</h3>
+<p>Nội dung các mục không đổi, chỉ thay đổi vị trí và cách đánh số. Một số đoạn văn trong Phần 2 còn tham chiếu theo số mục cũ; dùng bảng này để tra.</p>
+<table>
+  <thead><tr><th style="width:110px">v2.1</th><th style="width:110px">v3.0</th><th>Tên mục</th></tr></thead>
+  <tbody>
+    <tr><td class="id">01</td><td class="id">1.1</td><td>Phạm vi và mục đích</td></tr>
+    <tr><td class="id">02</td><td class="id">1.2</td><td>Ranh giới hệ thống</td></tr>
+    <tr><td class="id">03</td><td class="id">1.3</td><td>Tổ chức kho và mô hình Correspondent</td></tr>
+    <tr><td class="id">04</td><td class="id">1.4</td><td>Vai trò tham gia</td></tr>
+    <tr><td class="id">13</td><td class="id">2.1</td><td>Bối cảnh vận hành đặt hàng tại cửa hàng</td></tr>
+    <tr><td class="id">05</td><td class="id">2.2</td><td>Sơ đồ luồng chính</td></tr>
+    <tr><td class="id">06</td><td class="id">2.3</td><td>Mô tả chi tiết các bước</td></tr>
+    <tr><td class="id">07</td><td class="id">2.4</td><td>Phiếu Consolidate PR</td></tr>
+    <tr><td class="id">08</td><td class="id">2.5</td><td>Bốn nhánh nguồn hàng</td></tr>
+    <tr><td class="id">09</td><td class="id">2.6</td><td>Trạng thái chứng từ</td></tr>
+    <tr><td class="id">14</td><td class="id">3.7</td><td>Điều chuyển kho nội bộ trong cửa hàng</td></tr>
+    <tr><td class="id">15</td><td class="id">3.8</td><td>Điều chuyển liên cửa hàng</td></tr>
+    <tr><td class="id">17</td><td class="id">5.1</td><td>Yêu cầu về giá và VAT trên chứng từ</td></tr>
+    <tr><td class="id">16</td><td class="id">5.2</td><td>Khung Internal Logistic</td></tr>
+    <tr><td class="id">10</td><td class="id">5.3</td><td>Quy tắc nghiệp vụ</td></tr>
+    <tr><td class="id">18</td><td class="id">5.4</td><td>Yêu cầu cải tiến giao diện và tiện ích</td></tr>
+    <tr><td class="id">11</td><td class="id">6.1</td><td>Giả định và điểm còn mở</td></tr>
+    <tr><td class="id">19</td><td class="id">6.2</td><td>Khuyến nghị của Dcorp</td></tr>
+    <tr><td class="id">20</td><td class="id">6.3</td><td>Đối chiếu SOW_Kho</td></tr>
+    <tr><td class="id">12</td><td class="id">6.4</td><td>Lịch sử phiên bản</td></tr>
+  </tbody>
+</table>
+
+</section>
+
+</main>
+
+<footer>
+  <span>Dcorp Technology Corporation &middot; Core Technology &middot; The Street</span>
+  <span>Nghiệp vụ kho &middot; <b>v3.0</b></span>
+</footer>
+
+</body>
+</html>
