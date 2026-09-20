@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSF CRM_V7 — Health Check & Remediation Plan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --red:   #e30613;
+  --black: #000000;
+  --white: #ffffff;
+  --gray:  #727171;
+  --bg:    #f0f2f5;
+  --dark:  #1a1f2e;
+  --tabs:  #131722;
+  --amber: #d97706;
+  --green: #16a34a;
+  --blue:  #2563eb;
+  --radius: 10px;
+  --shadow: 0 1px 6px rgba(0,0,0,.07);
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: var(--bg);
+  color: var(--black);
+  font-size: 13px;
+  line-height: 1.5;
+  padding-bottom: 60px;
+}
+code, .mono { font-family: 'DM Mono', monospace; }
+
+/* HEADER */
+.header {
+  position: sticky; top:0; z-index:100;
+  background: var(--dark);
+  color: #fff;
+  display:grid; grid-template-columns: auto 1fr auto;
+  align-items:center; gap:16px;
+  padding: 14px 28px;
+  border-bottom: 3px solid var(--red);
+}
+.logo-mark {
+  width:38px; height:38px; border-radius:6px;
+  background: var(--red); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:15px; font-family:'DM Mono',monospace;
+}
+.header-center { text-align:left; }
+.header-title { font-size:14px; font-weight:800; letter-spacing:0.5px; }
+.header-sub { font-size:10px; color:#9aa3b5; margin-top:2px; }
+.header-right { text-align:right; }
+.badge-date {
+  font-family:'DM Mono',monospace; font-size:10px; font-weight:500;
+  background:rgba(255,255,255,.08); padding:4px 10px; border-radius:6px;
+  display:inline-block;
+}
+.badge-server {
+  font-family:'DM Mono',monospace; font-size:10px; font-weight:700;
+  color: var(--red); margin-top:4px;
+}
+
+/* TABS */
+.tabs {
+  position: sticky; top:66px; z-index:99;
+  background: var(--tabs);
+  display:flex; gap:4px; padding:0 24px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.nav-tab {
+  background:none; border:none; color:#8b93a7;
+  font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:0.5px; text-transform:uppercase;
+  padding: 12px 16px; cursor:pointer;
+  border-bottom: 2px solid transparent;
+}
+.nav-tab.active { color: var(--red); border-bottom-color: var(--red); }
+.tab-content { display:none; padding: 20px 28px 10px; max-width:1180px; margin:0 auto; }
+.tab-content.active { display:block; }
+
+/* SECTION */
+.section-title {
+  font-size:10px; font-weight:800; text-transform:uppercase;
+  letter-spacing:1.5px; color:var(--gray); margin: 22px 0 10px;
+  display:flex; align-items:center; gap:8px;
+}
+.section-title:first-child { margin-top:4px; }
+
+/* KPI CARDS */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.kpi-card {
+  background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+  border-top:3px solid var(--red); padding:14px 16px;
+}
+.kpi-card.amber { border-top-color: var(--amber); }
+.kpi-card.blue { border-top-color: var(--blue); }
+.kpi-card.green { border-top-color: var(--green); }
+.kpi-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray); }
+.kpi-value { font-family:'DM Mono',monospace; font-weight:900; font-size:24px; margin-top:6px; }
+.kpi-sub { font-size:10px; color:var(--gray); margin-top:4px; }
+
+/* FINDING CARD */
+.finding {
+  background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:16px 18px; margin-bottom:12px; border-left:4px solid var(--gray);
+}
+.finding.critical { border-left-color: var(--red); }
+.finding.high { border-left-color: var(--amber); }
+.finding.medium { border-left-color: var(--blue); }
+.finding.info { border-left-color: var(--green); }
+.finding-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.finding-title { font-size:12.5px; font-weight:800; }
+.tag { font-size:8px; font-weight:800; text-transform:uppercase; padding:3px 8px; border-radius:5px; white-space:nowrap; }
+.tag-block { background:#fde8e8; color:var(--red); }
+.tag-warn  { background:#fef3e2; color:var(--amber); }
+.tag-ok    { background:#e7f7ed; color:var(--green); }
+.tag-info  { background:#e8effe; color:var(--blue); }
+.finding-body { font-size:11.5px; color:#333; margin-top:8px; }
+.finding-evidence {
+  font-family:'DM Mono',monospace; font-size:10px; background:#f6f7f9;
+  border-radius:6px; padding:8px 10px; margin-top:8px; color:#444;
+  white-space:pre-wrap; word-break:break-word;
+}
+
+/* PLAN ITEM */
+.plan-item {
+  background:#fff; border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:14px 16px; margin-bottom:12px; display:flex; gap:12px;
+}
+.plan-num {
+  width:24px; height:24px; border-radius:50%; background:var(--dark); color:#fff;
+  font-family:'DM Mono',monospace; font-weight:700; font-size:11px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.plan-body { flex:1; }
+.plan-text { font-size:12px; font-weight:700; }
+.plan-sub { font-size:10px; color:var(--gray); margin-top:2px; }
+pre.sql {
+  font-family:'DM Mono',monospace; font-size:10.5px; background:var(--tabs); color:#d8e0f0;
+  border-radius:8px; padding:14px 16px; margin-top:10px; overflow-x:auto; line-height:1.6;
+}
+pre.sql .cmt { color:#7d8aa8; }
+pre.sql .kw { color:#e879c1; }
+pre.sql .str { color:#98d982; }
+
+/* TABLE */
+table.reorg { width:100%; border-collapse:collapse; background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); font-size:11px; }
+table.reorg th { background:var(--dark); color:#fff; font-size:9px; text-transform:uppercase; letter-spacing:0.5px; padding:10px 10px; text-align:left; font-weight:700; }
+table.reorg td { padding:9px 10px; border-bottom:1px solid #eef0f3; font-family:'DM Mono',monospace; font-size:10.5px; }
+table.reorg tr:last-child td { border-bottom:none; }
+table.reorg td.crit { color:var(--red); font-weight:700; }
+table.reorg td.warn { color:var(--amber); font-weight:700; }
+.bar-wrap { width:80px; height:6px; background:#eee; border-radius:3px; overflow:hidden; display:inline-block; vertical-align:middle; margin-right:6px; }
+.bar-fill { height:100%; background:var(--green); }
+.bar-fill.warn { background:var(--amber); }
+.bar-fill.crit { background:var(--red); }
+
+/* CHECKLIST */
+.checklist { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:6px 0; }
+.chk-item { display:flex; gap:10px; align-items:flex-start; padding:10px 16px; border-bottom:1px solid #f1f2f5; }
+.chk-item:last-child { border-bottom:none; }
+.chk-box { width:16px; height:16px; border:2px solid #ccc; border-radius:4px; flex-shrink:0; margin-top:1px; }
+.chk-text { font-size:11.5px; font-weight:600; }
+.chk-meta { font-size:9.5px; color:var(--gray); margin-top:2px; }
+
+.footer {
+  position:fixed; bottom:0; left:0; right:0; background:var(--dark); color:#8b93a7;
+  font-size:9px; padding:8px 28px; display:flex; justify-content:space-between;
+  font-family:'DM Mono',monospace;
+}
+.footer strong { color:#fff; }
+
+@media (max-width: 800px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-mark">D</div>
+  <div class="header-center">
+    <div class="header-title">GSF — CRM_V7 SQL SERVER HEALTH CHECK &amp; REMEDIATION PLAN</div>
+    <div class="header-sub">Dcorp Technology Corporation · Core Technology — DBA Report</div>
+  </div>
+  <div class="header-right">
+    <div class="badge-date">Cập nhật 20/09/2026 · 21:10 — Đã xử lý 2/8 mục</div>
+    <div class="badge-server">WIN-HLB4ESE5M88 · 192.168.62.95,9493</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="nav-tab active" onclick="switchTab('overview', this)">📊 Tổng quan</button>
+  <button class="nav-tab" onclick="switchTab('done', this)">✅ Đã xử lý</button>
+  <button class="nav-tab" onclick="switchTab('findings', this)">🔍 Phát hiện chi tiết</button>
+  <button class="nav-tab" onclick="switchTab('plan', this)">🛠 Kế hoạch tiếp theo</button>
+  <button class="nav-tab" onclick="switchTab('files', this)">💾 Bố trí file &amp; dung lượng</button>
+</div>
+
+<!-- =================== TAB: OVERVIEW =================== -->
+<div class="tab-content active" id="tab-overview">
+
+  <div class="section-title">📌 Tóm tắt tình trạng server (đã cập nhật sau xử lý)</div>
+  <div class="kpi-grid">
+    <div class="kpi-card green">
+      <div class="kpi-label">Đã xử lý</div>
+      <div class="kpi-value">2/8</div>
+      <div class="kpi-sub">File CRM_AB hết nguy cơ đầy · Đã tạo index SpecialOffer</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Còn lại — cần làm tiếp</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">Bật IFI · Escalate vendor · 2 điều tra phụ · Patch CU</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">CRM_AB — trước/sau</div>
+      <div class="kpi-value" style="font-size:20px">99.97%→78.7%</div>
+      <div class="kpi-sub">Đã grow 27.5GB→35GB, dư ra 7.47GB</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Bản vá còn thiếu</div>
+      <div class="kpi-value">0 CU</div>
+      <div class="kpi-sub">SQL Server 2019 RTM (15.0.2000.5) — chưa từng cài Cumulative Update</div>
+    </div>
+  </div>
+
+  <div class="section-title">⚡ Cơ chế gây "treo/mất kết nối" — tổng hợp bằng chứng</div>
+  <div class="finding high">
+    <div class="finding-head">
+      <div class="finding-title">Hiệu ứng dây chuyền: Query quét toàn bảng → File gần đầy autogrow liên tục → Network stack nghẽn → Client bị reset sau 5-6 phút chờ</div>
+      <span class="tag tag-warn">1 PHẦN ĐÃ XỬ LÝ</span>
+    </div>
+    <div class="finding-body">
+      Đây là chuỗi nguyên nhân — không phải một lỗi đơn lẻ. Khi RKeeper CRM Server chạy các truy vấn tra cứu giao dịch
+      (CAST phá sargable trên CARD_TRANSACTIONS, 23 triệu dòng) cùng lúc file dữ liệu <strong>CRM_AB</strong> đang đầy 99.97%
+      phải autogrow liên tục ở mức tăng 10MB/lần, CPU/IO của server bị dồn nén đến mức network stack không kịp accept
+      gói login mới — client phải chờ 300-380 giây rồi tự ngắt kết nối (lỗi TCP 10054).
+      <strong>Đã xử lý phần "file gần đầy":</strong> CRM_AB đã grow lên 35GB (còn 78.7% used, dư 7.47GB) và growth
+      increment đã đổi từ 10MB lên 512-2048MB cho toàn bộ file — nguyên nhân autogrow liên tục coi như đã chặn.
+      Phần còn lại của chuỗi (Instant File Initialization vẫn tắt, query CAST vendor chưa sửa) vẫn tồn tại — xem tab
+      "Kế hoạch tiếp theo".
+    </div>
+  </div>
+
+  <div class="section-title">✅ Không phát hiện vấn đề</div>
+  <div class="finding info">
+    <div class="finding-body">
+      Tại thời điểm kiểm tra: không có blocking chain, không có transaction mở kéo dài bất thường, scheduler không tồn
+      đọng công việc, memory dư dả (63GB RAM, 49GB available), tempdb cấu hình 8 file đồng đều đúng best practice,
+      config <span class="mono">user connections</span> không bị giới hạn cứng.
+    </div>
+  </div>
+
+  <div class="section-title">🔵 Ghi nhận thêm trong lúc theo dõi live</div>
+  <div class="finding medium">
+    <div class="finding-body">
+      Trong lúc theo dõi trực tiếp sau khi restart, ring buffer ghi nhận nhiều lần login từ IP <strong>10.10.2.1</strong>
+      bị treo ~380 giây rồi reset — đã xác nhận với anh Hải đây là traffic VPN bình thường của user, <strong>không
+      liên quan</strong> đến sự cố đang điều tra, không cần xử lý. Riêng 1 lần treo 196.7 giây từ loopback
+      (192.168.62.95) lúc 14:00:34 UTC trùng khớp thời điểm chạy lệnh resize file — nhiều khả năng là hệ quả một lần
+      của thao tác zero-fill I/O, không lặp lại sau đó.
+    </div>
+  </div>
+
+</div>
+
+<!-- =================== TAB: DONE =================== -->
+<div class="tab-content" id="tab-done">
+
+  <div class="section-title">✅ Đã thực hiện — 20/09/2026</div>
+
+  <div class="finding info">
+    <div class="finding-head">
+      <div class="finding-title">1. Mở rộng CRM_AB + sửa growth increment toàn bộ file dữ liệu</div>
+      <span class="tag tag-ok">HOÀN THÀNH</span>
+    </div>
+    <div class="finding-body">
+      Kiểm tra dung lượng ổ đĩa trước (D:\ dư 205,874MB, C:\ dư 99,174MB — dư dả). Chạy <span class="mono">ALTER DATABASE MODIFY FILE</span>
+      cho toàn bộ 10 file của CRM_V7. Kết quả xác nhận:
+    </div>
+    <div class="finding-evidence">CRM_AB:  27,538MB (99.97% used) → 35,000MB (78.7% used, dư 7.47GB)   growth 10MB → 2048MB
+CRM:     16,751MB (86.1% used) → 20,000MB (72.1% used)               growth 10MB → 1024MB
+CRM_IDX: 10,747MB (84.0% used) → 13,000MB (69.5% used)               growth 10MB → 1024MB
+CRM_LT:   1,617MB (84.9% used) →  2,500MB (54.9% used)               growth 10MB → 512MB
+CRM_AT, CRM_PB, CRM_MB, CRM_MSG, CRM_UR, CRM_log: giữ nguyên size, chỉ đổi growth increment sang mức cố định lớn</div>
+  </div>
+
+  <div class="finding info">
+    <div class="finding-head">
+      <div class="finding-title">2. Tạo index IX_CARD_TRANSACTIONS_SPECIALOFFER_SpecialOfferID</div>
+      <span class="tag tag-ok">HOÀN THÀNH</span>
+    </div>
+    <div class="finding-body">
+      Bảng CARD_TRANSACTIONS_SPECIALOFFER chỉ 573,299 dòng / 39.5MB — tạo ONLINE, không downtime, xong trong vài giây.
+      Index đã active (<span class="mono">is_disabled = False</span>), đúng cột SQL Server đề xuất
+      (SPECIALOFFER_ID + include TRANSACTION_ID, ACCOUNT_ID).
+    </div>
+  </div>
+
+  <div class="section-title">📈 Xác nhận sau xử lý</div>
+  <div class="finding info">
+    <div class="finding-body">
+      Kiểm tra lại ngay sau khi hoàn tất cả 2 việc trên: không có blocking chain, 144 session đang mở (bình thường,
+      không tăng vọt), chỉ 3 session đang chạy tích cực, không có query nặng nào đang chiếm CPU/IO. Server ở trạng
+      thái ổn định tại thời điểm kiểm tra.
+    </div>
+  </div>
+
+</div>
+
+<!-- =================== TAB: FINDINGS =================== -->
+<div class="tab-content" id="tab-findings">
+
+  <div class="section-title">🔴 Mức nghiêm trọng cao</div>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div class="finding-title">1. File CRM_AB gần đầy 99.97%, growth increment chỉ 10MB, Instant File Initialization đang tắt</div>
+      <span class="tag tag-ok">ĐÃ XỬ LÝ 1 PHẦN</span>
+    </div>
+    <div class="finding-body">
+      File dữ liệu <span class="mono">D:\RK7\DB\CRM_AB.mdf</span> (27,538MB) chỉ còn ~8MB trống. Mỗi lần cần thêm
+      dung lượng, SQL Server chỉ grow 10MB/lần (quá nhỏ so với kích thước file), và vì IFI tắt, mỗi lần grow phải
+      zero-fill đồng bộ toàn bộ phần mới — mọi write vào file này đều bị block trong lúc đó.
+      <strong>Cập nhật 20/09:</strong> đã grow CRM_AB lên 35,000MB (còn 78.7% used, dư 7.47GB) và đổi growth increment
+      lên 2048MB — cùng toàn bộ 9 file còn lại của database. Nguy cơ autogrow liên tục đã được chặn. Instant File
+      Initialization vẫn đang tắt — xem tab "Kế hoạch tiếp theo" bước 4.
+    </div>
+    <div class="finding-evidence">sys.dm_server_services.instant_file_initialization_enabled = 'N'  (chưa bật)
+CRM_AB: 27538MB (99.97% used, growth 10MB) → 35000MB (78.7% used, growth 2048MB)  ĐÃ FIX</div>
+  </div>
+
+  <div class="finding critical">
+    <div class="finding-head">
+      <div class="finding-title">2. Query CAST phá sargable trên CARD_TRANSACTIONS (23 triệu dòng)</div>
+      <span class="tag tag-block">CRITICAL</span>
+    </div>
+    <div class="finding-body">
+      Tính năng tra cứu giao dịch của RKeeper_CRM_Server.exe dùng
+      <span class="mono">CAST(TRANSACTION_TIME AS DATETIME) &gt;= CAST(@DateFrom AS DATE)</span> — vì TRANSACTION_TIME
+      là <span class="mono">datetimeoffset</span>, phép CAST này không seek được index dù index đúng cột đã tồn tại
+      (I_CARD_TRANSACTIONS_B), buộc scan toàn bộ index mỗi lần tra cứu (~1 triệu logical reads/lần, phiên dài nhất
+      quan sát được chạy 71.7 giây). Đây là code phía vendor RKeeper — không tự sửa được, cần escalate.
+    </div>
+    <div class="finding-evidence">Session 147 — RKeeper_CRM_Server.exe: elapsed 71,739ms, reads 1,073,190, wait PAGEIOLATCH_SH
+Bảng CARD_TRANSACTIONS đã có cột TRANSACTION_TIME_ORIGINAL (datetime thuần) kèm index riêng — có thể dùng thay thế nếu vendor đồng ý sửa</div>
+  </div>
+
+  <div class="section-title">🟡 Mức nghiêm trọng trung bình</div>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div class="finding-title">3. Thiếu index trên CARD_TRANSACTIONS_SPECIALOFFER(SPECIALOFFER_ID)</div>
+      <span class="tag tag-ok">ĐÃ XỬ LÝ</span>
+    </div>
+    <div class="finding-body">
+      Trùng thời điểm với job SQL Agent "Start SP SpecialOffer" đang chạy — SQL Server ước tính thêm index này sẽ
+      cải thiện 97.8% cho các truy vấn liên quan. Impact score cao nhất trong toàn bộ missing index của database.
+      <strong>Cập nhật 20/09:</strong> đã tạo <span class="mono">IX_CARD_TRANSACTIONS_SPECIALOFFER_SpecialOfferID</span>
+      (ONLINE, bảng chỉ 39.5MB nên xong trong vài giây, không downtime).
+    </div>
+    <div class="finding-evidence">Equality: [SPECIALOFFER_ID]  Include: [TRANSACTION_ID],[ACCOUNT_ID]
+avg_user_impact: 97.76%  user_seeks: 134
+→ Index đã tạo, is_disabled = False  ĐÃ FIX</div>
+  </div>
+
+  <div class="finding high">
+    <div class="finding-head">
+      <div class="finding-title">4. Disk read latency hơi cao trên filegroup CRM_AT</div>
+      <span class="tag tag-warn">MEDIUM</span>
+    </div>
+    <div class="finding-body">
+      Avg read latency ~26ms/read trên file CRM_AT (41.5GB), ~16ms/read trên file CRM chính. Chưa ở mức báo động
+      nhưng cao hơn chuẩn SSD/NVMe tốt (lý tưởng &lt;10ms) — cộng dồn với các vấn đề khác góp phần vào cảm giác lag.
+    </div>
+  </div>
+
+  <div class="section-title">🔵 Mức thấp / cần theo dõi thêm</div>
+
+  <div class="finding medium">
+    <div class="finding-head">
+      <div class="finding-title">5. Service khởi động sớm hơn SQL Server (race condition lúc restart)</div>
+      <span class="tag tag-info">LOW</span>
+    </div>
+    <div class="finding-body">
+      Lỗi 17187 + 18456 State 38 xảy ra 5 giây sau khi SQL Server bắt đầu log, từ 127.0.0.1 (chính server) — có
+      service/script cố connect trước khi SQL Server sẵn sàng. Tự hết sau vài giây, nhưng nên tìm ra service nào
+      để thêm retry/backoff hợp lý, tránh app hiểu nhầm là "mất kết nối" ngay sau restart.
+    </div>
+  </div>
+
+  <div class="finding medium">
+    <div class="finding-head">
+      <div class="finding-title">6. App tại 192.168.62.92 login sai mật khẩu</div>
+      <span class="tag tag-info">LOW</span>
+    </div>
+    <div class="finding-body">
+      Lỗi 18456 State 8 (sai password) 2 lần liên tiếp lúc 20:27:58 từ IP 192.168.62.92. Nghi do mật khẩu SQL login
+      vừa đổi (qua Vaultwarden?) chưa được cập nhật cho app/service tại IP này.
+    </div>
+  </div>
+
+  <div class="finding info">
+    <div class="finding-head">
+      <div class="finding-title">7. Chưa cài Cumulative Update nào kể từ khi lên SQL Server 2019</div>
+      <span class="tag tag-ok">PATCHING</span>
+    </div>
+    <div class="finding-body">
+      Build hiện tại 15.0.2000.5 = RTM gốc. Nên lên kế hoạch test + patch CU mới nhất trên staging trước khi áp
+      dụng production — nhiều bug fix về I/O, memory, deadlock đã được vá qua các CU từ 2019 đến nay.
+    </div>
+  </div>
+
+</div>
+
+<!-- =================== TAB: PLAN =================== -->
+<div class="tab-content" id="tab-plan">
+
+  <div class="section-title">✅ Đã hoàn thành — xem chi tiết ở tab "Đã xử lý"</div>
+  <div class="checklist" style="margin-bottom:18px;">
+    <div class="chk-item"><div class="chk-box" style="background:var(--green);border-color:var(--green)"></div><div><div class="chk-text">Kiểm tra dung lượng ổ đĩa D:\ (xp_fixeddrives) — D:\ dư 205,874MB</div><div class="chk-meta">Hoàn thành 20/09</div></div></div>
+    <div class="chk-item"><div class="chk-box" style="background:var(--green);border-color:var(--green)"></div><div><div class="chk-text">Mở rộng CRM_AB + sửa growth increment toàn bộ file</div><div class="chk-meta">Hoàn thành 20/09 — CRM_AB 99.97%→78.7%</div></div></div>
+    <div class="chk-item"><div class="chk-box" style="background:var(--green);border-color:var(--green)"></div><div><div class="chk-text">Tạo index IX_CARD_TRANSACTIONS_SPECIALOFFER_SpecialOfferID</div><div class="chk-meta">Hoàn thành 20/09</div></div></div>
+  </div>
+
+  <div class="section-title">🛠 Kế hoạch tiếp theo — chưa thực hiện</div>
+  <div class="plan-item">
+    <div class="plan-num">4</div>
+    <div class="plan-body">
+      <div class="plan-text">Bật Instant File Initialization cho service account SQL Server</div>
+      <div class="plan-sub">Thực hiện ở Windows, không phải SSMS · Cần restart service SQL Server để áp dụng — lên lịch bảo trì</div>
+      <div class="finding-body" style="margin-top:6px;">
+        1. Mở <span class="mono">secpol.msc</span> trên server WIN-HLB4ESE5M88 (hoặc Group Policy nếu domain-managed)<br>
+        2. Local Policies → User Rights Assignment → <strong>Perform Volume Maintenance Tasks</strong><br>
+        3. Thêm account <span class="mono">NT Service\MSSQLSERVER</span><br>
+        4. Restart service SQL Server (MSSQLSERVER) để áp dụng<br>
+        5. Xác nhận lại bằng câu lệnh ở bước 5 bên dưới — cột phải trả về <span class="mono">'Y'</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">5</div>
+    <div class="plan-body">
+      <div class="plan-text">Xác nhận lại Instant File Initialization đã bật</div>
+      <div class="plan-sub">Chạy sau khi restart service ở bước 4</div>
+      <pre class="sql">SELECT servicename, instant_file_initialization_enabled
+FROM sys.dm_server_services
+WHERE filename LIKE <span class="str">'%sqlservr.exe%'</span>;</pre>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">6</div>
+    <div class="plan-body">
+      <div class="plan-text">Điều tra 2 vấn đề phụ (không cần script — điều tra thủ công)</div>
+      <div class="plan-sub">Có thể làm song song với các bước trên</div>
+      <div class="finding-body" style="margin-top:6px;">
+        · Tìm service/task nào trên chính server WIN-HLB4ESE5M88 tự động connect vào SQL Server ngay lúc boot
+        (Task Scheduler, Windows Service với Startup Type = Automatic) — thêm delay/retry logic nếu cần.<br>
+        · Xác định app/service chạy trên 192.168.62.92 đang connect vào CRM_V7 — kiểm tra credential có khớp với
+        password SQL login hiện tại không (đặc biệt nếu gần đây có đổi password qua Vaultwarden).
+      </div>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">7</div>
+    <div class="plan-body">
+      <div class="plan-text">Escalate vấn đề query CAST non-sargable cho vendor RKeeper</div>
+      <div class="plan-sub">Không tự sửa code vendor · Có thể mở ticket UCS Service Desk kèm chi tiết kỹ thuật ở tab "Phát hiện chi tiết"</div>
+    </div>
+  </div>
+
+  <div class="plan-item">
+    <div class="plan-num">8</div>
+    <div class="plan-body">
+      <div class="plan-text">Lên kế hoạch patch Cumulative Update mới nhất cho SQL Server 2019</div>
+      <div class="plan-sub">Test trên staging trước · Không cấp bách bằng các mục 1-3, nhưng nên đưa vào roadmap quý này</div>
+    </div>
+  </div>
+
+  <div class="section-title">📋 Checklist việc còn lại</div>
+  <div class="checklist">
+    <div class="chk-item"><div class="chk-box"></div><div><div class="chk-text">Bật Instant File Initialization + restart service</div><div class="chk-meta">Bước 4-5 · Ưu tiên: Cao · Cần cửa sổ bảo trì</div></div></div>
+    <div class="chk-item"><div class="chk-box"></div><div><div class="chk-text">Tìm service gây race condition lúc restart</div><div class="chk-meta">Bước 6a · Ưu tiên: Trung bình</div></div></div>
+    <div class="chk-item"><div class="chk-box"></div><div><div class="chk-text">Xác minh credential app tại 192.168.62.92</div><div class="chk-meta">Bước 6b · Ưu tiên: Trung bình</div></div></div>
+    <div class="chk-item"><div class="chk-box"></div><div><div class="chk-text">Mở ticket vendor RKeeper về query CAST non-sargable</div><div class="chk-meta">Bước 7 · Ưu tiên: Trung bình</div></div></div>
+    <div class="chk-item"><div class="chk-box"></div><div><div class="chk-text">Lên roadmap patch Cumulative Update</div><div class="chk-meta">Bước 8 · Ưu tiên: Thấp</div></div></div>
+  </div>
+
+</div>
+
+<!-- =================== TAB: FILES =================== -->
+<div class="tab-content" id="tab-files">
+
+  <div class="section-title">💾 Bố trí file — CRM_V7 (đã cập nhật sau resize 20/09)</div>
+  <table class="reorg">
+    <tr><th>File</th><th>Type</th><th>Size trước</th><th>Size hiện tại</th><th>% Full hiện tại</th><th>Growth hiện tại</th><th>Trạng thái</th></tr>
+    <tr>
+      <td><strong>CRM_AB</strong></td><td>ROWS</td><td>27,538 MB</td><td><strong>35,000 MB</strong></td>
+      <td><span class="bar-wrap"><span class="bar-fill warn" style="width:79%"></span></span>78.7%</td>
+      <td>2048 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Đã fix</td>
+    </tr>
+    <tr>
+      <td><strong>CRM</strong> (main)</td><td>ROWS</td><td>16,751 MB</td><td><strong>20,000 MB</strong></td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:72%"></span></span>72.1%</td>
+      <td>1024 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Đã fix</td>
+    </tr>
+    <tr>
+      <td><strong>CRM_IDX</strong></td><td>ROWS</td><td>10,747 MB</td><td><strong>13,000 MB</strong></td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:70%"></span></span>69.5%</td>
+      <td>1024 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Đã fix</td>
+    </tr>
+    <tr>
+      <td><strong>CRM_LT</strong></td><td>ROWS</td><td>1,617 MB</td><td><strong>2,500 MB</strong></td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:55%"></span></span>54.9%</td>
+      <td>512 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Đã fix</td>
+    </tr>
+    <tr>
+      <td><strong>CRM_AT</strong> (archive)</td><td>ROWS</td><td>41,584 MB</td><td>41,584 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:57%"></span></span>56.8%</td>
+      <td>2048 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+    <tr>
+      <td>CRM_PB</td><td>ROWS</td><td>50 MB</td><td>50 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:4%"></span></span>3.9%</td>
+      <td>256 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+    <tr>
+      <td>CRM_MB</td><td>ROWS</td><td>50 MB</td><td>50 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:1%"></span></span>0.4%</td>
+      <td>256 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+    <tr>
+      <td>CRM_MSG</td><td>ROWS</td><td>50 MB</td><td>50 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:2%"></span></span>2.1%</td>
+      <td>256 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+    <tr>
+      <td>CRM_UR</td><td>ROWS</td><td>50 MB</td><td>50 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:1%"></span></span>1.4%</td>
+      <td>256 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+    <tr>
+      <td><strong>CRM_log</strong></td><td>LOG</td><td>8,014 MB</td><td>8,014 MB</td>
+      <td><span class="bar-wrap"><span class="bar-fill" style="width:1%"></span></span>&lt;1%</td>
+      <td>1024 MB fixed</td>
+      <td style="color:var(--green);font-weight:700">✓ Growth đã fix</td>
+    </tr>
+  </table>
+
+  <div class="section-title">📦 Kết quả xử lý</div>
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kpi-card green">
+      <div class="kpi-label">Đã grow thành công</div>
+      <div class="kpi-value" style="font-size:20px">≈ 16.8 GB</div>
+      <div class="kpi-sub">CRM_AB +7.5GB · CRM +3.3GB · CRM_IDX +2.3GB · CRM_LT +0.9GB — ổ D:\ vẫn còn dư ~189GB</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Growth increment 10MB</div>
+      <div class="kpi-value" style="font-size:20px">0 file còn lại</div>
+      <div class="kpi-sub">Toàn bộ 10 file đã chuyển sang mức cố định lớn (256MB-2048MB)</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Instant File Init</div>
+      <div class="kpi-value" style="font-size:20px">Vẫn TẮT</div>
+      <div class="kpi-sub">Chưa xử lý — cần thao tác Windows + restart service, xem tab "Kế hoạch tiếp theo"</div>
+    </div>
+  </div>
+
+  <div class="section-title">ℹ️ Lưu ý khi thực hiện</div>
+  <div class="finding info">
+    <div class="finding-body">
+      Lệnh <span class="mono">ALTER DATABASE ... MODIFY FILE SIZE</span> để tăng size ngay lập tức <strong>sẽ cấp phát
+      và zero-fill toàn bộ phần dung lượng mới ngay lúc chạy</strong> nếu IFI đang tắt — có thể gây I/O bận trong vài
+      giây đến vài chục giây tùy tốc độ ổ đĩa. Khuyến nghị: chạy bước 2 (resize) ngoài giờ cao điểm, HOẶC bật IFI
+      (bước 4) trước rồi mới resize để tránh stall. Tất cả các lệnh trong tab "Kế hoạch thực hiện" đều chỉ là script
+      để anh review và tự chạy trong SSMS — không có lệnh nào được thực thi qua MCP.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-l"><strong>Phạm Minh Hải</strong> · Core Technology, Dcorp</div>
+  <div class="footer-r">gsf_crm_sql_health_check_v1 · Generated 20/09/2026</div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
