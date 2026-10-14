@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 
 <title>Gia phả chi ông Phạm Quang Thụ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,7 +11,7 @@
   --g1:#9b1c1c; --g2:#b45309; --g3:#7c6a12; --g4:#2f6b3a; --g5:#1f5f86; --g6:#5b3f8f; --g7:#8a3b6b; --g8:#3d5a5a;
   --band:#faf8f4; --edge:#a39a8f;
   --serif:"Noto Serif",Georgia,"Times New Roman",serif;
-  --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;  
+  --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#16130f; --paper:#1f1b16; --ink:#efe9e1; --muted:#a69d92; --line:#36302a;
@@ -229,7 +230,7 @@ button{font:inherit;cursor:pointer}
   <div id="houses" style="display:flex;flex-direction:column;gap:16px"></div>
 
   <section class="gio-list">
-    <h3>Ngày giỗ ghi trong gia phả</h3>
+    <h3>Ngày giỗ / ngày mất ghi trong gia phả</h3>
     <table class="gio-table"><tbody id="gioBody"></tbody></table>
   </section>
   </div>
@@ -247,7 +248,11 @@ const D2 = [
  {n:"Phạm Chí Thoả", gio:"27/5 ÂL", sp:[{r:"Vợ",n:"Trần Thị Nhỡ",gio:"26/8 ÂL"},{r:"Vợ",n:"Nguyễn Thị Bẩy"}], kids:[
   {n:"Phạm Thị Rậu",f:1},
   {n:"Bác Tập"},
-  {n:"Bác Thứ"},
+  {n:"Phạm Đức Thứ", gio:"13/4/1969 DL", sp:[{r:"Vợ",n:"Phạm Thị Chè"}], kids:[
+   {n:"Phạm Văn Hương", gio:"29/9/2022 DL", sp:[{r:"Vợ",n:"Đào Thị Huê"}], kids:[
+    {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Thái Bảo"}]},
+    {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}]},
+    {n:"Phạm Văn Hoà", sp:[{r:"Vợ",n:"Phạm Thị Nga"}], kids:[{n:"Phạm Trâm Anh"},{n:"Phạm Anh Dũng"}]}]}]},
   {n:"Bác Doanh",f:1},
   {n:"Phạm Chí Thủa", sp:[{r:"Vợ",n:"Phạm Thị Thuý"}], kids:[
    {n:"Phạm Minh Hải", sp:[{r:"Vợ",n:"Đỗ Thị Lan Phương"}], kids:[{n:"Phạm Nhật An"},{n:"Phạm Gia Bảo"}]},
@@ -277,6 +282,7 @@ const fmt = s => esc(s);
 const plain = s => s;
 const fold = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase();
 const gc = g => `var(--g${g-G0+1})`;
+const gl = g => /DL/.test(g) ? "mất" : "giỗ";
 const bare = s => s.replace(/^(Cụ ông|Cụ bà|Ông|Bà)\s+/,"");
 const given = s => bare(s).replace(/\s*\(.*\)/,"").split(" ").at(-1);
 
@@ -314,7 +320,7 @@ function renderPerson(p, gen, idx, parent){
   el.innerHTML = `<div class="row">
       <span class="num">${idx}.</span>
       <button class="name" type="button">${fmt(p.n)}</button>
-      ${p.gio ? `<span class="chip">giỗ <b>${esc(p.gio)}</b></span>`:""}
+      ${p.gio ? `<span class="chip">${gl(p.gio)} <b>${esc(p.gio)}</b></span>`:""}
       ${p.sp ? `<span class="sp">+ ${spText(p.sp)}</span>`:""}
       ${has ? `<button class="tog" type="button" aria-expanded="true">Ẩn ${countDesc(p)} con cháu</button>`:""}
     </div>`;
@@ -431,7 +437,7 @@ function cardInner(p){
     <div class="s">Con ông Phạm Quang Bẩm · chắt cụ Phạm Quang Chiểu</div>
     <div class="gd">Giỗ ông: 26/10 ÂL · bà: 3/6 ÂL</div>`;
   let h = `<div class="nm">${fmt(p.n)}</div>`;
-  if(p.gio) h += `<div class="gd">giỗ ${esc(p.gio)}</div>`;
+  if(p.gio) h += `<div class="gd">${gl(p.gio)} ${esc(p.gio)}</div>`;
   if(p.sp) h += p.sp.map(s=>`<div class="s">${p.gen===5?"":"+ "}${s.r?`<i>${s.r}:</i> `:""}${fmt(s.n)}${s.gio?` <span class="gd">· giỗ ${esc(s.gio)}</span>`:""}</div>`).join("");
   return h;
 }
@@ -463,7 +469,7 @@ function buildTree(){
       kidsOf(p).forEach(k=>{
         tnodes.push(k);
         const li=document.createElement("li");
-        li.innerHTML=`<span class="nmb" role="button" tabindex="0">${fmt(k.n)}</span>${k.gio?`<span class="s"><span style="color:var(--gold);font-weight:600">giỗ ${esc(k.gio)}</span></span>`:""}${k.sp?`<span class="s">+ ${k.sp.map(s=>(s.r?`<i>${s.r}:</i> `:"")+fmt(s.n)).join(", ")}</span>`:""}`;
+        li.innerHTML=`<span class="nmb" role="button" tabindex="0">${fmt(k.n)}</span>${k.gio?`<span class="s"><span style="color:var(--gold);font-weight:600">${gl(k.gio)} ${esc(k.gio)}</span></span>`:""}${k.sp?`<span class="s">+ ${k.sp.map(s=>(s.r?`<i>${s.r}:</i> `:"")+fmt(s.n)).join(", ")}</span>`:""}`;
         const nb=li.querySelector(".nmb");
         nb.addEventListener("click",()=>{ if(!dragged) showPath(k); });
         nb.addEventListener("keydown",e=>{ if(e.key==="Enter") showPath(k); });
@@ -599,3 +605,5 @@ tabTree.onclick=()=>setTab("tree"); tabList.onclick=()=>setTab("list");
 let startTab="tree"; try{ startTab=localStorage.getItem("giapha-pq-thu-tab")||"tree"; }catch(e){}
 setTab(startTab);
 </script>
+
+</body></html>
