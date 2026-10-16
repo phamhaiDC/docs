@@ -253,7 +253,12 @@ const D2 = [
     {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Thái Bảo"}]},
     {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}]},
     {n:"Phạm Văn Hoà", sp:[{r:"Vợ",n:"Phạm Thị Nga"}], kids:[{n:"Phạm Trâm Anh"},{n:"Phạm Anh Dũng"}]}]}]},
-  {n:"Bác Doanh",f:1},
+  {n:"Phạm Thị Bắc",f:1, sp:[{r:"Chồng",n:"Hoàng Minh Doanh",gio:"đã mất"}], kids:[
+   {n:"Hoàng Minh Tranh", sp:[{r:"Vợ",n:"Nguyễn Thanh Hưng"}], kids:[
+    {n:"Hoàng Minh Trang", sp:[{r:"Vợ",n:"Nguyễn Thị Thuỷ"}], kids:[{n:"Hoàng Minh Ngọc"},{n:"Hoàng Minh Tuân"},{n:"Hoàng Thị Ngâu",f:1}]},
+    {n:"Hoàng Minh Đông", sp:[{r:"Vợ",n:"Nguyễn Thị Oanh"}], kids:[{n:"Hoàng Minh Phong"},{n:"Hoàng Thị Nhi",f:1},{n:"Hoàng Thị Thư",f:1}]}]},
+   {n:"Hoàng Thị Gấm",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Chung"}], kids:[{n:"Nguyễn Thị My",f:1},{n:"Nguyễn Thị Yến",f:1}]},
+   {n:"Hoàng Thị Vang",f:1, sp:[{r:"Chồng",n:"Nguyễn Đình Lộc",gio:"đã mất"}], kids:[{n:"Nguyễn Đình Đạt"},{n:"Nguyễn Thị An",f:1}]}]},
   {n:"Phạm Chí Thủa", sp:[{r:"Vợ",n:"Phạm Thị Thuý"}], kids:[
    {n:"Phạm Minh Hải", sp:[{r:"Vợ",n:"Đỗ Thị Lan Phương"}], kids:[{n:"Phạm Nhật An"},{n:"Phạm Gia Bảo"}]},
    {n:"Phạm Thu Vân",f:1, sp:[{r:"Chồng",n:"Nguyễn Tuấn Nam"}], kids:[{n:"Nguyễn Vân Khánh (Emily)"},{n:"Nguyễn Nam Khánh (Henry)"}]},
@@ -282,7 +287,7 @@ const fmt = s => esc(s);
 const plain = s => s;
 const fold = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase();
 const gc = g => `var(--g${g-G0+1})`;
-const gl = g => /DL/.test(g) ? "mất" : "giỗ";
+const gl = g => /DL/.test(g) ? "mất" : /mất/.test(g) ? "" : "giỗ";
 const bare = s => s.replace(/^(Cụ ông|Cụ bà|Ông|Bà)\s+/,"");
 const given = s => bare(s).replace(/\s*\(.*\)/,"").split(" ").at(-1);
 
@@ -302,7 +307,7 @@ document.getElementById("legend").innerHTML =
   Array.from({length:GMAX-G0+1},(_,i)=>i+G0).map(g=>`<span><i style="background:${gc(g)}"></i>Đời ${g}</span>`).join("");
 
 const all = [];
-function spText(sp){ return sp.map(s => (s.r ? `<i>${s.r}:</i> ` : "") + fmt(s.n) + (s.gio ? ` <span class="chip">giỗ <b>${esc(s.gio)}</b></span>` : "")).join(", "); }
+function spText(sp){ return sp.map(s => (s.r ? `<i>${s.r}:</i> ` : "") + fmt(s.n) + (s.gio ? ` <span class="chip">${gl(s.gio)} <b>${esc(s.gio)}</b></span>` : "")).join(", "); }
 
 function renderKids(p, gen){
   const g = document.createElement("div");
@@ -379,7 +384,7 @@ const gios = [["Bà cô tổ Phạm Thị Nương","Bà cô tổ","5/3 ÂL"],
  ["Ông Phạm Quang Thụ","Đời 4","26/10 ÂL"],["Bà Trần Thị Út","Đời 4 · vợ ông Thụ","3/6 ÂL"]];
 (function walk(list){ list.forEach(p=>{
   if(p.gio) gios.push([bare(p.n),"Đời "+p.gen,p.gio]);
-  (p.sp||[]).forEach(s=>{ if(s.gio) gios.push([bare(s.n),"Đời "+p.gen + " · " + (s.r==="Chồng"?"chồng":"vợ") + " ông " + given(p.n),s.gio]); });
+  (p.sp||[]).forEach(s=>{ if(s.gio && /\d/.test(s.gio)) gios.push([bare(s.n),"Đời "+p.gen + " · " + (s.r==="Chồng"?"chồng":"vợ") + " ông " + given(p.n),s.gio]); });
   if(p.kids) walk(p.kids);
 }); })(D2);
 document.getElementById("gioBody").innerHTML = gios.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
@@ -438,7 +443,7 @@ function cardInner(p){
     <div class="gd">Giỗ ông: 26/10 ÂL · bà: 3/6 ÂL</div>`;
   let h = `<div class="nm">${fmt(p.n)}</div>`;
   if(p.gio) h += `<div class="gd">${gl(p.gio)} ${esc(p.gio)}</div>`;
-  if(p.sp) h += p.sp.map(s=>`<div class="s">${p.gen===5?"":"+ "}${s.r?`<i>${s.r}:</i> `:""}${fmt(s.n)}${s.gio?` <span class="gd">· giỗ ${esc(s.gio)}</span>`:""}</div>`).join("");
+  if(p.sp) h += p.sp.map(s=>`<div class="s">${p.gen===5?"":"+ "}${s.r?`<i>${s.r}:</i> `:""}${fmt(s.n)}${s.gio?` <span class="gd">· ${gl(s.gio)} ${esc(s.gio)}</span>`:""}</div>`).join("");
   return h;
 }
 
