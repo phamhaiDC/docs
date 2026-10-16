@@ -170,19 +170,24 @@ button{font:inherit;cursor:pointer}
 .tcard.aunt-card{border:1px dashed var(--edge);border-top:3px solid var(--gold);cursor:default}
 .tcard.aunt-card .tag{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 @media (max-width:640px){.top{grid-template-columns:minmax(0,1fr)}}
+.nw{white-space:nowrap}
+.hero h1 .nw{display:inline-block}
+.tcard .nm,.tcard .s,.tcard .gd,.tlist .cp,.tlist li .nmb,.tlist li .s{white-space:nowrap}
+.tlist li .s{display:block}
+.row .name,.row .sp,.row .chip{white-space:nowrap}
 </style>
 
 <div class="wrap">
   <div class="top">
     <header class="hero">
       <div class="lbl">Đời 4 · Chi ông Thụ</div>
-      <h1>Ông PHẠM QUANG THỤ &amp; Bà TRẦN THỊ ÚT</h1>
+      <h1><span class="nw">Ông PHẠM QUANG THỤ</span> &amp; <span class="nw">Bà TRẦN THỊ ÚT</span></h1>
       <div class="place">Thôn Trà Khê - xã Tân Thuận - tỉnh Hưng Yên</div>
       <div class="gio">
         <span class="chip">Ngày giỗ ông: <b>26/10 ÂL</b></span>
         <span class="chip">Bà: <b>3/6 ÂL</b></span>
       </div>
-      <div class="lineage">Con ông Phạm Quang Bẩm · cháu ông Phạm Quang Thi · chắt cụ Phạm Quang Chiểu</div>
+      <div class="lineage"><span class="nw">Con ông Phạm Quang Bẩm</span> · <span class="nw">cháu ông Phạm Quang Thi</span> · <span class="nw">chắt cụ Phạm Quang Chiểu</span></div>
     </header>
     <aside class="aunt" aria-label="Bà cô tổ">
       <div class="lbl">Bà cô tổ</div>
@@ -455,20 +460,20 @@ function buildTree(){
   canvas.appendChild(svg);
   // Bà cô tổ: thẻ riêng ở tầng trên cùng, không nối dây
   auntCard=document.createElement("div");
-  auntCard.className="tcard aunt-card"; auntCard.style.width=CW+"px";
+  auntCard.className="tcard aunt-card"; auntCard.style.minWidth=CW+"px";
   auntCard.innerHTML=`<div class="tag">Bà cô tổ</div><div class="nm">${esc(AUNT.n)}</div><div class="gd">giỗ ${esc(AUNT.gio)}</div>`;
   canvas.appendChild(auntCard);
   (function mk(p){
     tnodes.push(p);
     const c=document.createElement("div");
-    c.className="tcard"+(p===ROOT?" root":""); c.style.width=cw(p)+"px"; c.style.setProperty("--gc",gc(p.gen));
+    c.className="tcard"+(p===ROOT?" root":""); c.style.minWidth=cw(p)+"px"; c.style.setProperty("--gc",gc(p.gen));
     c.innerHTML=cardInner(p); c.tabIndex=0;
     c.addEventListener("click",()=>{ if(!dragged) showPath(p); });
     c.addEventListener("keydown",e=>{ if(e.key==="Enter") showPath(p); });
     canvas.appendChild(c); p._card=c;
     if(isList(p)){
       const l=document.createElement("div");
-      l.className="tlist"; l.style.width=CW+"px"; l.style.setProperty("--gc",gc(p.gen+1));
+      l.className="tlist"; l.style.minWidth=CW+"px"; l.style.setProperty("--gc",gc(p.gen+1));
       l.innerHTML=`<div class="cp">${fmt(p.cap)}</div><ol></ol>`;
       const ol=l.querySelector("ol");
       kidsOf(p).forEach(k=>{
@@ -496,6 +501,7 @@ const ro = window.ResizeObserver ? new ResizeObserver(()=>{
   requestAnimationFrame(()=>{ layPending=false; if(!treeBuilt) return; const s=scale; layoutTree(); applyScale(s); });
 }) : null;
 
+const cardW = p => p._card ? p._card.offsetWidth : cw(p);
 function layoutTree(){
   const svg = tsvg;
   const rowH={[G0]:auntCard.offsetHeight};
@@ -510,7 +516,7 @@ function layoutTree(){
 
   const wid=new Map();
   (function w(p){
-    let v = cw(p);
+    let v = Math.max(cardW(p), p._list ? p._list.offsetWidth : 0);
     if(hasKids(p) && !isList(p)){
       const s = kidsOf(p).reduce((a,k)=>a+w(k),0) + HG*(kidsOf(p).length-1);
       v = Math.max(v,s);
@@ -531,9 +537,9 @@ function layoutTree(){
       const bot=rowTop[p.gen]+p._card.offsetHeight, bar=rowTop[p.gen+1]-VG/2;
       ks.forEach((k,i)=>{ paths+=`<path class="edge" data-i="${tnodes.indexOf(k)}" d="M${cx},${bot} V${bar} H${cxs[i]} V${rowTop[k.gen]}"/>`; });
     } else cx=x0+w/2;
-    p._card.style.left=(cx-cw(p)/2)+"px"; p._card.style.top=rowTop[p.gen]+"px";
+    p._card.style.left=(cx-cardW(p)/2)+"px"; p._card.style.top=rowTop[p.gen]+"px";
     if(p._list){
-      p._list.style.left=(cx-CW/2)+"px"; p._list.style.top=rowTop[p.gen+1]+"px";
+      p._list.style.left=(cx-p._list.offsetWidth/2)+"px"; p._list.style.top=rowTop[p.gen+1]+"px";
       paths+=`<path class="edge" data-l="${tnodes.indexOf(p)}" d="M${cx},${rowTop[p.gen]+p._card.offsetHeight} V${rowTop[p.gen+1]}"/>`;
     }
     return cx;
@@ -541,7 +547,7 @@ function layoutTree(){
 
   // Bà cô tổ: đặt sát bên trái ông Thụ, cùng tầng trên cùng
   const rootLeft=parseFloat(ROOT._card.style.left);
-  auntCard.style.left=Math.max(LBL+PAD, rootLeft-AUNT_W)+"px"; auntCard.style.top=rowTop[G0]+"px";
+  auntCard.style.left=Math.max(LBL+PAD, rootLeft-auntCard.offsetWidth-48)+"px"; auntCard.style.top=rowTop[G0]+"px";
 
   let bands="";
   gens.forEach((g,i)=>{
@@ -570,7 +576,7 @@ function showTree(){
   buildTree();
   const s = Math.max(0.55,Math.min(1,fitScale()));
   applyScale(s,false);
-  const rc = parseFloat(ROOT._card.style.left)+RW/2;
+  const rc = parseFloat(ROOT._card.style.left)+ROOT._card.offsetWidth/2;
   vp.scrollLeft = rc*scale - vp.clientWidth/2; vp.scrollTop=0;
 }
 document.getElementById("zIn").onclick=()=>applyScale(scale*1.2);
