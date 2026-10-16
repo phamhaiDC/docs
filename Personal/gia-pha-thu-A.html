@@ -1,0 +1,650 @@
+
+<title>Gia phả chi ông Thụ (Sơn son)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+/* Layout: hero cụ tổ + ô Bà cô tổ bên phải → tab Sơ đồ cây (mỗi đời một tầng) / Danh sách theo nhà (đời 2) */
+/* Phương án A · Sơn son thếp vàng: nền then, khung cánh gián, chữ và viền vàng thếp, điểm son */
+:root{
+  --bg:#1C1410; --paper:#2B1B13; --ink:#F3EAD7; --muted:#BFAF95; --line:#5A4330;
+  --lacquer:#E0B85C; --gold:#C9A14A; --flag:#E07A62; --son:#8E1B17; --son2:#A3261E;
+  --g1:#E0B85C; --g2:#E07A62; --g3:#C9C4B8; --g4:#93B89E; --g5:#D9A35B; --g6:#C98C7A;
+  --band:#22160F; --edge:#7A5C3E;
+  --serif:"Playfair Display",Georgia,"Times New Roman",serif;
+  --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --han:"Noto Serif TC","Noto Serif CJK TC","Songti TC",serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px;padding-block:28px 120px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0}
+.lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+
+/* Hero */
+.hero{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--lacquer);border-radius:6px;padding:26px 24px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.hero .lbl{color:var(--lacquer)}
+.hero h1{font-size:clamp(24px,4.4vw,36px);color:var(--lacquer);font-weight:700;line-height:1.2}
+.hero .place{font-family:var(--serif);font-size:clamp(15px,2.4vw,19px);color:var(--ink)}
+.hero .gio{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chip b{font-weight:600;color:var(--gold)}
+
+/* Legend + tools */
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.legend i{width:14px;height:4px;border-radius:2px;display:inline-block}
+.legend .red{color:var(--flag);font-weight:600}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=search]{font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:240px;max-width:100%}
+button{font:inherit;cursor:pointer}
+.btn{font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.btn:hover{border-color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#hint{font-size:13px;color:var(--muted);min-height:1.2em}
+
+/* Index of houses */
+.index{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.house-link{display:flex;flex-direction:column;gap:2px;padding:12px 14px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--g2);border-radius:6px;text-decoration:none;color:var(--ink)}
+.house-link:hover{border-color:var(--g2)}
+.house-link strong{font-family:var(--serif);font-weight:600;font-size:15px}
+.house-link small{color:var(--muted);font-size:12.5px}
+
+/* House sections */
+.house{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;scroll-margin-top:16px}
+.house-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
+.house-head .who{display:flex;flex-direction:column;gap:4px}
+.house-head h2{font-size:20px;font-weight:700}
+.house-head h2 .alias{font-weight:400;font-style:italic;color:var(--muted);font-size:16px}
+.house-head .spouse{font-family:var(--serif);font-size:16px}
+.house-head .lbl{color:var(--g2)}
+.house-body{padding:14px 16px 18px;overflow-x:auto}
+.empty{color:var(--muted);font-style:italic;font-size:14px;padding:4px 4px}
+
+/* Tree */
+.group{margin-left:10px;padding-left:16px;border-left:2px solid var(--gc,var(--line));display:flex;flex-direction:column;gap:2px}
+.cap{font-size:12.5px;color:var(--muted);padding:6px 0 4px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.cap .gen{font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:11px;color:var(--gc)}
+.cap em{font-style:italic}
+.person{position:relative}
+.person::before{content:"";position:absolute;left:-16px;top:19px;width:12px;border-top:2px solid var(--gc,var(--line))}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:5px 6px;border-radius:5px;min-width:0}
+.row:hover{background:var(--bg)}
+.num{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.4em;text-align:right}
+.name{font-family:var(--serif);font-size:16px;font-weight:600;background:none;border:0;padding:0;color:var(--ink);text-align:left;cursor:pointer}
+.name:hover{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.flag{color:var(--flag)}
+.sp{font-size:14px;color:var(--ink)}
+.sp i{color:var(--muted);font-style:italic}
+.tog{margin-left:auto;font-size:12px;color:var(--muted);background:none;border:1px solid transparent;border-radius:4px;padding:2px 8px}
+.tog:hover{border-color:var(--line)}
+.person.closed > .group{display:none}
+.hit > .row{background:color-mix(in srgb,var(--gold) 22%,transparent)}
+.dim > .row .name{opacity:.45}
+.sel > .row{outline:2px solid var(--gold)}
+
+/* Death anniversaries */
+.gio-list{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.gio-list h3{font-size:17px}
+.gio-table{width:100%;border-collapse:collapse;font-size:14px}
+.gio-table td{padding:7px 4px;border-top:1px solid var(--line)}
+.gio-table td:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--gold);font-weight:600;white-space:nowrap}
+.gio-table td:nth-child(2){color:var(--muted);font-size:13px}
+
+/* Lineage panel */
+#path{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:2px solid var(--gold);padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px rgba(0,0,0,.08);z-index:5}
+#path .in{max-width:1040px;margin:0 auto;display:flex;gap:12px;align-items:flex-start}
+#path ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;flex:1;min-width:0}
+#path li{display:inline-flex;align-items:center;gap:6px;font-size:13.5px}
+#path li .g{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:3px;color:var(--paper);background:var(--gc)}
+#path li + li::before{content:"›";color:var(--muted);margin-right:2px}
+#path li:last-child{font-weight:600}
+@media (max-width:560px){
+  .wrap{padding-inline:16px}
+  .group{margin-left:4px;padding-left:12px}
+  .person::before{left:-12px;width:9px}
+  input[type=search]{width:100%}
+  .tools{width:100%}
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+
+/* Tabs */
+.stack{display:flex;flex-direction:column;gap:28px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font-size:15px;font-weight:600;color:var(--muted);margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--lacquer);border-bottom-color:var(--lacquer)}
+
+/* Tree view */
+.ttools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.ttools select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.ttools .zl{font-size:13px;color:var(--muted);min-width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
+.ttools .sep{flex:1}
+#tvp{height:74vh;min-height:420px;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:6px;cursor:grab;position:relative;touch-action:pan-x pan-y}
+#tvp.drag{cursor:grabbing;user-select:none}
+#tsizer{position:relative}
+#tcanvas{position:absolute;left:0;top:0;transform-origin:0 0}
+#tcanvas svg{position:absolute;left:0;top:0;overflow:visible}
+.band{fill:var(--band)}
+.bandlbl{font:600 12px var(--sans);letter-spacing:.1em}
+.edge{fill:none;stroke:var(--edge);stroke-width:1.5}
+.edge.on{stroke:var(--gold);stroke-width:3}
+.tcard,.tlist{position:absolute;background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--gc);border-radius:6px;padding:8px 10px;font-size:12.5px;line-height:1.35}
+.tcard{text-align:center;cursor:pointer;display:flex;flex-direction:column;gap:3px}
+.tcard:hover{border-color:var(--gc)}
+.tcard .nm{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--ink)}
+.tcard .nm i{font-weight:400;color:var(--muted)}
+.tcard .s{color:var(--ink);font-size:12.5px}
+.tcard .s i{color:var(--muted)}
+.tcard .gd{color:var(--gold);font-weight:600;font-size:12px;font-variant-numeric:tabular-nums}
+.tcard.root{border-top-width:4px;padding:12px 14px}
+.tcard.root .nm{font-size:17px;color:var(--lacquer);font-weight:700}
+.tlist .cp{font-size:11px;color:var(--muted);font-weight:600;padding-bottom:5px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.tlist ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;counter-reset:n}
+.tlist li{display:grid;grid-template-columns:1.6em 1fr;align-items:start;counter-increment:n}
+.tlist li::before{content:counter(n) ".";color:var(--muted);font-size:12px;padding-top:2px;font-variant-numeric:tabular-nums}
+.tlist li .nmb{grid-column:2;font-family:var(--serif);font-size:13.5px;color:var(--ink);cursor:pointer;border-radius:3px;padding:0 2px}
+.tlist li .nmb:hover{text-decoration:underline;text-decoration-color:var(--gold)}
+.tlist li .s{grid-column:2;font-size:12px;color:var(--ink);padding-left:2px}
+.tcard.on{outline:3px solid var(--gold);outline-offset:1px}
+.tlist li.on .nmb{background:color-mix(in srgb,var(--gold) 28%,transparent);font-weight:600}
+.tnote{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* Phần đầu: cụ tổ + Bà cô tổ tách riêng */
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,280px);gap:14px;align-items:stretch}
+.hero .lineage{font-size:13px;color:var(--muted)}
+.aunt{background:var(--paper);border:1px dashed var(--edge);border-radius:6px;padding:20px 18px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;text-align:center}
+.aunt .lbl{color:var(--gold)}
+.aunt h2{font-size:20px;font-weight:700;color:var(--ink)}
+.aunt p{margin:0;font-size:12.5px;color:var(--muted);max-width:28ch}
+.tcard.aunt-card{border:1px dashed var(--edge);border-top:3px solid var(--gold);cursor:default}
+.tcard.aunt-card .tag{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+@media (max-width:640px){.top{grid-template-columns:minmax(0,1fr)}}
+.nw{white-space:nowrap}
+.hero h1 .nw{display:inline-block}
+.tcard .nm,.tcard .s,.tcard .gd,.tlist .cp,.tlist li .nmb,.tlist li .s{white-space:nowrap}
+.tlist li .s{display:block}
+.row .name,.row .sp,.row .chip{white-space:nowrap}
+
+/* --- Phương án A --- */
+.hoanh{position:relative;background:var(--son);border:2px solid var(--gold);outline:1px solid var(--gold);outline-offset:4px;border-radius:4px;padding:18px 20px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;margin:6px}
+.hoanh .doi{writing-mode:vertical-rl;font-family:var(--serif);color:#F1D9A0;font-size:12.5px;letter-spacing:.03em;line-height:1.3;white-space:nowrap;border:1px solid rgba(201,161,74,.6);padding:8px 5px;background:rgba(0,0,0,.18)}
+.hoanh .mid{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.hoanh .han{font-family:var(--han);font-size:clamp(30px,6vw,52px);color:#F1D9A0;letter-spacing:.3em;font-weight:700;line-height:1.1;padding-left:.3em}
+.hoanh .am{font-family:var(--serif);color:#E6CF8B;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
+.hoanh .cloud{width:min(260px,60%);height:14px;color:#C9A14A;opacity:.85}
+.hero{background:linear-gradient(180deg,#33201A,#2B1B13);border:1px solid var(--gold);border-top:3px double var(--gold);box-shadow:inset 0 0 0 4px #2B1B13,inset 0 0 0 5px rgba(201,161,74,.45)}
+.hero h1{color:#F1D9A0}
+.hero .lbl{color:var(--gold)}
+.hero .place{color:var(--ink)}
+.chip{background:#1F140E;border-color:var(--line);color:var(--ink)}
+.chip b{color:#F1D9A0}
+.aunt{background:#24170F;border:1px solid var(--gold);border-style:double;border-width:3px}
+.aunt h2{color:#F1D9A0}
+.house,.gio-list,.house-link{background:var(--paper);border-color:var(--line)}
+.tcard,.tlist{background:var(--paper);border-color:var(--line)}
+.tcard .nm{color:var(--ink)}
+.tcard.root{background:var(--son);border:1px solid var(--gold);border-top:4px double var(--gold)}
+.tcard.root .nm{color:#F1D9A0}
+.tcard.root .s{color:#F3EAD7}
+.tcard.root .gd{color:#F1D9A0}
+.tcard.aunt-card{background:#24170F;border-color:var(--gold)}
+#tvp{background:#1A120D;border-color:var(--line)}
+.edge.on{stroke:#F1D9A0}
+.tcard.on{outline-color:#F1D9A0}
+#path{background:#24170F;border-top-color:var(--gold)}
+.tab[aria-selected="true"]{color:#F1D9A0;border-bottom-color:var(--gold)}
+input[type=search],.btn,.ttools select{background:#24170F;color:var(--ink);border-color:var(--line)}
+.foot{color:var(--muted);font-size:12.5px;text-align:center}
+@media (max-width:640px){.hoanh{grid-template-columns:minmax(0,1fr)}.hoanh .doi{writing-mode:horizontal-tb;white-space:normal;text-align:center;letter-spacing:.04em;font-size:13.5px}.hoanh .doi.r{order:3}}
+</style>
+
+<div class="wrap">
+  <header class="hoanh" aria-label="Hoành phi và câu đối">
+    <div class="doi l">Mộc xuất thiên chi do hữu bản</div>
+    <div class="mid">
+      <div class="han" lang="zh-Hant">木本水源</div>
+      <svg class="cloud" viewBox="0 0 260 14" aria-hidden="true"><path d="M2 7 H92 M168 7 H258" stroke="currentColor" stroke-width="1"/><path d="M100 7c0-4 5-5 8-3c1-3 7-3 8 0c2-2 7-1 7 3c0 3-4 4-6 2c-1 3-7 3-8 0c-3 2-9 1-9-2zM137 7c0-4 5-5 8-3c1-3 7-3 8 0c2-2 7-1 7 3c0 3-4 4-6 2c-1 3-7 3-8 0c-3 2-9 1-9-2z" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+      <div class="am">Mộc Bản Thủy Nguyên · Phạm tộc gia phả</div>
+    </div>
+    <div class="doi r">Thủy lưu vạn phái tố tòng nguyên</div>
+  </header>
+  <div class="top">
+    <header class="hero">
+      <div class="lbl">Đời 4 · Chi ông Thụ</div>
+      <h1><span class="nw">Ông PHẠM QUANG THỤ</span> &amp; <span class="nw">Bà TRẦN THỊ ÚT</span></h1>
+      <div class="place">Thôn Trà Khê - xã Tân Thuận - tỉnh Hưng Yên</div>
+      <div class="gio">
+        <span class="chip">Ngày giỗ ông: <b>26/10 ÂL</b></span>
+        <span class="chip">Bà: <b>3/6 ÂL</b></span>
+      </div>
+      <div class="lineage"><span class="nw">Con ông Phạm Quang Bẩm</span> · <span class="nw">cháu ông Phạm Quang Thi</span> · <span class="nw">chắt cụ Phạm Quang Chiểu</span></div>
+    </header>
+    <aside class="aunt" aria-label="Bà cô tổ">
+      <div class="lbl">Bà cô tổ</div>
+      <h2>Phạm Thị Nương</h2>
+      <span class="chip">Ngày giỗ: <b>5/3 ÂL</b></span>
+      <p>Bà cô tổ của họ Phạm Quang. Ghi riêng, không nối vào cây.</p>
+    </aside>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tabTree" role="tab" type="button" aria-selected="true">Sơ đồ cây</button>
+    <button class="tab" id="tabList" role="tab" type="button" aria-selected="false">Danh sách theo nhà</button>
+  </div>
+
+  <div id="viewTree">
+    <div class="ttools">
+      <select id="tHouse" aria-label="Chọn nhà để xem"></select>
+      <span class="sep"></span>
+      <button class="btn" id="zOut" type="button" aria-label="Thu nhỏ">−</button>
+      <span class="zl" id="zLbl">100%</span>
+      <button class="btn" id="zIn" type="button" aria-label="Phóng to">+</button>
+      <button class="btn" id="zFit" type="button">Vừa khung</button>
+    </div>
+    <div id="tvp"><div id="tsizer"><div id="tcanvas"></div></div></div>
+    <div class="tnote">Kéo để di chuyển sơ đồ, dùng nút +/− để phóng to thu nhỏ. Bấm vào một người để tô đậm đường dòng dõi từ ông Thụ xuống. Các anh chị em cùng cha mẹ mà chưa có con được gom thành một danh sách.</div>
+  </div>
+
+  <div id="viewList" class="stack" hidden>
+  <div class="bar">
+    <div class="tools">
+      <input type="search" id="q" placeholder="Tìm tên (vd: Hải, Thoả, Bùi…)" aria-label="Tìm tên trong gia phả">
+      <button class="btn" id="openAll">Mở tất cả</button>
+      <button class="btn" id="closeAll">Thu gọn</button>
+    </div>
+  </div>
+  <div id="hint">Bấm vào một tên để xem dòng dõi từ ông Thụ xuống người đó.</div>
+
+  <section>
+    <div class="lbl" style="margin-bottom:10px">Đời 5 · Các con của ông Thụ — 5 nhà</div>
+    <nav class="index" id="index"></nav>
+  </section>
+
+  <div id="houses" style="display:flex;flex-direction:column;gap:16px"></div>
+
+  <section class="gio-list">
+    <h3>Ngày giỗ / ngày mất ghi trong gia phả</h3>
+    <table class="gio-table"><tbody id="gioBody"></tbody></table>
+  </section>
+  </div>
+  <p class="foot">Câu đối: "Cây chung nghìn nhánh sinh từ gốc · Nước chảy muôn dòng phát tại nguồn". Chữ Hán trên hoành phi nên nhờ người thạo chữ duyệt lại trước khi in.</p>
+</div>
+
+<div id="path" hidden><div class="in"><ol id="pathList"></ol><button class="btn" id="pathClose" aria-label="Đóng">Đóng</button></div></div>
+
+<script>
+// f:1 = nữ (dùng để ghi "ông/bà" và cháu nội/ngoại)
+const ROOT = {n:"Ông Phạm Quang Thụ", sp:"Bà Trần Thị Út", gen:4};
+const AUNT = {n:"Phạm Thị Nương", gio:"5/3 ÂL"};
+const D2 = [
+ {n:"Phạm Quang Thọ", sp:[{r:"Vợ",n:"Phạm Thị Thọ"}]},
+ {n:"Phạm Quang Vĩnh", sp:[{r:"Vợ",n:"Phạm Thị Vĩnh"}]},
+ {n:"Phạm Chí Thoả", gio:"27/5 ÂL", sp:[{r:"Vợ",n:"Trần Thị Nhỡ",gio:"26/8 ÂL"},{r:"Vợ",n:"Nguyễn Thị Bẩy"}], kids:[
+  {n:"Phạm Thị Rậu",f:1},
+  {n:"Bác Tập"},
+  {n:"Phạm Đức Thứ", gio:"13/4/1969 DL", sp:[{r:"Vợ",n:"Phạm Thị Chè"}], kids:[
+   {n:"Phạm Văn Hương", gio:"29/9/2022 DL", sp:[{r:"Vợ",n:"Đào Thị Huê"}], kids:[
+    {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Thái Bảo"}]},
+    {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}]},
+    {n:"Phạm Văn Hoà", sp:[{r:"Vợ",n:"Phạm Thị Nga"}], kids:[{n:"Phạm Trâm Anh"},{n:"Phạm Anh Dũng"}]}]}]},
+  {n:"Phạm Thị Bắc",f:1, sp:[{r:"Chồng",n:"Hoàng Minh Doanh",gio:"đã mất"}], kids:[
+   {n:"Hoàng Minh Tranh", sp:[{r:"Vợ",n:"Nguyễn Thanh Hưng"}], kids:[
+    {n:"Hoàng Minh Trang", sp:[{r:"Vợ",n:"Nguyễn Thị Thuỷ"}], kids:[{n:"Hoàng Minh Ngọc"},{n:"Hoàng Minh Tuân"},{n:"Hoàng Thị Ngâu",f:1}]},
+    {n:"Hoàng Minh Đông", sp:[{r:"Vợ",n:"Nguyễn Thị Oanh"}], kids:[{n:"Hoàng Minh Phong"},{n:"Hoàng Thị Nhi",f:1},{n:"Hoàng Thị Thư",f:1}]}]},
+   {n:"Hoàng Thị Gấm",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Chung"}], kids:[{n:"Nguyễn Thị My",f:1},{n:"Nguyễn Thị Yến",f:1}]},
+   {n:"Hoàng Thị Vang",f:1, sp:[{r:"Chồng",n:"Nguyễn Đình Lộc",gio:"đã mất"}], kids:[{n:"Nguyễn Đình Đạt"},{n:"Nguyễn Thị An",f:1}]}]},
+  {n:"Phạm Chí Thủa", sp:[{r:"Vợ",n:"Phạm Thị Thuý"}], kids:[
+   {n:"Phạm Minh Hải", sp:[{r:"Vợ",n:"Đỗ Thị Lan Phương"}], kids:[{n:"Phạm Nhật An"},{n:"Phạm Gia Bảo"}]},
+   {n:"Phạm Thu Vân",f:1, sp:[{r:"Chồng",n:"Nguyễn Tuấn Nam"}], kids:[{n:"Nguyễn Vân Khánh (Emily)"},{n:"Nguyễn Nam Khánh (Henry)"}]},
+   {n:"Phạm Minh Đức", sp:[{r:"Vợ",n:"Đỗ Thanh Thuỷ"}], kids:[{n:"Phạm Mộc Anh"},{n:"Phạm Minh Hiếu"}]}]},
+  {n:"Phạm Chí Thuận", sp:[{r:"Vợ",n:"Phạm Thị Bến"}], kids:[
+   {n:"Phạm Thị Huế",f:1, sp:[{r:"Chồng",n:"Bùi Quang Huy"}], kids:[
+    {n:"Bùi Hà Linh",f:1, sp:[{r:"Chồng",n:"Phạm Văn Cường"}], kids:[{n:"Phạm Linh Ngọc"}]},
+    {n:"Bùi Hương Giang",f:1}]},
+   {n:"Phạm Thị Huyền",f:1, sp:[{r:"Chồng",n:"Trần Văn Tưởng"}], kids:[
+    {n:"Trần Thu Hiền",f:1, sp:[{r:"Chồng",n:"Nguyễn Thành Trung"}], kids:[{n:"Nguyễn Thành Phong"}]},
+    {n:"Trần Thu Hoà",f:1}]},
+   {n:"Phạm Thị Hồng",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Trung"}], kids:[{n:"Nguyễn Văn Minh"},{n:"Nguyễn Thị Anh",f:1}]},
+   {n:"Phạm Thị Xiêm",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Hiệu"}], kids:[{n:"Nguyễn Bảo Minh"},{n:"Nguyễn Diệp Anh"}]}]},
+  {n:"Phạm Chí Thời", sp:[{r:"Vợ",n:"Phạm Thị Yên"}], kids:[
+   {n:"Phạm Anh Tuấn", sp:[{r:"Vợ",n:"Vũ Thị Hương"}], kids:[{n:"Phạm Vũ Tuấn Anh"},{n:"Phạm Vũ Ngọc Chi"}]},
+   {n:"Phạm Chí Cường", sp:[{r:"Vợ",n:"Lê Thị Giang"}], kids:[{n:"Phạm Lê Văn Minh"},{n:"Phạm Minh Anh"}]}]},
+  {n:"Phạm Văn Trôi"},{n:"Phạm Văn Nổi"}]},
+ {n:"Phạm Thị Lợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Huệ"}]},
+ {n:"Phạm Quang Thứ"}
+];
+const GEN = ["","","","","Đời 4 · Ông bà","Đời 5 · Các con","Đời 6 · Các cháu","Đời 7 · Các chắt","Đời 8 · Các chút","Đời 9 · Các chít"];
+const G0 = 4, GMAX = 9;
+
+const esc = s => s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = s => esc(s);
+const plain = s => s;
+const fold = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase();
+const gc = g => `var(--g${g-G0+1})`;
+const gl = g => /DL/.test(g) ? "mất" : /mất/.test(g) ? "" : "giỗ";
+const bare = s => s.replace(/^(Cụ ông|Cụ bà|Ông|Bà)\s+/,"");
+const given = s => bare(s).replace(/\s*\(.*\)/,"").split(" ").at(-1);
+
+// Chú thích "Con của …" tự sinh theo cha mẹ
+function makeCap(p, gen){
+  const t = x => x.f ? "bà" : "ông";
+  const sps = (p.sp||[]).map(s => (s.r==="Chồng" ? "ông " : "bà ") + given(s.n));
+  if(gen <= 6) return `Con ${t(p)} ${given(p.n)}${sps.length ? " + " + sps.join(" / ") : ""}`;
+  let c = `Con của ${given(p.n)}${p.sp ? " + " + given(p.sp[0].n) : ""}`;
+  const gp = p.parent;
+  if(gp && gp !== ROOT) c += ` (cháu ${p.f ? "ngoại" : "nội"} ${t(gp)} ${given(gp.n)})`;
+  return c;
+}
+
+// legend
+document.getElementById("legend").innerHTML =
+  Array.from({length:GMAX-G0+1},(_,i)=>i+G0).map(g=>`<span><i style="background:${gc(g)}"></i>Đời ${g}</span>`).join("");
+
+const all = [];
+function spText(sp){ return sp.map(s => (s.r ? `<i>${s.r}:</i> ` : "") + fmt(s.n) + (s.gio ? ` <span class="chip">${gl(s.gio)} <b>${esc(s.gio)}</b></span>` : "")).join(", "); }
+
+function renderKids(p, gen){
+  const g = document.createElement("div");
+  g.className = "group"; g.style.setProperty("--gc", gc(gen));
+  g.innerHTML = `<div class="cap"><span class="gen">${GEN[gen]}</span><em>${fmt(p.cap)}</em></div>`;
+  p.kids.forEach((k,i)=> g.appendChild(renderPerson(k, gen, i+1, p)));
+  return g;
+}
+function renderPerson(p, gen, idx, parent){
+  p.gen = gen; p.parent = parent;
+  if(p.kids && p.kids.length) p.cap = makeCap(p, gen);
+  const el = document.createElement("div");
+  el.className = "person"; el.style.setProperty("--gc", gc(gen));
+  const has = p.kids && p.kids.length;
+  el.innerHTML = `<div class="row">
+      <span class="num">${idx}.</span>
+      <button class="name" type="button">${fmt(p.n)}</button>
+      ${p.gio ? `<span class="chip">${gl(p.gio)} <b>${esc(p.gio)}</b></span>`:""}
+      ${p.sp ? `<span class="sp">+ ${spText(p.sp)}</span>`:""}
+      ${has ? `<button class="tog" type="button" aria-expanded="true">Ẩn ${countDesc(p)} con cháu</button>`:""}
+    </div>`;
+  if(has) el.appendChild(renderKids(p, gen+1));
+  wire(el, p);
+  return el;
+}
+function countDesc(p){ return (p.kids||[]).reduce((s,k)=>s+1+countDesc(k),0); }
+function wire(el, p){
+  p.el = el; all.push(p);
+  el.querySelector(":scope > .row .name").addEventListener("click",()=>showPath(p));
+  const t = el.querySelector(":scope > .row .tog");
+  if(t) t.addEventListener("click",()=>setOpen(p, el.classList.contains("closed")));
+}
+function setOpen(p, open){
+  p.el.classList.toggle("closed", !open);
+  const t = p.el.querySelector(":scope > .row .tog");
+  if(t){ t.setAttribute("aria-expanded", open); t.textContent = (open?"Ẩn ":"Hiện ") + countDesc(p) + " con cháu"; }
+}
+
+// houses
+const idx = document.getElementById("index"), houses = document.getElementById("houses");
+D2.forEach((h,i)=>{
+  h.gen = 5; h.parent = ROOT; if(h.kids) h.cap = makeCap(h, 5);
+  const id = "nha-" + (i+1);
+  const nk = h.kids ? h.kids.length : 0;
+  idx.insertAdjacentHTML("beforeend",
+    `<a class="house-link" href="#${id}"><strong>${fmt(h.n)}</strong>
+     <small>${h.sp ? h.sp.map(s=>fmt(s.n)).join(", ") : ""}${h.gio ? " · giỗ " + esc(h.gio) : ""}</small>
+     <small>${nk ? `${nk} người con · ${countDesc(h)} con cháu` : "Chưa ghi con cháu"}</small></a>`);
+  const sec = document.createElement("section");
+  sec.className = "house person"; sec.id = id;
+  sec.innerHTML = `<div class="house-head row">
+      <div class="who">
+        <div class="lbl">Đời 5 · Nhà thứ ${i+1}</div>
+        <h2><button class="name" type="button" style="font-size:inherit;font-weight:inherit">${fmt(h.n)}</button></h2>
+        ${h.sp ? `<div class="spouse">${h.sp.map(s=>fmt(s.n)+(s.gio?` <span class="chip">giỗ <b>${esc(s.gio)}</b></span>`:"")).join(", ")}</div>`:""}
+      </div>
+      ${h.gio ? `<span class="chip">Ngày giỗ <b>${esc(h.gio)}</b></span>`:""}
+    </div>`;
+  const body = document.createElement("div"); body.className = "house-body";
+  if(nk) body.appendChild(renderKids(h, 6));
+  else body.innerHTML = `<div class="empty">Chưa ghi con cháu.</div>`;
+  sec.appendChild(body);
+  houses.appendChild(sec);
+  h.el = sec; all.push(h);
+  sec.querySelector(".house-head .name").addEventListener("click",()=>showPath(h));
+});
+document.querySelectorAll(".house").forEach(s=>s.classList.remove("person"));
+
+// giỗ table
+const gios = [["Bà cô tổ Phạm Thị Nương","Bà cô tổ","5/3 ÂL"],
+ ["Cụ ông Phạm Quang Chiểu","Đời 1 · tổ tiên trực hệ","11/4 ÂL"],["Cụ bà Đào Thị Hải","Đời 1 · vợ cụ Chiểu","18/6 ÂL"],
+ ["Ông Phạm Quang Thi","Đời 2 · tổ tiên trực hệ","22/8 ÂL"],
+ ["Ông Phạm Quang Bẩm","Đời 3 · tổ tiên trực hệ","30/3 ÂL"],["Bà Trần Thị Xáo","Đời 3 · vợ ông Bẩm","29/1 ÂL"],
+ ["Ông Phạm Quang Thụ","Đời 4","26/10 ÂL"],["Bà Trần Thị Út","Đời 4 · vợ ông Thụ","3/6 ÂL"]];
+(function walk(list){ list.forEach(p=>{
+  if(p.gio) gios.push([bare(p.n),"Đời "+p.gen,p.gio]);
+  (p.sp||[]).forEach(s=>{ if(s.gio && /\d/.test(s.gio)) gios.push([bare(s.n),"Đời "+p.gen + " · " + (s.r==="Chồng"?"chồng":"vợ") + " ông " + given(p.n),s.gio]); });
+  if(p.kids) walk(p.kids);
+}); })(D2);
+document.getElementById("gioBody").innerHTML = gios.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+
+// lineage
+let selected = null;
+function showPath(p){
+  const chain = []; let c = p;
+  while(c){ chain.unshift(c); c = c.parent; }
+  document.getElementById("pathList").innerHTML = chain.map(n=>
+    `<li style="--gc:${gc(n.gen)}"><span class="g">Đời ${n.gen}</span>${fmt(n.n)}</li>`).join("");
+  document.getElementById("path").hidden = false;
+  if(selected && selected.el) selected.el.classList.remove("sel");
+  selected = p; if(p.el) p.el.classList.add("sel");
+  treeMark(p);
+}
+document.getElementById("pathClose").addEventListener("click",()=>{
+  document.getElementById("path").hidden = true;
+  if(selected && selected.el) selected.el.classList.remove("sel");
+  selected = null; treeMark(null);
+});
+
+const treeNodes = () => all.filter(p=>p.gen>=6 && p.kids && p.kids.length);
+document.getElementById("openAll").onclick = ()=> treeNodes().forEach(p=>setOpen(p,true));
+document.getElementById("closeAll").onclick = ()=> treeNodes().forEach(p=>setOpen(p,false));
+
+// search
+const hint = document.getElementById("hint"), hintDefault = hint.textContent;
+document.getElementById("q").addEventListener("input", e=>{
+  const q = fold(e.target.value.trim());
+  all.forEach(p=>p.el.classList.remove("hit","dim"));
+  if(!q){ hint.textContent = hintDefault; return; }
+  const hits = all.filter(p=> fold(p.n).includes(q) || (p.sp||[]).some(s=>fold(s.n).includes(q)));
+  all.forEach(p=>p.el.classList.add(hits.includes(p)?"hit":"dim"));
+  hits.forEach(p=>{ let c = p.parent; while(c && c.gen>=6){ setOpen(c,true); c = c.parent; } });
+  hint.textContent = hits.length ? `Tìm thấy ${hits.length} người (kể cả tên vợ/chồng). Bấm vào tên để xem dòng dõi.` : "Không có tên nào khớp.";
+  if(hits[0]) hits[0].el.scrollIntoView({block:"center"});
+});
+
+/* ================= SƠ ĐỒ CÂY ================= */
+const CW=196, RW=340, HG=16, VG=64, LBL=70, PAD=24, AUNT_W=CW+48;
+const vp=document.getElementById("tvp"), sizer=document.getElementById("tsizer"), canvas=document.getElementById("tcanvas");
+const hSel=document.getElementById("tHouse");
+hSel.innerHTML = `<option value="all">Toàn bộ 5 nhà</option>` + D2.map((h,i)=>`<option value="${i}">Nhà ${i+1}: ${esc(h.n)}</option>`).join("");
+let cur="all", scale=0.8, W=0, H=0, treeBuilt=false, tnodes=[], auntCard=null;
+ROOT.parent = null;
+
+const kidsOf = p => p===ROOT ? (cur==="all" ? D2 : [D2[+cur]]) : (p.kids||[]);
+const hasKids = p => kidsOf(p).length>0;
+const isList = p => p!==ROOT && hasKids(p) && kidsOf(p).every(k=>!(k.kids&&k.kids.length));
+const cw = p => p===ROOT ? RW : CW;
+
+function cardInner(p){
+  if(p===ROOT) return `<div class="nm">Ông PHẠM QUANG THỤ &amp; Bà TRẦN THỊ ÚT</div>
+    <div class="s">Con ông Phạm Quang Bẩm · chắt cụ Phạm Quang Chiểu</div>
+    <div class="gd">Giỗ ông: 26/10 ÂL · bà: 3/6 ÂL</div>`;
+  let h = `<div class="nm">${fmt(p.n)}</div>`;
+  if(p.gio) h += `<div class="gd">${gl(p.gio)} ${esc(p.gio)}</div>`;
+  if(p.sp) h += p.sp.map(s=>`<div class="s">${p.gen===5?"":"+ "}${s.r?`<i>${s.r}:</i> `:""}${fmt(s.n)}${s.gio?` <span class="gd">· ${gl(s.gio)} ${esc(s.gio)}</span>`:""}</div>`).join("");
+  return h;
+}
+
+function buildTree(){
+  tnodes.forEach(n=>{ delete n._card; delete n._li; delete n._edge; delete n._listEdge; delete n._list; });
+  tnodes=[];
+  canvas.innerHTML = "";
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  canvas.appendChild(svg);
+  // Bà cô tổ: thẻ riêng ở tầng trên cùng, không nối dây
+  auntCard=document.createElement("div");
+  auntCard.className="tcard aunt-card"; auntCard.style.minWidth=CW+"px";
+  auntCard.innerHTML=`<div class="tag">Bà cô tổ</div><div class="nm">${esc(AUNT.n)}</div><div class="gd">giỗ ${esc(AUNT.gio)}</div>`;
+  canvas.appendChild(auntCard);
+  (function mk(p){
+    tnodes.push(p);
+    const c=document.createElement("div");
+    c.className="tcard"+(p===ROOT?" root":""); c.style.minWidth=cw(p)+"px"; c.style.setProperty("--gc",gc(p.gen));
+    c.innerHTML=cardInner(p); c.tabIndex=0;
+    c.addEventListener("click",()=>{ if(!dragged) showPath(p); });
+    c.addEventListener("keydown",e=>{ if(e.key==="Enter") showPath(p); });
+    canvas.appendChild(c); p._card=c;
+    if(isList(p)){
+      const l=document.createElement("div");
+      l.className="tlist"; l.style.minWidth=CW+"px"; l.style.setProperty("--gc",gc(p.gen+1));
+      l.innerHTML=`<div class="cp">${fmt(p.cap)}</div><ol></ol>`;
+      const ol=l.querySelector("ol");
+      kidsOf(p).forEach(k=>{
+        tnodes.push(k);
+        const li=document.createElement("li");
+        li.innerHTML=`<span class="nmb" role="button" tabindex="0">${fmt(k.n)}</span>${k.gio?`<span class="s"><span style="color:var(--gold);font-weight:600">${gl(k.gio)} ${esc(k.gio)}</span></span>`:""}${k.sp?`<span class="s">+ ${k.sp.map(s=>(s.r?`<i>${s.r}:</i> `:"")+fmt(s.n)).join(", ")}</span>`:""}`;
+        const nb=li.querySelector(".nmb");
+        nb.addEventListener("click",()=>{ if(!dragged) showPath(k); });
+        nb.addEventListener("keydown",e=>{ if(e.key==="Enter") showPath(k); });
+        ol.appendChild(li); k._li=li;
+      });
+      canvas.appendChild(l); p._list=l;
+    } else kidsOf(p).forEach(mk);
+  })(ROOT);
+
+  tsvg = svg;
+  treeBuilt = true;
+  layoutTree();
+  if(ro){ ro.disconnect(); canvas.querySelectorAll(".tcard,.tlist").forEach(el=>ro.observe(el)); }
+}
+
+let tsvg=null, layPending=false;
+const ro = window.ResizeObserver ? new ResizeObserver(()=>{
+  if(layPending) return; layPending=true;
+  requestAnimationFrame(()=>{ layPending=false; if(!treeBuilt) return; const s=scale; layoutTree(); applyScale(s); });
+}) : null;
+
+const cardW = p => p._card ? p._card.offsetWidth : cw(p);
+function layoutTree(){
+  const svg = tsvg;
+  const rowH={[G0]:auntCard.offsetHeight};
+  tnodes.forEach(p=>{
+    if(p._card) rowH[p.gen]=Math.max(rowH[p.gen]||0,p._card.offsetHeight);
+    if(p._list) rowH[p.gen+1]=Math.max(rowH[p.gen+1]||0,p._list.offsetHeight);
+  });
+  const gens=Object.keys(rowH).map(Number).sort((a,b)=>a-b);
+  const rowTop={}; let y=PAD+8;
+  gens.forEach(g=>{ rowTop[g]=y; y+=rowH[g]+VG; });
+  H = y - VG + PAD + 8;
+
+  const wid=new Map();
+  (function w(p){
+    let v = Math.max(cardW(p), p._list ? p._list.offsetWidth : 0);
+    if(hasKids(p) && !isList(p)){
+      const s = kidsOf(p).reduce((a,k)=>a+w(k),0) + HG*(kidsOf(p).length-1);
+      v = Math.max(v,s);
+    }
+    wid.set(p,v); return v;
+  })(ROOT);
+  W = LBL + AUNT_W + wid.get(ROOT) + PAD*2;
+
+  let paths="";
+  (function place(p,x0){
+    const w=wid.get(p);
+    let cx;
+    if(hasKids(p) && !isList(p)){
+      const ks=kidsOf(p), tot=ks.reduce((a,k)=>a+wid.get(k),0)+HG*(ks.length-1);
+      let x=x0+(w-tot)/2; const cxs=[];
+      ks.forEach(k=>{ cxs.push(place(k,x)); x+=wid.get(k)+HG; });
+      cx=(cxs[0]+cxs[cxs.length-1])/2;
+      const bot=rowTop[p.gen]+p._card.offsetHeight, bar=rowTop[p.gen+1]-VG/2;
+      ks.forEach((k,i)=>{ paths+=`<path class="edge" data-i="${tnodes.indexOf(k)}" d="M${cx},${bot} V${bar} H${cxs[i]} V${rowTop[k.gen]}"/>`; });
+    } else cx=x0+w/2;
+    p._card.style.left=(cx-cardW(p)/2)+"px"; p._card.style.top=rowTop[p.gen]+"px";
+    if(p._list){
+      p._list.style.left=(cx-p._list.offsetWidth/2)+"px"; p._list.style.top=rowTop[p.gen+1]+"px";
+      paths+=`<path class="edge" data-l="${tnodes.indexOf(p)}" d="M${cx},${rowTop[p.gen]+p._card.offsetHeight} V${rowTop[p.gen+1]}"/>`;
+    }
+    return cx;
+  })(ROOT, LBL+PAD+AUNT_W);
+
+  // Bà cô tổ: đặt sát bên trái ông Thụ, cùng tầng trên cùng
+  const rootLeft=parseFloat(ROOT._card.style.left);
+  auntCard.style.left=Math.max(LBL+PAD, rootLeft-auntCard.offsetWidth-48)+"px"; auntCard.style.top=rowTop[G0]+"px";
+
+  let bands="";
+  gens.forEach((g,i)=>{
+    const t=rowTop[g]-VG/2+ (i===0?VG/2-8:0), b=rowTop[g]+rowH[g]+VG/2;
+    if(i%2===0) bands+=`<rect class="band" x="0" y="${t}" width="${W}" height="${b-t}"/>`;
+    bands+=`<text class="bandlbl" x="14" y="${rowTop[g]+16}" style="fill:${gc(g)}">ĐỜI ${g}</text>`;
+  });
+  svg.setAttribute("width",W); svg.setAttribute("height",H);
+  svg.innerHTML=bands+paths;
+  svg.querySelectorAll("path[data-i]").forEach(e=>{ tnodes[+e.dataset.i]._edge=e; });
+  svg.querySelectorAll("path[data-l]").forEach(e=>{ tnodes[+e.dataset.l]._listEdge=e; });
+  canvas.style.width=W+"px"; canvas.style.height=H+"px";
+  if(selected) treeMark(selected);
+}
+
+function applyScale(s, keepCenter=true){
+  const cxr=(vp.scrollLeft+vp.clientWidth/2)/(W*scale), cyr=(vp.scrollTop+vp.clientHeight/2)/(H*scale);
+  scale=Math.min(1.6,Math.max(0.15,s));
+  canvas.style.transform=`scale(${scale})`;
+  sizer.style.width=W*scale+"px"; sizer.style.height=H*scale+"px";
+  document.getElementById("zLbl").textContent=Math.round(scale*100)+"%";
+  if(keepCenter){ vp.scrollLeft=cxr*W*scale-vp.clientWidth/2; vp.scrollTop=cyr*H*scale-vp.clientHeight/2; }
+}
+const fitScale=()=>Math.min(1,(vp.clientWidth-4)/W);
+function showTree(){
+  buildTree();
+  const s = Math.max(0.55,Math.min(1,fitScale()));
+  applyScale(s,false);
+  const rc = parseFloat(ROOT._card.style.left)+ROOT._card.offsetWidth/2;
+  vp.scrollLeft = rc*scale - vp.clientWidth/2; vp.scrollTop=0;
+}
+document.getElementById("zIn").onclick=()=>applyScale(scale*1.2);
+document.getElementById("zOut").onclick=()=>applyScale(scale/1.2);
+document.getElementById("zFit").onclick=()=>{ applyScale(fitScale(),false); vp.scrollLeft=0; vp.scrollTop=0; };
+hSel.onchange=()=>{ cur=hSel.value; showTree(); };
+
+function treeMark(p){
+  canvas.querySelectorAll(".on").forEach(e=>e.classList.remove("on"));
+  if(!p || !treeBuilt) return;
+  let c=p;
+  while(c){
+    if(c._card) c._card.classList.add("on");
+    if(c._li) c._li.classList.add("on");
+    if(c._edge) c._edge.classList.add("on");
+    if(c._li && c.parent && c.parent._listEdge) c.parent._listEdge.classList.add("on");
+    c=c.parent;
+  }
+}
+
+let dragged=false, ds=null;
+vp.addEventListener("pointerdown",e=>{ if(e.pointerType!=="mouse"||e.button!==0) return; ds={x:e.clientX,y:e.clientY,l:vp.scrollLeft,t:vp.scrollTop}; dragged=false; });
+window.addEventListener("pointermove",e=>{ if(!ds) return; const dx=e.clientX-ds.x, dy=e.clientY-ds.y;
+  if(Math.abs(dx)+Math.abs(dy)>4){ dragged=true; vp.classList.add("drag"); }
+  if(dragged){ vp.scrollLeft=ds.l-dx; vp.scrollTop=ds.t-dy; } });
+window.addEventListener("pointerup",()=>{ ds=null; vp.classList.remove("drag"); setTimeout(()=>dragged=false,0); });
+
+const tabTree=document.getElementById("tabTree"), tabList=document.getElementById("tabList");
+function setTab(t){
+  const tree = t==="tree";
+  tabTree.setAttribute("aria-selected",tree); tabList.setAttribute("aria-selected",!tree);
+  document.getElementById("viewTree").hidden=!tree; document.getElementById("viewList").hidden=tree;
+  try{ localStorage.setItem("giapha-pq-thu-tab-A",t); }catch(e){}
+  if(tree && !treeBuilt) showTree();
+}
+tabTree.onclick=()=>setTab("tree"); tabList.onclick=()=>setTab("list");
+let startTab="tree"; try{ startTab=localStorage.getItem("giapha-pq-thu-tab-A")||"tree"; }catch(e){}
+setTab(startTab);
+</script>
