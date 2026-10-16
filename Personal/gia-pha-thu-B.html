@@ -9,7 +9,7 @@
   --bg:#F4EDE0; --paper:#FBF7EE; --ink:#1F1B16; --muted:#5B544B; --line:#DCCFB8;
   --lacquer:#A3261E; --gold:#B8892E; --flag:#A3261E; --then:#1C1410; --cham:#2E3A59;
   --g1:#A3261E; --g2:#2E3A59; --g3:#4F7F6A; --g4:#8C6414; --g5:#7A4A2E; --g6:#5B544B;
-  --band:#EFE6D4; --edge:#A39684;
+  --band:#EFE6D4; --edge:#4A433B; --card-line:#8A7A60;
   --serif:"EB Garamond",Georgia,"Times New Roman",serif;
   --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --han:"Noto Serif TC","Noto Serif CJK TC","Songti TC",serif;
@@ -168,6 +168,12 @@ button{font:inherit;cursor:pointer}
 
 /* --- Phương án B --- */
 body{background:var(--bg)}
+/* Đường nối và viền thẻ đậm hơn để tách khỏi nền giấy */
+.edge{stroke:var(--edge);stroke-width:1.8}
+.edge.on{stroke-width:3.2}
+.tcard,.tlist{border-color:var(--card-line)}
+.tlist .cp{border-bottom-color:var(--card-line)}
+.band{fill:var(--band)}
 .hoanh{position:relative;background:var(--then);border-radius:4px;padding:16px 20px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;box-shadow:inset 0 0 0 3px var(--then),inset 0 0 0 4px var(--gold)}
 .hoanh .doi{writing-mode:vertical-rl;font-family:var(--serif);color:#E6CF8B;font-size:12.5px;letter-spacing:.03em;line-height:1.3;white-space:nowrap;padding:10px 4px}
 .hoanh .mid{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
