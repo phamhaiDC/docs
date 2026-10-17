@@ -1,29 +1,21 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 
-<title>Gia phả chi ông Phạm Quang Thụ</title>
+<title>Gia phả chi ông Thụ (Giấy dó)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Noto+Serif+TC:wght@600;700&display=swap">
 <style>
 /* Layout: hero cụ tổ + ô Bà cô tổ bên phải → tab Sơ đồ cây (mỗi đời một tầng) / Danh sách theo nhà (đời 2) */
+/* Phương án B · Giấy dó, mực tàu, triện son: nền giấy, chữ mực, son để nhấn, vàng thếp chỉ cho viền và đường kẻ */
 :root{
-  --bg:#f6f5f2; --paper:#ffffff; --ink:#1f1b18; --muted:#6b635c; --line:#e3ded6;
-  --lacquer:#9b1c1c; --gold:#a37b22; --flag:#c81e1e;
-  --g1:#9b1c1c; --g2:#b45309; --g3:#7c6a12; --g4:#2f6b3a; --g5:#1f5f86; --g6:#5b3f8f; --g7:#8a3b6b; --g8:#3d5a5a;
-  --band:#faf8f4; --edge:#a39a8f;
-  --serif:"Noto Serif",Georgia,"Times New Roman",serif;
+  --bg:#F4EDE0; --paper:#FBF7EE; --ink:#1F1B16; --muted:#5B544B; --line:#DCCFB8;
+  --lacquer:#A3261E; --gold:#B8892E; --flag:#A3261E; --then:#1C1410; --cham:#2E3A59;
+  --g1:#A3261E; --g2:#2E3A59; --g3:#4F7F6A; --g4:#8C6414; --g5:#7A4A2E; --g6:#5B544B;
+  --band:#EFE6D4; --edge:#4A433B; --card-line:#8A7A60;
+  --serif:"EB Garamond",Georgia,"Times New Roman",serif;
   --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --han:"Noto Serif TC","Noto Serif CJK TC","Songti TC",serif;
+  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#16130f; --paper:#1f1b16; --ink:#efe9e1; --muted:#a69d92; --line:#36302a;
-  --lacquer:#e0605a; --gold:#d4ad55; --flag:#ff6b6b;
-  --g1:#e0605a; --g2:#e8954a; --g3:#cdb54a; --g4:#6cbf7a; --g5:#64a9d6; --g6:#a88be0; --g7:#e08ab8; --g8:#7fc4c0;
-  --band:#1b1813; --edge:#6d655b;
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#16130f; --paper:#1f1b16; --ink:#efe9e1; --muted:#a69d92; --line:#36302a;
-  --lacquer:#e0605a; --gold:#d4ad55; --flag:#ff6b6b;
-  --g1:#e0605a; --g2:#e8954a; --g3:#cdb54a; --g4:#6cbf7a; --g5:#64a9d6; --g6:#a88be0; --g7:#e08ab8; --g8:#7fc4c0;
-  --band:#1b1813; --edge:#6d655b;
-  color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:20px;padding-block:28px 120px;display:flex;flex-direction:column;gap:28px}
@@ -174,19 +166,71 @@ button{font:inherit;cursor:pointer}
 .tcard .nm,.tcard .s,.tcard .gd,.tlist .cp,.tlist li .nmb,.tlist li .s{white-space:nowrap}
 .tlist li .s{display:block}
 .row .name,.row .sp,.row .chip{white-space:nowrap}
+.tcard.blank{border-style:dashed;cursor:default;text-align:left}
+.tcard.blank .nm{text-align:center}
+.tcard.blank .lines{display:flex;flex-direction:column;gap:13px;padding:10px 2px 4px}
+.tcard.blank .lines i{display:block;border-bottom:1px dotted var(--card-line,var(--edge))}
+.edge.dash{stroke-dasharray:5 4}
+.more{font-size:12px;color:var(--muted);font-style:italic;border-top:1px dashed var(--card-line,var(--line));margin-top:5px;padding-top:4px;white-space:nowrap}
+.group > .more{border-top:0;margin:2px 0 4px;padding:4px 6px;border:1px dashed var(--card-line,var(--line));border-radius:4px;align-self:flex-start}
+
+/* --- Phương án B --- */
+body{background:var(--bg)}
+/* Đường nối và viền thẻ đậm hơn để tách khỏi nền giấy */
+.edge{stroke:var(--edge);stroke-width:1.8}
+.edge.on{stroke-width:3.2}
+.tcard,.tlist{border-color:var(--card-line)}
+.tlist .cp{border-bottom-color:var(--card-line)}
+.band{fill:var(--band)}
+.hoanh{position:relative;background:var(--then);border-radius:4px;padding:16px 20px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;box-shadow:inset 0 0 0 3px var(--then),inset 0 0 0 4px var(--gold)}
+.hoanh .doi{writing-mode:vertical-rl;font-family:var(--serif);color:#E6CF8B;font-size:12.5px;letter-spacing:.03em;line-height:1.3;white-space:nowrap;padding:10px 4px}
+.hoanh .mid{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.hoanh .han{font-family:var(--han);font-size:clamp(28px,5.4vw,46px);color:#E6CF8B;letter-spacing:.3em;font-weight:700;line-height:1.1;padding-left:.3em}
+.hoanh .am{font-family:var(--serif);color:#D9C8A0;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
+.hoanh .cloud{width:min(240px,60%);height:12px;color:#B8892E}
+.hero{border:1px solid var(--line);border-top:1px solid var(--line);box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--gold);position:relative;padding-top:34px}
+.hero h1{color:var(--ink);font-weight:600;letter-spacing:.01em}
+.hero .lbl{color:var(--lacquer)}
+.trien{position:absolute;top:16px;right:18px;width:46px;height:46px;background:var(--lacquer);color:#FBF7EE;display:grid;place-items:center;font-family:var(--han);font-size:26px;font-weight:700;border-radius:3px;transform:rotate(-4deg);box-shadow:inset 0 0 0 2px #FBF7EE,inset 0 0 0 3px var(--lacquer)}
+.chip{background:var(--paper)}
+.chip b,.gio-table td:last-child,.tcard .gd,.tcard.root .gd{color:var(--lacquer)}
+.aunt{background:var(--paper);border:1px solid var(--line);box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 6px var(--line)}
+.aunt .lbl{color:var(--lacquer)}
+.tcard.root{border-top:4px solid var(--lacquer)}
+.tcard.root .nm{color:var(--ink)}
+.tcard.aunt-card{border-top-color:var(--lacquer)}
+.tcard.aunt-card .tag{color:var(--lacquer)}
+.edge.on{stroke:var(--lacquer)}
+.tcard.on{outline-color:var(--lacquer)}
+.tlist li.on .nmb{background:color-mix(in srgb,var(--lacquer) 16%,transparent)}
+#path{border-top-color:var(--lacquer)}
+.tab[aria-selected="true"]{color:var(--lacquer);border-bottom-color:var(--lacquer)}
+:focus-visible{outline-color:var(--lacquer)}
+.foot{color:var(--muted);font-size:12.5px;text-align:center}
+@media (max-width:640px){.hoanh{grid-template-columns:minmax(0,1fr)}.hoanh .doi{writing-mode:horizontal-tb;white-space:normal;text-align:center;letter-spacing:.04em;font-size:13.5px}.hoanh .doi.r{order:3}.trien{width:38px;height:38px;font-size:21px;top:10px;right:10px}}
 </style>
 
 <div class="wrap">
+  <header class="hoanh" aria-label="Hoành phi và câu đối">
+    <div class="doi l">Mộc xuất thiên chi do hữu bản</div>
+    <div class="mid">
+      <div class="han" lang="zh-Hant">木本水源</div>
+      <svg class="cloud" viewBox="0 0 260 14" aria-hidden="true"><path d="M2 7 H92 M168 7 H258" stroke="currentColor" stroke-width="1"/><path d="M100 7c0-4 5-5 8-3c1-3 7-3 8 0c2-2 7-1 7 3c0 3-4 4-6 2c-1 3-7 3-8 0c-3 2-9 1-9-2zM137 7c0-4 5-5 8-3c1-3 7-3 8 0c2-2 7-1 7 3c0 3-4 4-6 2c-1 3-7 3-8 0c-3 2-9 1-9-2z" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+      <div class="am">Mộc Bản Thủy Nguyên · Phạm tộc gia phả</div>
+    </div>
+    <div class="doi r">Thủy lưu vạn phái tố tòng nguyên</div>
+  </header>
   <div class="top">
     <header class="hero">
-      <div class="lbl">Đời 4 · Chi ông Thụ</div>
-      <h1><span class="nw">Ông PHẠM QUANG THỤ</span> &amp; <span class="nw">Bà TRẦN THỊ ÚT</span></h1>
+      <div class="trien" lang="zh-Hant" aria-label="Triện họ Phạm">范</div>
+      <div class="lbl">Đời 4 · Chi Cụ Thụ</div>
+      <h1><span class="nw">Cụ Ông PHẠM QUANG THỤ</span> &amp; <span class="nw">Cụ Bà TRẦN THỊ ÚT</span></h1>
       <div class="place">Thôn Trà Khê - xã Tân Thuận - tỉnh Hưng Yên</div>
       <div class="gio">
-        <span class="chip">Ngày giỗ ông: <b>26/10 ÂL</b></span>
-        <span class="chip">Bà: <b>3/6 ÂL</b></span>
+        <span class="chip">Ngày giỗ cụ ông: <b>26/10 ÂL</b></span>
+        <span class="chip">Cụ bà: <b>3/6 ÂL</b></span>
       </div>
-      <div class="lineage"><span class="nw">Con ông Phạm Quang Bẩm</span> · <span class="nw">cháu ông Phạm Quang Thi</span> · <span class="nw">chắt cụ Phạm Quang Chiểu</span></div>
+      <div class="lineage"><span class="nw">Con của cụ Phạm Quang Bẩm,</span> <span class="nw">cháu của cụ Phạm Quang Thi,</span> <span class="nw">chắt của cụ Phạm Quang Chiểu</span></div>
     </header>
     <aside class="aunt" aria-label="Bà cô tổ">
       <div class="lbl">Bà cô tổ</div>
@@ -213,7 +257,7 @@ button{font:inherit;cursor:pointer}
       <button class="btn" id="zFit" type="button">Vừa khung</button>
     </div>
     <div id="tvp"><div id="tsizer"><div id="tcanvas"></div></div></div>
-    <div class="tnote">Kéo để di chuyển sơ đồ, dùng nút +/− để phóng to thu nhỏ. Bấm vào một người để tô đậm đường dòng dõi từ ông Thụ xuống. Các anh chị em cùng cha mẹ mà chưa có con được gom thành một danh sách.</div>
+    <div class="tnote">Kéo để di chuyển sơ đồ, dùng nút +/− để phóng to thu nhỏ. Bấm vào một người để tô đậm đường dòng dõi từ cụ Thụ xuống. Các anh chị em cùng cha mẹ mà chưa có con được gom thành một danh sách.</div>
   </div>
 
   <div id="viewList" class="stack" hidden>
@@ -224,10 +268,10 @@ button{font:inherit;cursor:pointer}
       <button class="btn" id="closeAll">Thu gọn</button>
     </div>
   </div>
-  <div id="hint">Bấm vào một tên để xem dòng dõi từ ông Thụ xuống người đó.</div>
+  <div id="hint">Bấm vào một tên để xem dòng dõi từ cụ Thụ xuống người đó.</div>
 
   <section>
-    <div class="lbl" style="margin-bottom:10px">Đời 5 · Các con của ông Thụ — 5 nhà</div>
+    <div class="lbl" style="margin-bottom:10px">Đời 5 · Các con của cụ Thụ — 5 nhà</div>
     <nav class="index" id="index"></nav>
   </section>
 
@@ -238,26 +282,33 @@ button{font:inherit;cursor:pointer}
     <table class="gio-table"><tbody id="gioBody"></tbody></table>
   </section>
   </div>
+  <p class="foot">Câu đối: "Cây chung nghìn nhánh sinh từ gốc · Nước chảy muôn dòng phát tại nguồn". Chữ Hán trên hoành phi nên nhờ người thạo chữ duyệt lại trước khi in.</p>
 </div>
 
 <div id="path" hidden><div class="in"><ol id="pathList"></ol><button class="btn" id="pathClose" aria-label="Đóng">Đóng</button></div></div>
 
 <script>
 // f:1 = nữ (dùng để ghi "ông/bà" và cháu nội/ngoại)
-const ROOT = {n:"Ông Phạm Quang Thụ", sp:"Bà Trần Thị Út", gen:4};
+const ROOT = {n:"Cụ ông Phạm Quang Thụ", sp:"Cụ bà Trần Thị Út", gen:4};
 const AUNT = {n:"Phạm Thị Nương", gio:"5/3 ÂL"};
 const D2 = [
  {n:"Phạm Quang Thọ", sp:[{r:"Vợ",n:"Phạm Thị Thọ"}]},
  {n:"Phạm Quang Vĩnh", sp:[{r:"Vợ",n:"Phạm Thị Vĩnh"}]},
  {n:"Phạm Chí Thoả", gio:"27/5 ÂL", sp:[{r:"Vợ",n:"Trần Thị Nhỡ",gio:"26/8 ÂL"},{r:"Vợ",n:"Nguyễn Thị Bẩy"}], kids:[
-  {n:"Phạm Thị Rậu",f:1},
-  {n:"Bác Tập"},
-  {n:"Phạm Đức Thứ", gio:"13/4/1969 DL", sp:[{r:"Vợ",n:"Phạm Thị Chè"}], kids:[
-   {n:"Phạm Văn Hương", gio:"29/9/2022 DL", sp:[{r:"Vợ",n:"Đào Thị Huê"}], kids:[
+  {n:"Phạm Văn Trôi"},{n:"Phạm Văn Nổi"},
+  {n:"Phạm Thị Dậu",f:1, gio:"mất 2022", sp:[{r:"Chồng",n:"Trịnh Văn Tập",gio:"mất 1992"}], kids:[
+   {n:"Trịnh Thị Nụ",f:1, sp:[{r:"Chồng",n:"Phạm Văn Á"}], more:["4 Con","10 Cháu/chắt"]},
+   {n:"Trịnh Văn Khải", gio:"mất 2018", sp:[{r:"Vợ",n:"Phạm Thị Bền"}], kids:[{n:"Trịnh Văn Giản"},{n:"Trịnh Văn Ngoan"}], more:"7 Cháu/chắt"},
+   {n:"Trịnh Văn Thiệp", sp:[{r:"Vợ",n:"Phạm Thị Tám"}], kids:[{n:"Trịnh Tơ"},{n:"Trịnh Ngoan"},{n:"Trịnh Văn Đoàn"},{n:"Trịnh Văn Đạt"}], more:"10 Cháu/chắt"},
+   {n:"Trịnh Văn Thành", sp:[{r:"Vợ",n:"Nguyễn Thị Thắm"}], kids:[{n:"Trịnh Hiền"},{n:"Trịnh Hòe"}]},
+   {n:"Trịnh Văn Thông", sp:[{r:"Vợ",n:"Trịnh Thị Đơn"}], kids:[{n:"Trịnh Thị Nga",f:1},{n:"Trịnh Thị Hà",f:1},{n:"Trịnh Lan Anh"}], more:"4 Cháu/chắt"},
+   {n:"Trịnh Thị Liễu",f:1, sp:[{r:"Chồng",n:"Lê Văn Luyến"}], kids:[{n:"Lê Thị Vân",f:1},{n:"Lê Văn Hải"}], more:"3 Cháu/chắt"}]},
+  {n:"Phạm Đức Thứ", gio:"13/4/1969 ÂL", sp:[{r:"Vợ",n:"Phạm Thị Chè"}], kids:[
+   {n:"Phạm Văn Hương", gio:"29/9/2022 ÂL", sp:[{r:"Vợ",n:"Đào Thị Huê"}], kids:[
     {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Thái Bảo"}]},
     {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}]},
     {n:"Phạm Văn Hoà", sp:[{r:"Vợ",n:"Phạm Thị Nga"}], kids:[{n:"Phạm Trâm Anh"},{n:"Phạm Anh Dũng"}]}]}]},
-  {n:"Phạm Thị Bắc",f:1, sp:[{r:"Chồng",n:"Hoàng Minh Doanh",gio:"đã mất"}], kids:[
+  {n:"Phạm Thị Bắc",f:1, sp:[{r:"Chồng",n:"Hoàng Minh Doanh",gio:"3/7/2017 DL"}], kids:[
    {n:"Hoàng Minh Tranh", sp:[{r:"Vợ",n:"Nguyễn Thanh Hưng"}], kids:[
     {n:"Hoàng Minh Trang", sp:[{r:"Vợ",n:"Nguyễn Thị Thuỷ"}], kids:[{n:"Hoàng Minh Ngọc"},{n:"Hoàng Minh Tuân"},{n:"Hoàng Thị Ngâu",f:1}]},
     {n:"Hoàng Minh Đông", sp:[{r:"Vợ",n:"Nguyễn Thị Oanh"}], kids:[{n:"Hoàng Minh Phong"},{n:"Hoàng Thị Nhi",f:1},{n:"Hoàng Thị Thư",f:1}]}]},
@@ -278,9 +329,8 @@ const D2 = [
    {n:"Phạm Thị Xiêm",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Hiệu"}], kids:[{n:"Nguyễn Bảo Minh"},{n:"Nguyễn Diệp Anh"}]}]},
   {n:"Phạm Chí Thời", sp:[{r:"Vợ",n:"Phạm Thị Yên"}], kids:[
    {n:"Phạm Anh Tuấn", sp:[{r:"Vợ",n:"Vũ Thị Hương"}], kids:[{n:"Phạm Vũ Tuấn Anh"},{n:"Phạm Vũ Ngọc Chi"}]},
-   {n:"Phạm Chí Cường", sp:[{r:"Vợ",n:"Lê Thị Giang"}], kids:[{n:"Phạm Lê Minh"},{n:"Phạm Minh Anh"}]}]},
-  {n:"Phạm Văn Trôi"},{n:"Phạm Văn Nổi"}]},
- {n:"Phạm Thị Lợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Huệ"}]},
+   {n:"Phạm Chí Cường", sp:[{r:"Vợ",n:"Lê Thị Giang"}], kids:[{n:"Phạm Lê Minh"},{n:"Phạm Minh Anh"}]}]},]},
+ {n:"Phạm Thị Sợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Huệ"}]},
  {n:"Phạm Quang Thứ"}
 ];
 const GEN = ["","","","","Đời 4 · Ông bà","Đời 5 · Các con","Đời 6 · Các cháu","Đời 7 · Các chắt","Đời 8 · Các chút","Đời 9 · Các chít"];
@@ -318,6 +368,7 @@ function renderKids(p, gen){
   g.className = "group"; g.style.setProperty("--gc", gc(gen));
   g.innerHTML = `<div class="cap"><span class="gen">${GEN[gen]}</span><em>${fmt(p.cap)}</em></div>`;
   p.kids.forEach((k,i)=> g.appendChild(renderPerson(k, gen, i+1, p)));
+  if(p.more) g.insertAdjacentHTML("beforeend", `<div class="more">+ ${[].concat(p.more).map(esc).join(" · ")}</div>`);
   return g;
 }
 function renderPerson(p, gen, idx, parent){
@@ -334,6 +385,7 @@ function renderPerson(p, gen, idx, parent){
       ${has ? `<button class="tog" type="button" aria-expanded="true">Ẩn ${countDesc(p)} con cháu</button>`:""}
     </div>`;
   if(has) el.appendChild(renderKids(p, gen+1));
+  else if(p.more) el.insertAdjacentHTML("beforeend", `<div class="group" style="--gc:${gc(gen+1)}"><div class="more">+ ${[].concat(p.more).map(esc).join(" · ")}</div></div>`);
   wire(el, p);
   return el;
 }
@@ -383,9 +435,9 @@ document.querySelectorAll(".house").forEach(s=>s.classList.remove("person"));
 // giỗ table
 const gios = [["Bà cô tổ Phạm Thị Nương","Bà cô tổ","5/3 ÂL"],
  ["Cụ ông Phạm Quang Chiểu","Đời 1 · tổ tiên trực hệ","11/4 ÂL"],["Cụ bà Đào Thị Hải","Đời 1 · vợ cụ Chiểu","18/6 ÂL"],
- ["Ông Phạm Quang Thi","Đời 2 · tổ tiên trực hệ","22/8 ÂL"],
- ["Ông Phạm Quang Bẩm","Đời 3 · tổ tiên trực hệ","30/3 ÂL"],["Bà Trần Thị Xáo","Đời 3 · vợ ông Bẩm","29/1 ÂL"],
- ["Ông Phạm Quang Thụ","Đời 4","26/10 ÂL"],["Bà Trần Thị Út","Đời 4 · vợ ông Thụ","3/6 ÂL"]];
+ ["Cụ ông Phạm Quang Thi","Đời 2 · tổ tiên trực hệ","22/8 ÂL"],
+ ["Cụ ông Phạm Quang Bẩm","Đời 3 · tổ tiên trực hệ","30/3 ÂL"],["Cụ bà Trần Thị Xáo","Đời 3 · vợ cụ Bẩm","29/1 ÂL"],
+ ["Cụ ông Phạm Quang Thụ","Đời 4","26/10 ÂL"],["Cụ bà Trần Thị Út","Đời 4 · vợ cụ Thụ","3/6 ÂL"]];
 (function walk(list){ list.forEach(p=>{
   if(p.gio) gios.push([bare(p.n),"Đời "+p.gen,p.gio]);
   (p.sp||[]).forEach(s=>{ if(s.gio && /\d/.test(s.gio)) gios.push([bare(s.n),"Đời "+p.gen + " · " + (s.r==="Chồng"?"chồng":"vợ") + " ông " + given(p.n),s.gio]); });
@@ -442,9 +494,9 @@ const isList = p => p!==ROOT && hasKids(p) && kidsOf(p).every(k=>!(k.kids&&k.kid
 const cw = p => p===ROOT ? RW : CW;
 
 function cardInner(p){
-  if(p===ROOT) return `<div class="nm">Ông PHẠM QUANG THỤ &amp; Bà TRẦN THỊ ÚT</div>
-    <div class="s">Con ông Phạm Quang Bẩm · chắt cụ Phạm Quang Chiểu</div>
-    <div class="gd">Giỗ ông: 26/10 ÂL · bà: 3/6 ÂL</div>`;
+  if(p===ROOT) return `<div class="nm">Cụ Ông PHẠM QUANG THỤ &amp; Cụ Bà TRẦN THỊ ÚT</div>
+    <div class="s">Con của cụ Phạm Quang Bẩm, chắt của cụ Phạm Quang Chiểu</div>
+    <div class="gd">Giỗ cụ ông: 26/10 ÂL · cụ bà: 3/6 ÂL</div>`;
   let h = `<div class="nm">${fmt(p.n)}</div>`;
   if(p.gio) h += `<div class="gd">${gl(p.gio)} ${esc(p.gio)}</div>`;
   if(p.sp) h += p.sp.map(s=>`<div class="s">${p.gen===5?"":"+ "}${s.r?`<i>${s.r}:</i> `:""}${fmt(s.n)}${s.gio?` <span class="gd">· ${gl(s.gio)} ${esc(s.gio)}</span>`:""}</div>`).join("");
@@ -452,7 +504,7 @@ function cardInner(p){
 }
 
 function buildTree(){
-  tnodes.forEach(n=>{ delete n._card; delete n._li; delete n._edge; delete n._listEdge; delete n._list; });
+  tnodes.forEach(n=>{ delete n._card; delete n._li; delete n._edge; delete n._listEdge; delete n._list; delete n._more; });
   tnodes=[];
   canvas.innerHTML = "";
   const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
@@ -486,6 +538,15 @@ function buildTree(){
       });
       canvas.appendChild(l); p._list=l;
     } else kidsOf(p).forEach(mk);
+    if(p.more){
+      const sg = p._list ? p.gen+2 : p.gen+1;
+      p._more=[].concat(p.more).map((lab,i)=>{
+        const m=document.createElement("div");
+        m.className="tcard blank"; m.style.minWidth=CW+"px"; m.style.setProperty("--gc",gc(sg+i));
+        m.innerHTML=`<div class="nm">${esc(lab)}</div><div class="lines"><i></i><i></i><i></i><i></i></div>`;
+        canvas.appendChild(m); return m;
+      });
+    }
   })(ROOT);
 
   tsvg = svg;
@@ -507,6 +568,7 @@ function layoutTree(){
   tnodes.forEach(p=>{
     if(p._card) rowH[p.gen]=Math.max(rowH[p.gen]||0,p._card.offsetHeight);
     if(p._list) rowH[p.gen+1]=Math.max(rowH[p.gen+1]||0,p._list.offsetHeight);
+    if(p._more){ const sg=p._list?p.gen+2:p.gen+1; p._more.forEach((m,i)=>{ rowH[sg+i]=Math.max(rowH[sg+i]||0,m.offsetHeight); }); }
   });
   const gens=Object.keys(rowH).map(Number).sort((a,b)=>a-b);
   const rowTop={}; let y=PAD+8;
@@ -515,7 +577,7 @@ function layoutTree(){
 
   const wid=new Map();
   (function w(p){
-    let v = Math.max(cardW(p), p._list ? p._list.offsetWidth : 0);
+    let v = Math.max(cardW(p), p._list ? p._list.offsetWidth : 0, ...(p._more||[]).map(m=>m.offsetWidth));
     if(hasKids(p) && !isList(p)){
       const s = kidsOf(p).reduce((a,k)=>a+w(k),0) + HG*(kidsOf(p).length-1);
       v = Math.max(v,s);
@@ -540,6 +602,15 @@ function layoutTree(){
     if(p._list){
       p._list.style.left=(cx-p._list.offsetWidth/2)+"px"; p._list.style.top=rowTop[p.gen+1]+"px";
       paths+=`<path class="edge" data-l="${tnodes.indexOf(p)}" d="M${cx},${rowTop[p.gen]+p._card.offsetHeight} V${rowTop[p.gen+1]}"/>`;
+    }
+    if(p._more){
+      const sg=p._list?p.gen+2:p.gen+1;
+      let yb = p._list ? rowTop[p.gen+1]+p._list.offsetHeight : rowTop[p.gen]+p._card.offsetHeight;
+      p._more.forEach((m,i)=>{
+        m.style.left=(cx-m.offsetWidth/2)+"px"; m.style.top=rowTop[sg+i]+"px";
+        paths+=`<path class="edge dash" d="M${cx},${yb} V${rowTop[sg+i]}"/>`;
+        yb=rowTop[sg+i]+m.offsetHeight;
+      });
     }
     return cx;
   })(ROOT, LBL+PAD+AUNT_W);
@@ -608,10 +679,12 @@ function setTab(t){
   const tree = t==="tree";
   tabTree.setAttribute("aria-selected",tree); tabList.setAttribute("aria-selected",!tree);
   document.getElementById("viewTree").hidden=!tree; document.getElementById("viewList").hidden=tree;
-  try{ localStorage.setItem("giapha-pq-thu-tab",t); }catch(e){}
+  try{ localStorage.setItem("giapha-pq-thu-tab-B",t); }catch(e){}
   if(tree && !treeBuilt) showTree();
 }
 tabTree.onclick=()=>setTab("tree"); tabList.onclick=()=>setTab("list");
-let startTab="tree"; try{ startTab=localStorage.getItem("giapha-pq-thu-tab")||"tree"; }catch(e){}
+let startTab="tree"; try{ startTab=localStorage.getItem("giapha-pq-thu-tab-B")||"tree"; }catch(e){}
 setTab(startTab);
 </script>
+
+</body></html>
