@@ -270,7 +270,7 @@ body{background:var(--bg)}
   <div id="hint">Bấm vào một tên để xem dòng dõi từ cụ Thụ xuống người đó.</div>
 
   <section>
-    <div class="lbl" style="margin-bottom:10px">Đời 5 · Các con của cụ Thụ — 5 nhà</div>
+    <div class="lbl" style="margin-bottom:10px">Đời 5 · Các con của cụ Thụ — 6 nhà</div>
     <nav class="index" id="index"></nav>
   </section>
 
@@ -294,7 +294,7 @@ const D2 = [
  {n:"Phạm Quang Thọ", sp:[{r:"Vợ",n:"Phạm Thị Thọ"}]},
  {n:"Phạm Quang Vĩnh", sp:[{r:"Vợ",n:"Phạm Thị Vĩnh"}]},
  {n:"Phạm Chí Thoả", gio:"27/5 ÂL", sp:[{r:"Vợ",n:"Trần Thị Nhỡ",gio:"26/8 ÂL"},{r:"Vợ",n:"Nguyễn Thị Bẩy"}], kids:[
-  {n:"Phạm Văn Trôi"},{n:"Phạm Văn Nổi"},
+  {n:"Phạm Văn Trôi", gio:"mất từ nhỏ"},{n:"Phạm Văn Nổi", gio:"mất từ nhỏ"},
   {n:"Phạm Thị Dậu",f:1, gio:"mất 2022", sp:[{r:"Chồng",n:"Trịnh Văn Tập",gio:"mất 1992"}], kids:[
    {n:"Trịnh Thị Nụ",f:1, sp:[{r:"Chồng",n:"Phạm Văn Á"}], more:["4 Con","10 Cháu/chắt"]},
    {n:"Trịnh Văn Khải", gio:"mất 2018", sp:[{r:"Vợ",n:"Phạm Thị Bền"}], kids:[{n:"Trịnh Văn Giản"},{n:"Trịnh Văn Ngoan"}], more:"7 Cháu/chắt"},
@@ -330,6 +330,7 @@ const D2 = [
    {n:"Phạm Anh Tuấn", sp:[{r:"Vợ",n:"Vũ Thị Hương"}], kids:[{n:"Phạm Vũ Tuấn Anh"},{n:"Phạm Vũ Ngọc Chi"}]},
    {n:"Phạm Chí Cường", sp:[{r:"Vợ",n:"Lê Hương Giang"}], kids:[{n:"Phạm Lê Minh"},{n:"Phạm Minh Anh"}]}]},]},
  {n:"Phạm Thị Sợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Huệ"}]},
+ {n:"Phạm Thị Sợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Tỵ"}]},
  {n:"Phạm Quang Thừ"}
 ];
 const GEN = ["","","","","Đời 4 · Ông bà","Đời 5 · Các con","Đời 6 · Các cháu","Đời 7 · Các chắt","Đời 8 · Các chút","Đời 9 · Các chít"];
@@ -439,7 +440,7 @@ const gios = [["Bà cô tổ Phạm Thị Nương","Bà cô tổ","5/3 ÂL"],
  ["Cụ ông Phạm Quang Bẩm","Đời 3 · tổ tiên trực hệ","30/3 ÂL"],["Cụ bà Trần Thị Xáo","Đời 3 · vợ cụ Bẩm","29/1 ÂL"],
  ["Cụ ông Phạm Quang Thụ","Đời 4","26/10 ÂL"],["Cụ bà Trần Thị Út","Đời 4 · vợ cụ Thụ","3/6 ÂL"]];
 (function walk(list){ list.forEach(p=>{
-  if(p.gio) gios.push([bare(p.n),"Đời "+p.gen,p.gio]);
+  if(p.gio && /\d/.test(p.gio)) gios.push([bare(p.n),"Đời "+p.gen,p.gio]);
   (p.sp||[]).forEach(s=>{ if(s.gio && /\d/.test(s.gio)) gios.push([bare(s.n),"Đời "+p.gen + " · " + (s.r==="Chồng"?"chồng":"vợ") + (p.gen<=5?" cụ ":(p.f?" bà ":" ông ")) + given(p.n),s.gio]); });
   if(p.kids) walk(p.kids);
 }); })(D2);
@@ -484,7 +485,7 @@ document.getElementById("q").addEventListener("input", e=>{
 const CW=196, RW=340, HG=16, VG=64, LBL=70, PAD=24, AUNT_W=CW+48;
 const vp=document.getElementById("tvp"), sizer=document.getElementById("tsizer"), canvas=document.getElementById("tcanvas");
 const hSel=document.getElementById("tHouse");
-hSel.innerHTML = `<option value="all">Toàn bộ 5 nhà</option>` + D2.map((h,i)=>`<option value="${i}">Nhà ${i+1}: ${esc(h.n)}</option>`).join("");
+hSel.innerHTML = `<option value="all">Toàn bộ 6 nhà</option>` + D2.map((h,i)=>`<option value="${i}">Nhà ${i+1}: ${esc(h.n)}</option>`).join("");
 let cur="all", scale=0.8, W=0, H=0, treeBuilt=false, tnodes=[], auntCard=null;
 ROOT.parent = null;
 
