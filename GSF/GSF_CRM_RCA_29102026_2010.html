@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GSF CRM – RCA sự cố 29/10/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e30613;--black:#000;--white:#fff;--gray:#727171;--bg:#f0f2f5;--dark:#1a1f2e;--tabs:#131722;--amber:#d97706;--green:#16a34a;--blue:#2563eb;--radius:10px;--shadow:0 1px 6px rgba(0,0,0,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--black);font-size:12px;line-height:1.55}
+.mono{font-family:'DM Mono',monospace}
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:12px 24px;min-height:62px}
+.logo{width:38px;height:38px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:9px;letter-spacing:.5px;text-align:center;line-height:1.1}
+.h-title{font-weight:800;font-size:13px;letter-spacing:.5px}
+.h-sub{font-size:10px;color:#b8bcc8;margin-top:2px}
+.h-right{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 8px;border-radius:5px;background:#2a3042;color:#fff}
+.badge.red{background:var(--red)}
+.tabs{position:sticky;top:62px;z-index:99;background:var(--tabs);display:flex;overflow-x:auto;padding:0 16px}
+.nav-tab{background:none;border:none;color:#9aa0ae;font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;padding:12px 14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 24px 40px}
+.tab-content{display:none}.tab-content.active{display:block}
+.sec-title{font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;color:var(--gray);margin:22px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;border-top:3px solid var(--red)}
+.card.amber{border-top-color:var(--amber)}.card.blue{border-top-color:var(--blue)}.card.green{border-top-color:var(--green)}
+.k-label{font-size:9px;text-transform:uppercase;font-weight:700;letter-spacing:1px;color:var(--gray)}
+.k-val{font-family:'DM Mono',monospace;font-size:30px;font-weight:500;margin:4px 0}
+.k-sub{font-size:10px;color:var(--gray)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.box{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px}
+.box h3{font-size:11px;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px}
+.box p{margin-bottom:6px}
+.box ul{padding-left:18px}.box li{margin-bottom:4px}
+.verdict{background:#fff;border-left:4px solid var(--red);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.verdict .v-head{font-weight:900;font-size:14px;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+th{background:var(--dark);color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;text-align:left;padding:8px 10px}
+td{padding:7px 10px;border-bottom:1px solid #eceef2;vertical-align:top;font-size:11px}
+tr:last-child td{border-bottom:none}
+td code,.ex{font-family:'DM Mono',monospace;font-size:10.5px;background:#f5f6f8;padding:1px 4px;border-radius:3px;word-break:break-word}
+tr.bad td{background:#fdf0f0}
+tr.ok td{background:#f1faf3}
+.tag{display:inline-block;font-size:8px;text-transform:uppercase;font-weight:800;padding:3px 7px;border-radius:4px;letter-spacing:.5px;white-space:nowrap}
+.tag-block{background:#fde2e2;color:#b00010}.tag-warn{background:#fff1d6;color:#9a5a00}.tag-ok{background:#dcf5e3;color:#0f6b2f}.tag-done{background:#dde8fd;color:#1d4fc4}.tag-ip{background:#e2f2fb;color:#0c6c9a}.tag-gray{background:#eceef2;color:#555}
+.note{font-size:10.5px;color:var(--gray);margin-top:8px}
+.footer{background:var(--dark);color:#b8bcc8;display:flex;justify-content:space-between;padding:14px 24px;font-size:10px}
+.footer strong{color:#fff}
+.scroll{overflow-x:auto}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.header{grid-template-columns:auto 1fr}.h-right{display:none}.wrap{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'CORP<br>RK</div>
+  <div>
+    <div class="h-title">GSF CRM · PHÂN TÍCH SỰ CỐ CRM SERVER TREO LÚC 20:10 NGÀY 29/10/2026</div>
+    <div class="h-sub">Dcorp Technology Corporation · Core Technology · CRM GSF2 (WIN-292DB0K3N9A / 192.168.62.93) · DB CRM_V7 (WIN-HLB4ESE5M88)</div>
+  </div>
+  <div class="h-right">
+    <span class="badge red">INCIDENT RCA</span>
+    <span class="badge">29/10/2026 20:10–20:26</span>
+    <span class="badge">gsf_crm_rca v1</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="nav-tab active" onclick="switchTab('overview',this)">Tổng quan</button>
+  <button class="nav-tab" onclick="switchTab('process',this)">Quy trình kiểm tra</button>
+  <button class="nav-tab" onclick="switchTab('timeline',this)">Timeline &amp; bằng chứng</button>
+  <button class="nav-tab" onclick="switchTab('rca',this)">Phân tích nguyên nhân</button>
+  <button class="nav-tab" onclick="switchTab('impact',this)">Thiệt hại &amp; đối soát</button>
+  <button class="nav-tab" onclick="switchTab('action',this)">Việc cần làm</button>
+</div>
+
+<div class="wrap">
+
+<!-- ============ TỔNG QUAN ============ -->
+<div class="tab-content active" id="tab-overview">
+  <div class="sec-title">Chỉ số sự cố</div>
+  <div class="kpis">
+    <div class="card"><div class="k-label">Thời gian gián đoạn</div><div class="k-val">15 phút</div><div class="k-sub mono">20:10:43 → 20:26:00</div></div>
+    <div class="card amber"><div class="k-label">Lỗi phía SkyCRM</div><div class="k-val">308</div><div class="k-sub">157 timeout (20:12:23–20:21:52) + 151 refused (20:20:18–20:26:02)</div></div>
+    <div class="card blue"><div class="k-label">Số lần treo cùng dấu hiệu</div><div class="k-val">5</div><div class="k-sub">15/10: 19:43, 20:31, 20:50 · 29/10: 12:07, 20:10</div></div>
+    <div class="card green"><div class="k-label">Khách bị trừ điểm, không nhận voucher</div><div class="k-val">2</div><div class="k-sub">29/10 12:07 (chưa xử lý) · 29/10 20:10 (đã cấp bù thủ công 21:21)</div></div>
+  </div>
+
+  <div class="sec-title">Kết luận</div>
+  <div class="verdict">
+    <div class="v-head">CRM Server GSF2 treo toàn bộ tiến trình ngay khi xử lý bước cấp voucher, sau lệnh trừ điểm đổi voucher từ SkyCRM.</div>
+    <p>Lệnh cuối cùng hoàn tất là giao dịch trừ 500,000 điểm (<code>Change to coupon</code>, TX 10000024428806) lúc 20:10:43.539. Request kế tiếp vào sau 15 ms, đúng vị trí của lệnh <code>ADD COUPONS</code> trong luồng đổi điểm. Request này dừng ở bước khởi tạo kết nối DB, các luồng nền của CRM ngừng cùng lúc, và CRM không phản hồi cho tới khi được khởi động lại lúc 20:26.</p>
+    <p>SQL Server không phải nguyên nhân: không có lệnh nào chạy lâu hay bị hủy trong Query Store, không có lỗi kết nối, kho voucher đủ. Lệnh cấp voucher <strong>không tới được SQL Server</strong>. Điểm kẹt nằm bên trong <code>RKeeper_CRM_Server.exe</code>.</p>
+    <p>Đây là lần thứ 5 cùng một dấu hiệu, và cả 5 lần đều xảy ra ngay sau một lệnh trừ điểm đổi voucher. Xác định được vị trí kích hoạt. Nguyên nhân ở mức mã nguồn cần UCS phân tích process dump.</p>
+  </div>
+
+  <div class="sec-title">Issue · Impact · Status · Next action</div>
+  <div class="grid2">
+    <div class="box"><h3>Issue</h3><p>CRM GSF2 ngừng xử lý mọi request (HTTP 9196, các luồng nền) từ 20:10:43. App khách hàng báo "The operation has timed out", không đăng nhập, không đọc được e-code.</p></div>
+    <div class="box"><h3>Impact</h3><p>15 phút gián đoạn toàn bộ chức năng thành viên trên app và tích/đổi điểm tại POS. 1 khách bị trừ 500,000 điểm mà SkyCRM không cấp voucher (đã được cấp bù thủ công lúc 21:21). Khách trong sự cố 12:07 cùng ngày vẫn chưa được xử lý.</p></div>
+    <div class="box"><h3>Status</h3><p>CRM chạy lại từ 20:26:00, nhưng <strong>đang chạy dạng ứng dụng dưới user dcorp</strong> (<code>AsService: False</code>), không phải Windows service. Nguyên nhân gốc chưa được khắc phục, lỗi có thể lặp lại bất kỳ lúc nào có giao dịch đổi điểm.</p></div>
+    <div class="box"><h3>Next action</h3><ul><li>Lần treo sau: chụp process dump trước khi restart.</li><li>Gửi UCS hồ sơ 5 lần treo kèm log.</li><li>Xử lý khách sự cố 12:07.</li><li>Chuyển CRM về chạy dạng service.</li></ul><p class="note">Chi tiết ở tab Việc cần làm.</p></div>
+  </div>
+
+  <div class="sec-title">Lưu ý về thời gian</div>
+  <div class="box"><p>Yêu cầu ban đầu ghi khoảng 22:10. Log CRM, log SkyCRM và tên folder (<code>LOG291020H</code>, <code>20H10</code>) đều cho thấy sự cố xảy ra lúc <strong>20:10</strong>. Khung 22:00–22:20 không có timeout hay refused nào trong log SkyCRM.</p></div>
+</div>
+
+<!-- ============ QUY TRÌNH ============ -->
+<div class="tab-content" id="tab-process">
+  <div class="sec-title">Các bước kiểm tra đã thực hiện</div>
+  <div class="scroll"><table>
+    <tr><th>#</th><th>Bước kiểm tra</th><th>Nguồn</th><th>Khung thời gian</th><th>Kết quả</th></tr>
+    <tr><td>1</td><td>Xác định thời điểm sự cố</td><td>3 file log SkyCRM (<code>SKYCRM 2026-10-29.log*</code>, <code>sKYCRM HIEP2026-10-29.log</code>)</td><td>19:30–23:59</td><td>Timeout chỉ có trong 20:12:23–20:21:52, refused trong 20:20:18–20:26:02. Khung 22:10 không có lỗi kết nối CRM</td></tr>
+    <tr><td>2</td><td>Đo nhịp ghi log (heartbeat) các luồng nền CRM</td><td><code>CS_Server_BP_SQLTables</code>, <code>CS_Server_BP_SendSMS</code>, <code>CS_Server_BP_SystemEMail</code> [SYSTEM]</td><td>00:00–20:10</td><td>Bình thường ghi log mỗi 5s. Cả 3 dừng trong 20:10:39–20:10:42 và không ghi thêm. Trong ngày còn 1 khoảng im lặng khác: 12:07:25–12:24:36 (sự cố trưa)</td></tr>
+    <tr><td>3</td><td>Tìm request đang dở tại thời điểm treo</td><td><code>CS_Server_Ext.[SYSTEM].01–05.log</code></td><td>19:41–20:10:43</td><td>1 request (tid 7476, start 20:10:43.554) dừng ở dòng <code>MSSQL: 192.168.62.95,9493:CRM_V7@sa</code>, chưa ghi được nội dung lệnh</td></tr>
+    <tr><td>4</td><td>Xem request hoàn tất cuối cùng</td><td><code>CS_Server_Ext.[SYSTEM].01.log</code></td><td>20:10:43.398–.539</td><td>Trừ 500,000 điểm "Change to coupon", tài khoản 01.00116.02048033.0001, TX 10000024428806, Exec 0.141s</td></tr>
+    <tr><td>5</td><td>Bộ đếm kết nối HTTP</td><td><code>CS_Server_HTTP.[SYSTEM].01.log</code></td><td>20:10:11–20:12:55</td><td>Số request xử lý xong đứng ở 5979. Số kết nối đang mở tăng từ 2 lên 44</td></tr>
+    <tr><td>6</td><td>Khớp thời gian timeout của SkyCRM</td><td>Log SkyCRM</td><td>20:12:23</td><td>Timeout đầu tiên lúc 20:12:23.609, đúng 100s sau request kẹt (20:10:43.554). 100s là timeout mặc định của HttpWebRequest</td></tr>
+    <tr><td>7</td><td>Thời điểm và cách khởi động lại</td><td><code>CS_Server.[dcorp].01.log</code>, <code>AS_Server.[dcorp].01.log</code></td><td>20:26:00–20:26:02</td><td>CRM khởi động dạng ứng dụng: <code>AsService: False</code>, HTTP 9196 mở lại 20:26:02</td></tr>
+    <tr><td>8</td><td>Thời gian mở kết nối DB lúc bình thường</td><td><code>CS_Server_Ext</code> (29/10 sáng, 29/10 tối, 15/10)</td><td>~2,400 request</td><td>Tối đa 0.08s. Không lần nào vượt 1s. Chỉ các request tại thời điểm treo là không hoàn tất</td></tr>
+    <tr><td>9</td><td>Đối chiếu tất cả các lần trừ điểm với request ngay sau đó</td><td><code>CS_Server_Ext</code> 3 bộ log</td><td>15/10, 29/10</td><td>Luồng bình thường: trừ điểm → ADD COUPONS sau 125–264 ms. 5/5 lần treo rơi đúng vào vị trí này (xem tab Phân tích)</td></tr>
+    <tr><td>10</td><td>Query Store: lệnh chạy lâu hoặc bị hủy</td><td>SQL <code>CRM_V7.sys.query_store_*</code></td><td>20:10–20:27</td><td>Không có lệnh nào bị Aborted/Exception. Lệnh chạy lâu chỉ có các lượt search khách (15–23s) sau 20:26 và SP_SPECIAL_OFFER (tối đa 8.3s), đều là tải thường ngày</td></tr>
+    <tr><td>11</td><td>Lỗi kết nối phía SQL</td><td>SQL <code>RING_BUFFER_CONNECTIVITY</code></td><td>20:00–20:35</td><td>Không có sự kiện nào</td></tr>
+    <tr><td>12</td><td>Kho voucher đổi điểm</td><td>Bảng <code>CARD_COUPON_TYPES</code>, <code>CARD_COUPONS</code></td><td>Đo lúc 30/10 10:56</td><td>50K: 5,000 · 100K: 1,500 · 200K: 1,500 · 500K: 1,500 voucher sẵn sàng. Kho đầy đủ</td></tr>
+    <tr><td>13</td><td>Giao dịch ghi vào CRM quanh sự cố</td><td>Bảng <code>CARD_TRANSACTIONS</code></td><td>20:08–20:30</td><td>Không có giao dịch nào từ 20:10:44 đến 20:26. Từ 20:26–20:28 có loạt hóa đơn POS của 6 nhà hàng được ghi nhận</td></tr>
+    <tr><td>14</td><td>Đối soát khách bị trừ điểm</td><td>Bảng <code>CARD_TRANSACTIONS</code>, <code>CARD_COUPONS</code></td><td>29/10</td><td>Khách 20:10: không có lệnh cấp voucher từ SkyCRM, được gán thủ công 1 voucher 500K lúc 21:21:19. Khách 12:07: chưa có voucher, chưa hoàn điểm</td></tr>
+    <tr><td>15</td><td>So sánh với các lần treo trước</td><td>Log folder <code>LOG GSF 15102026</code>, <code>LOG GSF 29102026</code></td><td>15/10, 29/10 trưa</td><td>Cùng dấu hiệu log. 15/10 có 8 lần treo (3 lần còn log chi tiết), 29/10 trưa 1 lần</td></tr>
+  </table></div>
+</div>
+
+<!-- ============ TIMELINE ============ -->
+<div class="tab-content" id="tab-timeline">
+  <div class="sec-title">Timeline sự cố 29/10/2026 tối</div>
+  <div class="scroll"><table>
+    <tr><th>Thời điểm</th><th>Sự kiện</th><th>File</th><th>Trích log / dữ liệu</th></tr>
+    <tr><td class="mono">20:09:36–20:10:08</td><td>3 lần đổi điểm trước đó chạy bình thường (trừ điểm → ADD COUPONS)</td><td><code>CS_Server_Ext.[SYSTEM].02/01.log</code></td><td>ADD COUPONS sau 157–174 ms, hoàn tất</td></tr>
+    <tr><td class="mono">20:10:39–20:10:42</td><td>Các luồng nền ghi dòng cuối cùng</td><td><code>CS_Server_BP_SQLTables</code> / <code>SendSMS</code> / <code>SystemEMail</code></td><td>Dòng cuối: 20:10:39.8 / 20:10:40.4 / 20:10:42.2</td></tr>
+    <tr><td class="mono">20:10:43.398</td><td>SkyCRM gửi lệnh trừ điểm</td><td><code>CS_Server_Ext.[SYSTEM].01.log</code></td><td><span class="ex">Action="Transaction" Terminal_Type="99999" &lt;Account_Number&gt;01.00116.02048033.0001&lt;/Account_Number&gt; &lt;Amount&gt;-500000&lt;/Amount&gt; &lt;Remarks&gt;Change to coupon&lt;/Remarks&gt;</span></td></tr>
+    <tr><td class="mono">20:10:43.492</td><td>CRM ghi giao dịch trừ điểm</td><td>như trên</td><td><span class="ex">Credit=0.00 Balance=765211.00 Summ=-500000.00 · TransactionID: 10000024428806</span></td></tr>
+    <tr><td class="mono">20:10:43.539</td><td>Request cuối cùng hoàn tất</td><td>như trên</td><td><span class="ex">Exec: 00:00.141 · ***** CS_Server_Ext (Stop)</span></td></tr>
+    <tr class="bad"><td class="mono">20:10:43.554</td><td><strong>Request kế tiếp kẹt</strong> (vị trí ADD COUPONS)</td><td>như trên</td><td><span class="ex">7476 *** 2026-10-29 20:10:43 CS_Server_Ext (Start) → Read config → MSSQL: 192.168.62.95,9493:CRM_V7@sa [dbexpsda40.dll/sqloledb.dll]</span>, sau đó hết log</td></tr>
+    <tr class="bad"><td class="mono">20:10:43 → 20:12:55</td><td>Kết nối mới dồn lại, không request nào xong</td><td><code>CS_Server_HTTP.[SYSTEM].01.log</code></td><td><span class="ex">Accept … 8017/2 5973/0 → 8064/44 5979/1</span></td></tr>
+    <tr><td class="mono">20:12:23.609</td><td>SkyCRM nhận timeout đầu tiên (100s sau request kẹt)</td><td><code>SKYCRM 2026-10-29.log2026-10-29.log</code></td><td><span class="ex">ERROR [121] CrmServices - The operation has timed out.</span></td></tr>
+    <tr><td class="mono">20:14:03</td><td>Lỗi phụ của SkyCRM khi CRM không phản hồi</td><td>như trên</td><td><span class="ex">ArgumentNullException … at WebServer.Services.CrmServices.WriteOffPointAccount</span></td></tr>
+    <tr><td class="mono">20:12 → 20:21:52</td><td>157 lỗi timeout</td><td>như trên</td><td></td></tr>
+    <tr><td class="mono">20:20:18 → 20:26:02</td><td>Service đang được dừng, cổng 9196 đóng: 151 lỗi refused</td><td>như trên</td><td><span class="ex">No connection could be made … actively refused … :9196</span></td></tr>
+    <tr class="ok"><td class="mono">20:26:00</td><td>CRM khởi động lại dạng ứng dụng (user dcorp)</td><td><code>CS_Server.[dcorp].01.log</code></td><td><span class="ex">***** CS_Server (Start) … Database: CRM_V7 · AsService: False</span></td></tr>
+    <tr class="ok"><td class="mono">20:26:02</td><td>HTTP 9196 mở lại</td><td><code>AS_Server.[dcorp].01.log</code></td><td><span class="ex">HTTP: successful start (Port=9196)</span></td></tr>
+    <tr><td class="mono">20:26–20:28</td><td>Hóa đơn POS của 6 nhà hàng được ghi nhận dồn</td><td>Bảng <code>CARD_TRANSACTIONS</code></td><td>CLIENT_ID 84, 154, 155, 165, 166, 203</td></tr>
+    <tr><td class="mono">21:21:19.950</td><td>Voucher 500K được gán thủ công cho khách bị ảnh hưởng</td><td>Bảng <code>CARD_TRANSACTIONS</code></td><td>Coupon 9220015677611335305, OPERATION_TYPE 13, CLIENT_ID trống (lần duy nhất trong ngày)</td></tr>
+    <tr><td class="mono">21:25:24</td><td>Khách dùng voucher 500K tại nhà hàng</td><td>Bảng <code>CARD_TRANSACTIONS</code></td><td>OPERATION_TYPE 18, CLIENT_ID 53, hóa đơn 148297</td></tr>
+  </table></div>
+</div>
+
+<!-- ============ PHÂN TÍCH ============ -->
+<div class="tab-content" id="tab-rca">
+  <div class="sec-title">Mẫu lặp lại: lệnh ngay sau trừ điểm đổi voucher</div>
+  <p class="note" style="margin:-4px 0 10px">Luồng đổi điểm của SkyCRM: <code>TRANSACTION</code> (trừ điểm) → khoảng 125–550 ms sau → <code>ADD COUPONS</code> (cấp voucher). Bảng liệt kê mọi lần trừ điểm có trong log.</p>
+  <div class="scroll"><table>
+    <tr><th>Ngày</th><th>Trừ điểm lúc (số điểm)</th><th>Request ngay sau</th><th>Kết quả</th></tr>
+    <tr><td>29/10 tối</td><td class="mono">19:44:06 (-50,000), 19:44:14 (-100,000), 19:45:28 (-100,000), 19:51:29 (-50,000), 19:56:51 (-200,000), 20:09:36 (-200,000), 20:09:42 (-100,000), 20:10:08 (-200,000)</td><td>ADD COUPONS sau 125–202 ms</td><td><span class="tag tag-ok">Bình thường</span></td></tr>
+    <tr class="bad"><td>29/10 tối</td><td class="mono">20:10:43 (-500,000)</td><td>Request sau 156 ms, kẹt trước khi ghi tên lệnh</td><td><span class="tag tag-block">Treo</span></td></tr>
+    <tr><td>29/10 trưa</td><td class="mono">11:57:30 (-200,000)</td><td>ADD COUPONS sau 234 ms</td><td><span class="tag tag-ok">Bình thường</span></td></tr>
+    <tr class="bad"><td>29/10 trưa</td><td class="mono">12:07:30 (-500,000)</td><td>Request sau 203 ms, kẹt</td><td><span class="tag tag-block">Treo</span></td></tr>
+    <tr><td>15/10</td><td class="mono">19:42:38 (-100,000), 19:43:35 (-100,000)</td><td>ADD COUPONS sau 187–264 ms</td><td><span class="tag tag-ok">Bình thường</span></td></tr>
+    <tr class="bad"><td>15/10</td><td class="mono">19:43:40 (-50,000)</td><td>Request sau 535 ms, kẹt</td><td><span class="tag tag-block">Treo</span></td></tr>
+    <tr><td>15/10</td><td class="mono">19:59:06 (-100,000), 20:23:44 (-500,000), 20:26:08 (-50,000), 21:20:17 (-100,000), 21:25:31 (-50,000)</td><td>ADD COUPONS sau 203–1,361 ms</td><td><span class="tag tag-ok">Bình thường</span></td></tr>
+    <tr class="bad"><td>15/10</td><td class="mono">20:31:05 (-50,000)</td><td>ADD COUPONS xong nhưng lỗi trùng khóa <code>PK_CARD_COUPON_CLIENTS</code>; request kế tiếp kẹt</td><td><span class="tag tag-block">Treo</span></td></tr>
+    <tr class="bad"><td>15/10</td><td class="mono">20:50:38 (-50,000)</td><td>Request sau 459 ms, kẹt</td><td><span class="tag tag-block">Treo</span></td></tr>
+  </table></div>
+
+  <div class="sec-title">Thống kê</div>
+  <div class="scroll"><table>
+    <tr><th>Chỉ số</th><th>Giá trị</th></tr>
+    <tr><td>Tổng request trong log có đủ dữ liệu</td><td class="mono">~2,400</td></tr>
+    <tr><td>Thời gian mở kết nối DB lúc bình thường</td><td class="mono">≤ 0.08 s (0 lần &gt; 1 s)</td></tr>
+    <tr><td>Tỷ lệ lệnh TRANSACTION trong tổng request</td><td class="mono">~2%</td></tr>
+    <tr><td>Số lần treo rơi đúng sau một lệnh trừ điểm đổi voucher</td><td class="mono">5 / 5</td></tr>
+    <tr><td>Số lần trừ điểm có ADD COUPONS chạy bình thường</td><td class="mono">16</td></tr>
+  </table></div>
+  <p class="note">Nếu treo xảy ra ngẫu nhiên, xác suất cả 5 lần đều rơi vào vị trí ngay sau lệnh trừ điểm (khoảng 2% số request) là gần bằng 0. Bước cấp voucher là yếu tố kích hoạt, nhưng không phải lần cấp voucher nào cũng gây treo (16 bình thường, 5 treo).</p>
+
+  <div class="sec-title">Các giả thuyết đã kiểm tra</div>
+  <div class="scroll"><table>
+    <tr><th>Giả thuyết</th><th>Bằng chứng</th><th>Kết luận</th></tr>
+    <tr><td>SQL Server quá tải hoặc bị khóa chặn</td><td>Query Store 20:10–20:27 không có lệnh bị hủy hay chạy bất thường. CPU SQL thấp. Không có lỗi kết nối trong ring buffer</td><td><span class="tag tag-ok">Loại trừ</span></td></tr>
+    <tr><td>Đăng nhập DB bị treo</td><td>Ring buffer 20:00–20:35 trống. Bước mở kết nối bình thường ≤ 0.08s trên ~2,400 request</td><td><span class="tag tag-ok">Loại trừ</span></td></tr>
+    <tr><td>Kho voucher hết, CRM phải sinh thêm voucher ngay trong request</td><td>Kho 4 loại voucher đổi điểm đầy (1,500–5,000 voucher sẵn sàng). Lệnh cấp voucher không tới SQL nên không có thao tác sinh voucher</td><td><span class="tag tag-ok">Loại trừ</span></td></tr>
+    <tr><td>Lệnh ADD COUPONS tới SQL và kẹt trong SQL</td><td>Không có lệnh cấp voucher (OPERATION_TYPE 14) cho khách sau 20:10:43. Query Store không có lệnh bị hủy lúc dừng service 20:20</td><td><span class="tag tag-ok">Loại trừ</span></td></tr>
+    <tr><td>Mạng giữa CRM và SQL</td><td>15/10 CRM chạy cùng máy với SQL (127.0.0.1) vẫn treo cùng dấu hiệu</td><td><span class="tag tag-ok">Loại trừ</span></td></tr>
+    <tr class="bad"><td>Treo bên trong <code>RKeeper_CRM_Server.exe</code> khi nhận request cấp voucher ngay sau lệnh trừ điểm (khóa nội bộ, thư viện kết nối dbExpress <code>dbexpsda40.dll</code> / <code>sqloledb.dll</code>, hoặc xử lý đồng thời của cùng một khách)</td><td>Request kẹt ở bước khởi tạo, trước khi tới SQL. Toàn bộ luồng nền ngừng cùng lúc. Mẫu 5/5 lần</td><td><span class="tag tag-block">Nguyên nhân</span><br><span class="note">Đã xác định vị trí. Mức mã nguồn cần UCS phân tích dump</span></td></tr>
+  </table></div>
+
+  <div class="sec-title">So sánh các lần treo</div>
+  <div class="scroll"><table>
+    <tr><th>Tiêu chí</th><th>15/10</th><th>29/10 trưa (12:07)</th><th>29/10 tối (20:10)</th></tr>
+    <tr><td>Nơi CRM chạy</td><td>Chung máy SQL (WIN-HLB4ESE5M88)</td><td>GSF2 (WIN-292DB0K3N9A)</td><td>GSF2 (WIN-292DB0K3N9A)</td></tr>
+    <tr><td>Số lần treo</td><td>8 (3 lần còn log chi tiết)</td><td>1</td><td>1</td></tr>
+    <tr><td>Lệnh trước khi treo</td><td>Trừ điểm -50,000</td><td>Trừ điểm -500,000</td><td>Trừ điểm -500,000</td></tr>
+    <tr><td>Thời gian gián đoạn</td><td>12–74 phút mỗi lần</td><td>17 phút</td><td>15 phút</td></tr>
+    <tr><td>Khóa chặn trên SQL</td><td>Có (DELETE SYS_SEARCHING bị chặn 20:11–20:45)</td><td>Không</td><td>Không</td></tr>
+    <tr><td>Cách khôi phục</td><td>Restart CRM nhiều lần, restart SQL 20:05 và 22:03</td><td>Restart CRM service</td><td>Restart CRM dạng ứng dụng</td></tr>
+  </table></div>
+</div>
+
+<!-- ============ THIỆT HẠI ============ -->
+<div class="tab-content" id="tab-impact">
+  <div class="sec-title">Khách bị trừ điểm nhưng SkyCRM không cấp voucher</div>
+  <div class="scroll"><table>
+    <tr><th>Sự cố</th><th>Khách (PEOPLE_ID)</th><th>Tài khoản điểm</th><th>Giao dịch trừ điểm</th><th>Voucher</th><th>Trạng thái</th></tr>
+    <tr class="ok"><td>29/10 20:10</td><td class="mono">10000000259476</td><td class="mono">01.00116.02048033.0001</td><td class="mono">10000024428806 · -500,000 · 20:10:43</td><td>Voucher 500K <span class="mono">5677611335305</span> gán thủ công 21:21:19, dùng tại CLIENT_ID 53 hóa đơn 148297 lúc 21:25:24</td><td><span class="tag tag-ok">Đã cấp bù</span></td></tr>
+    <tr class="bad"><td>29/10 12:07</td><td class="mono">10000001067569</td><td class="mono">01.00116.05170757.0001</td><td class="mono">10000024427785 · -500,000 · 12:07:30</td><td>Không có voucher mới, không có giao dịch hoàn điểm (kiểm tra lúc 30/10 10:56)</td><td><span class="tag tag-block">Chưa xử lý</span></td></tr>
+  </table></div>
+  <p class="note">Khách 20:10 sau đó đổi thêm 2 voucher (-50,000 lúc 20:56:45, -200,000 lúc 20:57:52) và đều nhận được voucher bình thường.</p>
+
+  <div class="sec-title">Hóa đơn POS trong 20:10:44–20:26</div>
+  <div class="box"><p>CRM không ghi nhận giao dịch nào trong khung này. Từ 20:26 đến 20:28 có loạt hóa đơn tích điểm của 6 nhà hàng (CLIENT_ID 84, 154, 155, 165, 166, 203) được ghi dồn, cho thấy POS đã gửi lại ít nhất một phần. Cần đối chiếu danh sách hóa đơn có quẹt thẻ trên RK7 trong 20:10–20:26 để xác nhận không bỏ sót.</p></div>
+
+  <div class="sec-title">Lỗi nền không liên quan sự cố</div>
+  <div class="box"><p><code>sKYCRM HIEP2026-10-29.log</code> có <strong>35,242 lỗi "ApiKey Invalid"</strong> trong ngày, khoảng 25 lỗi/phút đều đặn. Có một tích hợp đang gọi SkyCRM bằng API key sai. Không gây treo, nhưng làm log nhiễu và tốn tài nguyên.</p></div>
+</div>
+
+<!-- ============ VIỆC CẦN LÀM ============ -->
+<div class="tab-content" id="tab-action">
+  <div class="sec-title">Việc cần làm</div>
+  <div class="scroll"><table>
+    <tr><th>#</th><th>Hành động</th><th>Phụ trách đề xuất</th><th>Ưu tiên</th></tr>
+    <tr><td>1</td><td>Xử lý cho khách PEOPLE_ID 10000001067569 (sự cố 12:07): cấp 1 voucher đổi điểm 500K (type 826) hoặc hoàn 500,000 điểm</td><td>CSKH / Vận hành CRM</td><td><span class="tag tag-block">Cao</span></td></tr>
+    <tr><td>2</td><td>Lần treo sau, trước khi restart: chụp 2 process dump cách nhau 30s bằng <code>procdump -ma RKeeper_CRM_Server.exe</code> trên WIN-292DB0K3N9A. Chuẩn bị sẵn procdump và hướng dẫn cho người trực</td><td>IT Dcorp</td><td><span class="tag tag-block">Cao</span></td></tr>
+    <tr><td>3</td><td>Gửi UCS hồ sơ 5 lần treo (15/10 ×3, 29/10 ×2) kèm log và mẫu "trừ điểm → request kế tiếp kẹt ở bước MSSQL"</td><td>IT Dcorp</td><td><span class="tag tag-block">Cao</span></td></tr>
+    <tr><td>4</td><td>Chuyển CRM GSF2 từ chạy dạng ứng dụng (user dcorp) về Windows service, để không dừng khi user đăng xuất hoặc server khởi động lại</td><td>IT Dcorp</td><td><span class="tag tag-warn">Trung bình</span></td></tr>
+    <tr><td>5</td><td>Thêm cảnh báo khi log <code>CS_Server_BP_SQLTables</code> im lặng quá 60 giây, hoặc khi health check rkcrm-gsf-proxy đỏ quá 2 phút, để phát hiện trước khi khách báo</td><td>IT Dcorp</td><td><span class="tag tag-warn">Trung bình</span></td></tr>
+    <tr><td>6</td><td>SkyCRM: tách 2 bước trừ điểm và cấp voucher thành luồng có bù trừ (retry cấp voucher hoặc tự hoàn điểm khi bước 2 thất bại). Xử lý lỗi null trong <code>WriteOffPointAccount</code></td><td>Đội SkyCRM</td><td><span class="tag tag-warn">Trung bình</span></td></tr>
+    <tr><td>7</td><td>Đối chiếu hóa đơn POS có quẹt thẻ trên RK7 trong 20:10–20:26 và 12:07–12:24</td><td>Vận hành RK7</td><td><span class="tag tag-warn">Trung bình</span></td></tr>
+    <tr><td>8</td><td>Tìm và sửa tích hợp đang gọi SkyCRM bằng API key sai (35,242 lỗi/ngày)</td><td>Đội SkyCRM</td><td><span class="tag tag-gray">Thấp</span></td></tr>
+  </table></div>
+
+  <div class="sec-title">Nguồn dữ liệu</div>
+  <div class="box">
+    <ul>
+      <li>Log CRM GSF2: folder <code>LOG_GSF_29Oct2026_22H10/LOG291020H</code> (CS_Server, CS_Server_Ext, CS_Server_HTTP, CS_Server_BP_*, AS_Server, bản [SYSTEM] và [dcorp])</li>
+      <li>Log SkyCRM: folder <code>SkyCRMGSF 20H10 2910</code> (3 file)</li>
+      <li>Log so sánh: <code>LOG GSF 15102026</code>, <code>LOG GSF 29102026</code></li>
+      <li>SQL Server WIN-HLB4ESE5M88 / CRM_V7: Query Store, RING_BUFFER_CONNECTIVITY, bảng CARD_TRANSACTIONS, CARD_COUPONS, CARD_COUPON_TYPES, CARD_PEOPLE_ACCOUNTS. Chỉ dùng lệnh SELECT, chạy lúc 30/10/2026 10:56</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <div><strong>Phạm Minh Hải</strong> · Core Technology · Dcorp</div>
+  <div class="mono">gsf_crm_rca v1 · Generated 30/10/2026</div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0});
+}
+</script>
+</body>
+</html>
