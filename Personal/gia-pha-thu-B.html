@@ -8,7 +8,7 @@
 :root{
   --bg:#F4EDE0; --paper:#FBF7EE; --ink:#1F1B16; --muted:#5B544B; --line:#DCCFB8;
   --lacquer:#A3261E; --gold:#B8892E; --flag:#A3261E; --then:#1C1410; --cham:#2E3A59;
-  --g1:#A3261E; --g2:#2E3A59; --g3:#4F7F6A; --g4:#8C6414; --g5:#7A4A2E; --g6:#5B544B;
+  --g1:#A3261E; --g2:#2E3A59; --g3:#4F7F6A; --g4:#8C6414; --g5:#7A4A2E; --g6:#5B544B; --g7:#6B3A5B;
   --band:#EFE6D4; --edge:#4A433B; --card-line:#8A7A60;
   --serif:"EB Garamond",Georgia,"Times New Roman",serif;
   --sans:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -296,16 +296,32 @@ const D2 = [
  {n:"Phạm Chí Thoả", gio:"27/5 ÂL", sp:[{r:"Vợ",n:"Trần Thị Nhỡ",gio:"26/8 ÂL"},{r:"Vợ",n:"Nguyễn Thị Bẩy"}], kids:[
   {n:"Phạm Văn Trôi", gio:"mất từ nhỏ"},{n:"Phạm Văn Nổi", gio:"mất từ nhỏ"},
   {n:"Phạm Thị Dậu",f:1, gio:"mất 2022", sp:[{r:"Chồng",n:"Trịnh Văn Tập",gio:"mất 1992"}], kids:[
-   {n:"Trịnh Thị Nụ",f:1, sp:[{r:"Chồng",n:"Phạm Văn Á"}], more:["4 Con","10 Cháu/chắt"]},
-   {n:"Trịnh Văn Khải", gio:"mất 2018", sp:[{r:"Vợ",n:"Phạm Thị Bền"}], kids:[{n:"Trịnh Văn Giản"},{n:"Trịnh Văn Ngoan"}], more:"7 Cháu/chắt"},
-   {n:"Trịnh Văn Thiệp", sp:[{r:"Vợ",n:"Phạm Thị Tám"}], kids:[{n:"Trịnh Tơ"},{n:"Trịnh Ngoan"},{n:"Trịnh Văn Đoàn"},{n:"Trịnh Văn Đạt"}], more:"10 Cháu/chắt"},
-   {n:"Trịnh Văn Thành", sp:[{r:"Vợ",n:"Nguyễn Thị Thắm"}], kids:[{n:"Trịnh Hiền"},{n:"Trịnh Hòe"}]},
-   {n:"Trịnh Văn Thông", sp:[{r:"Vợ",n:"Trịnh Thị Đơn"}], kids:[{n:"Trịnh Thị Nga",f:1},{n:"Trịnh Thị Hà",f:1},{n:"Trịnh Lan Anh"}], more:"4 Cháu/chắt"},
-   {n:"Trịnh Thị Liễu",f:1, sp:[{r:"Chồng",n:"Lê Văn Luyến"}], kids:[{n:"Lê Thị Vân",f:1},{n:"Lê Văn Hải"}], more:"3 Cháu/chắt"}]},
+   {n:"Trịnh Thị Nụ",f:1, sp:[{r:"Chồng",n:"Phạm Văn Á"}]},
+   {n:"Trịnh Văn Khải", gio:"mất 2018", sp:[{r:"Vợ",n:"Phạm Thị Bền"}], kids:[
+    {n:"Trịnh Văn Giản", sp:[{r:"Vợ",n:"Đào Thị Hạnh"}], kids:[
+     {n:"Trịnh Thị Hằng",f:1, sp:[{r:"Chồng",n:"Nguyễn Duy Quảng"}], kids:[{n:"Nguyễn Văn Quân"},{n:"Nguyễn Văn Quang"}]},
+     {n:"Trịnh Văn Tú", sp:[{r:"Vợ",n:"Nguyễn Thị Nga"}]}]},
+    {n:"Trịnh Văn Ngoan"}]},
+   {n:"Trịnh Văn Thiệp", sp:[{r:"Vợ",n:"Phạm Thị Tám",gio:"mất 1988"}], kids:[
+    {n:"Trịnh Thị Tơ",f:1, sp:[{r:"Chồng",n:"Đặng Văn Hùng"}], kids:[{n:"Đặng Thị Diệp",f:1},{n:"Đặng Văn Bảo"}]},
+    {n:"Trịnh Thị Ngoan",f:1, sp:[{r:"Chồng",n:"Hoàng Văn Hậu"}], kids:[{n:"Hoàng Văn Nguyên"},{n:"Hoàng Thị Nguyệt",f:1}]},
+    {n:"Trịnh Văn Đoàn", sp:[{r:"Vợ",n:"Nguyễn Thị Chuyên"}], kids:[{n:"Trịnh Văn Việt"},{n:"Trịnh Văn Đại"}]},
+    {n:"Trịnh Văn Đạt", sp:[{r:"Vợ",n:"Đặng Thị Tuyết"}], kids:[{n:"Trịnh Thị Hân",f:1},{n:"Trịnh Văn Khoai"}]},
+    {n:"Trịnh Văn Đức", sp:[{r:"Vợ",n:"Đào Thị Duyên"}], kids:[{n:"Trịnh Thị Ngọc",f:1}]}]},
+   {n:"Trịnh Văn Thành", sp:[{r:"Vợ",n:"Nguyễn Thị Thắm"}], kids:[
+    {n:"Trịnh Thị Hiền",f:1, sp:[{r:"Chồng",n:"Trần Văn Quân"}], kids:[{n:"Trần Văn Nam"}]},
+    {n:"Trịnh Thị Hoa",f:1, sp:[{r:"Chồng",n:"Vũ Duy Tuấn"}]}]},
+   {n:"Trịnh Văn Thông", sp:[{r:"Vợ",n:"Trịnh Thị Đơn"}], kids:[
+    {n:"Trịnh Thị Nga",f:1, sp:[{r:"Chồng",n:"Phạm Văn Cường"}], kids:[{n:"Phạm Quỳnh Anh"},{n:"Phạm Khánh An"}]},
+    {n:"Trịnh Thị Hà",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Chuyên"}], kids:[{n:"Nguyễn Thảo Chi"},{n:"Nguyễn Khánh An"}]},
+    {n:"Trịnh Thị Anh",f:1}]},
+   {n:"Trịnh Thị Liễu",f:1, sp:[{r:"Chồng",n:"Lê Văn Luyến"}], kids:[
+    {n:"Lê Tường Vân",f:1, sp:[{r:"Chồng",n:"Phạm Văn Soái"}]},
+    {n:"Lê Văn Hải", sp:[{r:"Vợ",n:"Đào Thị Nguyệt"}], kids:[{n:"Lê Văn Tới"},{n:"Lê Thị Duyên",f:1},{n:"Lê Thị Minh Sinh",f:1}]}]}]},
   {n:"Phạm Đức Thứ", gio:"13/4/1969 ÂL", sp:[{r:"Vợ",n:"Phạm Thị Chè"}], kids:[
    {n:"Phạm Văn Hương", gio:"29/9/2022 ÂL", sp:[{r:"Vợ",n:"Đào Thị Huê"}], kids:[
-    {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Thái Bảo"}]},
-    {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}]},
+    {n:"Phạm Văn Duy", sp:[{r:"Vợ",n:"Phạm Thị Lơ"}], kids:[{n:"Phạm Thái Nam"},{n:"Phạm Bảo Hà"}]},
+    {n:"Phạm Thị Phượng",f:1, sp:[{r:"Chồng",n:"Bùi Văn Bảo"}], kids:[{n:"Bùi Văn Việt"},{n:"Bùi Văn Thuận"},{n:"Bùi Hồng Thúy",f:1}]},
     {n:"Phạm Văn Hoà", sp:[{r:"Vợ",n:"Phạm Thị Nga"}], kids:[{n:"Phạm Trâm Anh"},{n:"Phạm Anh Dũng"}]}]}]},
   {n:"Phạm Thị Bắc",f:1, sp:[{r:"Chồng",n:"Hoàng Minh Doanh",gio:"3/7/2017 ÂL"}], kids:[
    {n:"Hoàng Minh Tranh", sp:[{r:"Vợ",n:"Nguyễn Thanh Hưng"}], kids:[
@@ -324,7 +340,7 @@ const D2 = [
    {n:"Phạm Thị Huyền",f:1, sp:[{r:"Chồng",n:"Trần Văn Tưởng"}], kids:[
     {n:"Trần Thu Hiền",f:1, sp:[{r:"Chồng",n:"Nguyễn Thành Trung"}], kids:[{n:"Nguyễn Thành Phong"}]},
     {n:"Trần Thu Hoà",f:1}]},
-   {n:"Phạm Thị Hồng",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Trung"}], kids:[{n:"Nguyễn Văn Minh"},{n:"Nguyễn Thị Anh",f:1}]},
+   {n:"Phạm Thị Hồng",f:1, sp:[{r:"Chồng",n:"Nguyễn Hữu Trung"}], kids:[{n:"Nguyễn Hữu Minh"},{n:"Nguyễn Quỳnh Anh"}]},
    {n:"Phạm Thị Xiêm",f:1, sp:[{r:"Chồng",n:"Nguyễn Văn Hiệu"}], kids:[{n:"Nguyễn Bảo Minh"},{n:"Nguyễn Diệp Anh"}]}]},
   {n:"Phạm Chí Thời", sp:[{r:"Vợ",n:"Phạm Thị Yên"}], kids:[
    {n:"Phạm Anh Tuấn", sp:[{r:"Vợ",n:"Vũ Thị Hương"}], kids:[{n:"Phạm Vũ Tuấn Anh"},{n:"Phạm Vũ Ngọc Chi"}]},
@@ -333,8 +349,8 @@ const D2 = [
  {n:"Phạm Thị Sợi",f:1, sp:[{r:"Chồng",n:"Trần Văn Tỵ"}]},
  {n:"Phạm Quang Thừ"}
 ];
-const GEN = ["","","","","Đời 4 · Ông bà","Đời 5 · Các con","Đời 6 · Các cháu","Đời 7 · Các chắt","Đời 8 · Các chút","Đời 9 · Các chít"];
-const G0 = 4, GMAX = 9;
+const GEN = ["","","","","Đời 4 · Ông bà","Đời 5 · Các con","Đời 6 · Các cháu","Đời 7 · Các chắt","Đời 8 · Các chút","Đời 9 · Các chít","Đời 10"];
+const G0 = 4, GMAX = 10;
 
 const esc = s => s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt = s => esc(s);

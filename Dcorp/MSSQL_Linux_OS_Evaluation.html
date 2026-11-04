@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSSQL trên Linux – Đánh giá OS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --red:#e30613;--black:#000;--white:#fff;--gray:#727171;
+  --bg:#f0f2f5;--dark:#1a1f2e;--tabs:#131722;
+  --amber:#d97706;--green:#16a34a;--blue:#2563eb;
+  --radius:10px;--shadow:0 1px 6px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:#1c1c1e;font-size:13px;line-height:1.55}
+.mono{font-family:'DM Mono',monospace}
+/* Header */
+.header{position:sticky;top:0;z-index:100;background:var(--dark);color:#fff;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:12px 24px;border-bottom:3px solid var(--red)}
+.logo{width:38px;height:38px;border-radius:6px;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;letter-spacing:.5px}
+.h-title{font-weight:800;font-size:13px;letter-spacing:.5px}
+.h-sub{font-size:10px;color:#a8adbb;margin-top:2px}
+.h-right{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-family:'DM Mono',monospace;font-size:10px;padding:4px 8px;border-radius:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.badge.red{background:var(--red);border-color:var(--red)}
+/* Tabs */
+.tabs{position:sticky;top:65px;z-index:99;background:var(--tabs);display:flex;gap:4px;padding:0 24px;overflow-x:auto}
+.nav-tab{background:none;border:none;color:#a8adbb;font-family:inherit;font-weight:700;font-size:11px;padding:12px 14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none;max-width:1180px;margin:0 auto;padding:24px}
+.tab-content.active{display:block}
+/* Sections */
+.sec-title{font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;color:var(--gray);margin:26px 0 10px}
+.sec-title:first-child{margin-top:0}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
+.card h3{font-size:14px;font-weight:800;margin-bottom:8px}
+.card p{margin-bottom:8px}
+.card ul{padding-left:18px}.card li{margin-bottom:4px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-top:3px solid var(--red)}
+.kpi.amber{border-top-color:var(--amber)}.kpi.blue{border-top-color:var(--blue)}.kpi.green{border-top-color:var(--green)}
+.kpi-label{font-size:9px;text-transform:uppercase;font-weight:700;letter-spacing:1px;color:var(--gray)}
+.kpi-value{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;margin:6px 0 4px}
+.kpi-sub{font-size:10px;color:var(--gray)}
+/* Highlight */
+.hl{display:flex;gap:12px;background:#fff;border-left:4px solid var(--red);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px}
+.hl.green{border-left-color:var(--green)}.hl.amber{border-left-color:var(--amber)}
+.hl-icon{font-size:18px}
+.hl-title{font-weight:800;font-size:12.5px;margin-bottom:3px}
+.hl-body{font-size:12px}
+/* Tables */
+.tbl-wrap{overflow-x:auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--dark);color:#fff;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:10px 12px;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #eceef2;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:700;white-space:nowrap}
+.ok{color:var(--green);font-weight:700}.warn{color:var(--amber);font-weight:700}.no{color:var(--red);font-weight:700}
+.legend{font-size:11px;color:var(--gray);margin-bottom:8px}
+/* Tags */
+.tag{display:inline-block;font-size:8px;text-transform:uppercase;font-weight:800;letter-spacing:.6px;padding:3px 7px;border-radius:4px}
+.tag-fact{background:#e7f0ff;color:var(--blue)}
+.tag-inf{background:#fff3e0;color:var(--amber)}
+.tag-risk{background:#fde7e9;color:var(--red)}
+.tag-ok{background:#e6f6ec;color:var(--green)}
+/* Options */
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.opt{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-top:3px solid var(--green)}
+.opt.b{border-top-color:var(--amber)}.opt.c{border-top-color:var(--red)}
+.opt h4{font-size:12.5px;font-weight:800;margin:6px 0}
+.opt p{font-size:12px}
+/* Plan */
+.plan-item{display:flex;gap:12px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:8px;align-items:flex-start}
+.plan-num{font-family:'DM Mono',monospace;background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.plan-text{font-weight:700;font-size:12.5px}
+.plan-sub{font-size:11px;color:var(--gray)}
+code{font-family:'DM Mono',monospace;font-size:11px;background:#f1f2f5;padding:1px 5px;border-radius:3px}
+.src a{color:var(--blue);text-decoration:none;word-break:break-all}
+.src li{margin-bottom:5px;font-size:11.5px}
+.footer{background:var(--dark);color:#a8adbb;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:14px 24px;font-size:10px;margin-top:20px}
+.footer strong{color:#fff}
+@media(max-width:860px){
+  .kpis{grid-template-columns:repeat(2,1fr)}.opts{grid-template-columns:1fr}
+  .header{grid-template-columns:auto 1fr;padding:10px 16px}.h-right{grid-column:1/-1;justify-content:flex-start}
+  .tabs{top:98px;padding:0 16px}.tab-content{padding:16px}
+}
+@media print{.header,.tabs{position:static}.tab-content{display:block!important}.nav-tab{display:none}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">D'C</div>
+  <div>
+    <div class="h-title">ĐÁNH GIÁ HỆ ĐIỀU HÀNH LINUX CHO MICROSOFT SQL SERVER (2012 → 2025)</div>
+    <div class="h-sub">Dcorp Technology Corporation · Core Technology · Debian / Ubuntu LTS / Astra Linux</div>
+  </div>
+  <div class="h-right">
+    <span class="badge red">04/11/2026</span>
+    <span class="badge">Research v1</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="nav-tab active" onclick="switchTab('overview',this)">📊 Tổng quan</button>
+  <button class="nav-tab" onclick="switchTab('matrix',this)">🧩 Ma trận hỗ trợ</button>
+  <button class="nav-tab" onclick="switchTab('astra',this)">🛡️ Astra Linux</button>
+  <button class="nav-tab" onclick="switchTab('migrate',this)">🔁 SQL 2012 &amp; r_keeper</button>
+  <button class="nav-tab" onclick="switchTab('next',this)">✅ Khuyến nghị &amp; việc tiếp theo</button>
+  <button class="nav-tab" onclick="switchTab('sources',this)">📚 Nguồn</button>
+</div>
+
+<!-- ============ TAB 1: OVERVIEW ============ -->
+<div class="tab-content active" id="tab-overview">
+  <div class="sec-title">Kết luận nhanh</div>
+  <div class="kpis">
+    <div class="kpi green"><div class="kpi-label">Tổ hợp khuyến nghị</div><div class="kpi-value">SQL 2022 + Ubuntu 22.04</div><div class="kpi-sub">Chính thức từ CU10, nhiều tài liệu nhất</div></div>
+    <div class="kpi blue"><div class="kpi-label">Vòng đời dài nhất</div><div class="kpi-value">SQL 2025 + Ubuntu 24.04</div><div class="kpi-sub">Chính thức từ CU1, extended đến 2036</div></div>
+    <div class="kpi amber"><div class="kpi-label">Astra / Debian</div><div class="kpi-value">Không chính thức</div><div class="kpi-sub">Chạy được về kỹ thuật, Microsoft không hỗ trợ</div></div>
+    <div class="kpi"><div class="kpi-label">SQL Server 2012</div><div class="kpi-value">Không có bản Linux</div><div class="kpi-sub">Hết ESU 08/07/2025, không còn bản vá</div></div>
+  </div>
+
+  <div class="sec-title">Điểm chính</div>
+  <div class="hl">
+    <div class="hl-icon">❌</div>
+    <div><div class="hl-title">"Astra phải qua WINE mới cài được MSSQL" là không đúng</div>
+    <div class="hl-body">Từ bản 2017, SQL Server có <strong>bản Linux native</strong>, không cần Wine. Nhiều khả năng đây là nhầm lẫn với tài liệu chính thức của r_keeper (docs.rkeeper.ru), vốn hướng dẫn chạy <strong>chính r_keeper 7</strong> (file .exe) qua Wine với <strong>PostgreSQL</strong> làm CSDL.</div></div>
+  </div>
+  <div class="hl amber">
+    <div class="hl-icon">⚠️</div>
+    <div><div class="hl-title">Debian và Astra Linux không nằm trong danh sách hỗ trợ của Microsoft</div>
+    <div class="hl-body">Microsoft chỉ hỗ trợ RHEL, SLES (đến 2022) và Ubuntu LTS. Khi có sự cố trên Debian/Astra, Microsoft có thể yêu cầu tái hiện lỗi trên cấu hình được hỗ trợ (KB4047326).</div></div>
+  </div>
+  <div class="hl">
+    <div class="hl-icon">🔒</div>
+    <div><div class="hl-title">SQL Server 2012 chỉ chạy trên Windows và đã hết mọi hỗ trợ</div>
+    <div class="hl-body">Hết extended support 12/07/2022, hết ESU 08/07/2025. Chạy qua WINE không dùng được cho production. Hướng đúng: <strong>backup → restore lên SQL 2022</strong>, giữ compatibility level 110 trong lúc kiểm thử.</div></div>
+  </div>
+  <div class="hl green">
+    <div class="hl-icon">✅</div>
+    <div><div class="hl-title">Nếu bắt buộc dùng Astra: chạy VM KVM (guest Ubuntu) hoặc container chính thức</div>
+    <div class="hl-body">Hai cách này tránh xung đột thư viện (OpenSSL, libldap) và giữ SQL Server trên môi trường Microsoft hỗ trợ. Cài gói Ubuntu trực tiếp lên Astra chỉ nên dùng cho lab.</div></div>
+  </div>
+
+  <div class="sec-title">Ký hiệu độ tin cậy trong báo cáo</div>
+  <div class="card">
+    <p><span class="tag tag-fact">Fact</span> Có nguồn kiểm chứng (ưu tiên Microsoft Learn, wiki Astra, docs.rkeeper.ru). &nbsp;
+    <span class="tag tag-inf">Inference</span> Suy luận từ các fact, cần thử nghiệm hoặc xác nhận. &nbsp;
+    <span class="tag tag-risk">Chưa xác minh</span> Nguồn thứ cấp hoặc chưa đối chiếu được.</p>
+    <p>Danh sách distro/CU của Microsoft thay đổi theo từng bản CU (trang release notes cập nhật lần cuối 10/2026). Cần kiểm tra lại ngay trước khi triển khai.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 2: MATRIX ============ -->
+<div class="tab-content" id="tab-matrix">
+  <div class="sec-title">Hệ điều hành × Phiên bản SQL Server × Mức hỗ trợ</div>
+  <div class="legend"><span class="ok">✅</span> chính thức (Microsoft Learn) · <span class="warn">⚠️</span> không chính thức, chạy được nhưng phải xử lý thủ công · <span class="no">❌</span> không thể / không hỗ trợ</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Hệ điều hành</th><th>2012/2014/2016</th><th>2017</th><th>2019</th><th>2022</th><th>2025</th></tr>
+    <tr><td>Ubuntu 18.04 LTS</td><td class="no">❌ chỉ Windows</td><td class="ok">✅ từ CU20</td><td class="ok">✅ từ CU3</td><td class="no">❌</td><td class="no">❌</td></tr>
+    <tr><td>Ubuntu 20.04 LTS</td><td class="no">❌</td><td class="warn">⚠️</td><td class="ok">✅ từ CU10</td><td class="ok">✅</td><td class="no">❌</td></tr>
+    <tr><td>Ubuntu 22.04 LTS</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️ lỗi OpenSSL 3</td><td class="ok">✅ từ CU10</td><td class="ok">✅</td></tr>
+    <tr><td>Ubuntu 24.04 LTS</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="warn">⚠️ thiếu libldap-2.5</td><td class="ok">✅ từ CU1</td></tr>
+    <tr><td>RHEL 8 / 9 / 10</td><td class="no">❌</td><td class="ok">✅ 7.7–7.9, 8</td><td class="ok">✅ 7.7–7.9, 8</td><td class="ok">✅ 8, 9</td><td class="ok">✅ 9, 10</td></tr>
+    <tr><td>SLES 12 / 15</td><td class="no">❌</td><td class="ok">✅ 12</td><td class="ok">✅ 12, 15</td><td class="ok">✅ 15 SP1–SP4</td><td class="no">❌ đã bỏ SLES</td></tr>
+    <tr><td>Debian 11 / 12</td><td class="no">❌</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️ gói Ubuntu</td><td class="warn">⚠️</td></tr>
+    <tr><td>Astra SE 1.7 (Debian 10)</td><td class="no">❌</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️ chưa có báo cáo</td></tr>
+    <tr><td>Astra SE 1.8 (Debian 12)</td><td class="no">❌</td><td class="warn">⚠️</td><td class="warn">⚠️</td><td class="warn">⚠️ gói Ubuntu / Docker</td><td class="warn">⚠️ Docker hợp lý nhất</td></tr>
+    <tr><td>Linux bất kỳ + Docker x86-64</td><td class="no">❌</td><td class="ok">✅ image chính thức</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+    <tr><td>Linux + KVM guest Windows</td><td class="warn">⚠️ 2012 hết hỗ trợ</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+    <tr><td>Linux bất kỳ + WINE</td><td class="no">❌ không dùng cho prod</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td></tr>
+  </table></div>
+  <div class="card"><p><span class="tag tag-inf">Lưu ý Docker</span> Microsoft hỗ trợ image chạy trên "Docker Engine 1.8+ on Linux", chỉ yêu cầu CPU x86-64, không nêu distro host. Chạy container trên host Astra vì vậy là vùng xám: image được hỗ trợ, nhưng lỗi ở tầng host có thể bị yêu cầu tái hiện trên cấu hình chuẩn.</p></div>
+
+  <div class="sec-title">Yêu cầu hệ thống ("core")</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Hạng mục</th><th>Yêu cầu</th><th>Ghi chú</th></tr>
+    <tr><td>CPU</td><td>x64, 2 GHz, 2 nhân</td><td>Không hỗ trợ giả lập (QEMU emulation, Rosetta)</td></tr>
+    <tr><td>RAM</td><td>Tối thiểu 2 GB</td><td>Backoffice thực tế nên ≥ 8–16 GB</td></tr>
+    <tr><td>Ổ đĩa</td><td>6 GB</td><td>Chưa tính dữ liệu</td></tr>
+    <tr><td>File system</td><td>XFS hoặc ext4</td><td>BTRFS và FS khác không được hỗ trợ</td></tr>
+    <tr><td>Init</td><td>systemd</td><td>Astra ≤1.5 dùng init nên cài thất bại; Astra 1.7/1.8 đã dùng systemd</td></tr>
+    <tr><td>OpenSSL</td><td>2017/2019: 1.1 · 2022 CU10+/2025: 3.x</td><td>Trên Astra 1.8 (OpenSSL 3) nên dùng 2022/2025 thay vì 2019</td></tr>
+    <tr><td>Instance</td><td>1 instance / host</td><td>Nhiều instance → dùng VM hoặc container</td></tr>
+    <tr><td>Kernel / glibc</td><td>Microsoft không công bố mức tối thiểu</td><td><span class="tag tag-risk">Chưa xác minh</span> Yêu cầu biểu đạt gián tiếp qua danh sách distro</td></tr>
+  </table></div>
+
+  <div class="sec-title">Vòng đời phiên bản</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Phiên bản</th><th>Mainstream</th><th>Extended / ESU</th><th>Đánh giá</th></tr>
+    <tr><td>SQL 2012</td><td>11/07/2017</td><td>Extended 12/07/2022 · ESU 08/07/2025</td><td class="no">Hết hoàn toàn</td></tr>
+    <tr><td>SQL 2014</td><td>Đã hết</td><td>ESU đến 12/07/2027</td><td class="no">Chỉ tạm thời</td></tr>
+    <tr><td>SQL 2016</td><td>Đã hết</td><td>Extended 14/07/2026 · ESU đến 17/07/2029</td><td class="warn">Không triển khai mới</td></tr>
+    <tr><td>SQL 2019</td><td>28/02/2025</td><td>CU32 (05/2026) là CU cuối</td><td class="warn">Không triển khai mới</td></tr>
+    <tr><td>SQL 2022</td><td>11/01/2028</td><td>11/01/2033</td><td class="ok">Khuyến nghị</td></tr>
+    <tr><td>SQL 2025</td><td>2031 <span class="tag tag-risk">ngày cụ thể chưa xác minh</span></td><td>2036</td><td class="ok">Phương án dài hạn</td></tr>
+  </table></div>
+</div>
+
+<!-- ============ TAB 3: ASTRA ============ -->
+<div class="tab-content" id="tab-astra">
+  <div class="sec-title">Thông tin nền Astra Linux</div>
+  <div class="card">
+    <ul>
+      <li><span class="tag tag-fact">Fact</span> Astra SE 1.8 phát hành 01/08/2024, dựa trên <strong>Debian 12 (Bookworm)</strong>, kernel <strong>6.1 LTS</strong> (được ИСП РАН rà soát) và <strong>6.6</strong>.</li>
+      <li><span class="tag tag-fact">Fact</span> Astra SE 1.7 dựa trên <strong>Debian 10 (Buster)</strong>.</li>
+      <li><span class="tag tag-risk">Chưa xác minh</span> Kernel 5.4/5.15/6.1 cho 1.7; kernel 6.12 và bản 1.8.4 (~10/2025) — lấy từ blog, cần đối chiếu release notes chính thức.</li>
+      <li><span class="tag tag-fact">Fact</span> Repo main của Astra 1.8 có <code>docker.io</code> 25.0.5. Astra khuyến nghị chế độ rootless, nhưng rootless không hỗ trợ khi dùng kernel hardened.</li>
+      <li><span class="tag tag-fact">Fact</span> Không có bài wiki chính thức nào của Astra về cài MSSQL; SQL Server không có trong chương trình "Ready for Astra". Với MySQL, wiki Astra ghi rõ là không cài được — Astra chỉ bảo đảm DBMS đã chứng nhận.</li>
+      <li><span class="tag tag-fact">Fact</span> Trung tâm Eureca (St. Petersburg) đã cài SQL Server 2017 bản Linux native trên Astra CE 1.11/2.11 bằng gói Ubuntu + <code>dpkg --ignore-depends=openssl</code>, <strong>không dùng Wine</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">Chế độ bảo mật cần thử nghiệm</div>
+  <div class="card">
+    <p><strong>ЗПС (môi trường phần mềm khép kín):</strong> khi bật sẽ chặn file ELF và thư viện không có chữ ký số. Ở mức "Усиленный" ЗПС có sẵn nhưng mặc định tắt. Từ 1.8 có <code>bsign-integrator</code> để ký file.</p>
+    <p><span class="tag tag-inf">Inference</span> Nếu khách hàng bật ЗПС, binary trong <code>/opt/mssql</code> sẽ bị chặn cho đến khi được ký bằng khóa tổ chức. Mandatory integrity control (МКЦ) cũng có thể ảnh hưởng dịch vụ chạy nền.</p>
+  </div>
+
+  <div class="sec-title">Ba cách triển khai SQL Server trên Astra</div>
+  <div class="opts">
+    <div class="opt">
+      <span class="tag tag-ok">Khuyến nghị cho production</span>
+      <h4>A. VM KVM, guest Ubuntu 22.04/24.04</h4>
+      <p><strong>Ưu:</strong> SQL Server nằm trên cấu hình Microsoft hỗ trợ; không xung đột thư viện; ít bị ЗПС/МКЦ ảnh hưởng.</p>
+      <p><strong>Nhược:</strong> quản trị 2 lớp OS; mất vài % hiệu năng.</p>
+    </div>
+    <div class="opt b">
+      <span class="tag tag-inf">Phù hợp lab / dev / prod có kiểm soát</span>
+      <h4>B. Container chính thức Microsoft</h4>
+      <p><code>mcr.microsoft.com/mssql/server:2022-latest</code> trên Docker 25 của Astra 1.8, mount volume XFS/ext4 vào <code>/var/opt/mssql</code>.</p>
+      <p><strong>Ưu:</strong> thư viện đóng gói sẵn, gần native. <strong>Nhược:</strong> host Astra là vùng xám; cần thử rootless + kernel hardened.</p>
+    </div>
+    <div class="opt c">
+      <span class="tag tag-risk">Không khuyến nghị cho production</span>
+      <h4>C. Cài gói Ubuntu trực tiếp</h4>
+      <p><strong>Ưu:</strong> hiệu năng tốt nhất.</p>
+      <p><strong>Nhược:</strong> phải tự xử lý OpenSSL/libldap; dễ hỏng khi cập nhật OS; phải ký binary nếu bật ЗПС; không có hỗ trợ chính thức.</p>
+    </div>
+  </div>
+
+  <div class="sec-title">WINE xuất hiện ở đâu (giải thích nhầm lẫn)</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Bối cảnh</th><th>Thực tế</th></tr>
+    <tr><td>Ứng dụng r_keeper 7 trên Linux</td><td>Tài liệu chính thức UCS: Debian 11 → Wine (&gt;6.0) → PostgreSQL → r_keeper 7. refsrv.exe, midserv.exe, wincash chạy qua Wine. <strong>Đây là nguồn gốc khả dĩ nhất của nhận định.</strong></td></tr>
+    <tr><td>SQL Server 2012 (chỉ có bản Windows)</td><td>Cộng đồng WineHQ báo cáo các bản 2005/2008/2012 không cài được hoặc lỗi nặng. Không khả thi.</td></tr>
+    <tr><td>Công cụ client (SSMS)</td><td>Có dự án cộng đồng chạy SSMS 20 qua Wine, không chính thức.</td></tr>
+    <tr><td>SQL Server 2017+ engine</td><td>Binary Linux native, <strong>không cần Wine</strong>.</td></tr>
+  </table></div>
+
+  <div class="sec-title">Rủi ro bản quyền (chỉ khi triển khai cho thực thể tại Nga)</div>
+  <div class="card">
+    <p><span class="tag tag-fact">Fact</span> Microsoft tạm dừng bán mới tại Nga từ 04/03/2022; theo nguồn thứ cấp, khách hàng Nga không gia hạn được subscription sau 30/09/2023. Thị trường Nga chuyển sang PostgreSQL (Postgres Pro, Tantor) có sẵn trong hệ sinh thái Astra.</p>
+    <p><span class="tag tag-inf">Inference</span> Với Dcorp tại Việt Nam, việc mua license không bị ảnh hưởng trực tiếp.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 4: MIGRATE ============ -->
+<div class="tab-content" id="tab-migrate">
+  <div class="sec-title">Đường chuyển dữ liệu từ SQL 2012</div>
+  <div class="card">
+    <ul>
+      <li><span class="tag tag-fact">Fact</span> SQL 2022 hỗ trợ compatibility level 100–160, nên CSDL 2012 (level 110) restore lên vẫn giữ level 110.</li>
+      <li><span class="tag tag-fact">Fact</span> Backup từ SQL 2008 trở lên restore được lên SQL 2025 nếu level ≥ 100.</li>
+      <li><span class="tag tag-fact">Fact</span> Từ Windows sang Linux không có in-place upgrade, luôn đi đường backup → restore. Backup không restore ngược về bản cũ hơn được.</li>
+      <li><span class="tag tag-fact">Fact</span> CSDL SQL 2014 có In-Memory OLTP không restore được sang SQL Server on Linux.</li>
+    </ul>
+  </div>
+  <div class="plan-item"><div class="plan-num">1</div><div><div class="plan-text">Backup trên SQL 2012 SP4</div><div class="plan-sub">Full backup, kiểm tra checksum</div></div></div>
+  <div class="plan-item"><div class="plan-num">2</div><div><div class="plan-text">Restore lên SQL 2022 (Linux hoặc Windows)</div><div class="plan-sub">Đổi đường dẫn file kiểu Windows (<code>C:\...</code>) sang <code>/var/opt/mssql/...</code></div></div></div>
+  <div class="plan-item"><div class="plan-num">3</div><div><div class="plan-text">Giữ compatibility level 110 trong giai đoạn kiểm thử</div><div class="plan-sub">Chạy toàn bộ nghiệp vụ r_keeper / StoreHouse</div></div></div>
+  <div class="plan-item"><div class="plan-num">4</div><div><div class="plan-text">Nâng dần level lên 150/160 sau khi UCS xác nhận</div><div class="plan-sub">Có hồi quy hiệu năng → bật <code>LEGACY_CARDINALITY_ESTIMATION = ON</code></div></div></div>
+
+  <div class="sec-title">Tính năng không có trên SQL Server for Linux</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Tính năng</th><th>Trạng thái trên Linux</th><th>Ảnh hưởng r_keeper / SH5 cần kiểm tra</th></tr>
+    <tr><td>xp_cmdshell, job CmdExec / PowerShell</td><td class="no">Không có (SQL Agent chỉ chạy job T-SQL)</td><td>Script backup / xuất file tự động</td></tr>
+    <tr><td>Reporting Services (SSRS), SSAS</td><td class="no">Không có</td><td>Báo cáo dựa trên SSRS</td></tr>
+    <tr><td>Linked server tới nguồn non-SQL Server</td><td class="no">Không có (thay bằng PolyBase)</td><td>Kết nối Excel / Access / ODBC khác</td></tr>
+    <tr><td>Merge replication, FILESTREAM</td><td class="no">Không có</td><td>Đồng bộ dữ liệu giữa site</td></tr>
+    <tr><td>CLR EXTERNAL_ACCESS / UNSAFE</td><td class="no">Không có</td><td>Assembly tuỳ biến</td></tr>
+    <tr><td>Maintenance Plans (SSMS)</td><td class="no">Không có</td><td>Thay bằng job T-SQL / Ola Hallengren</td></tr>
+    <tr><td>MSDTC</td><td class="ok">Có từ 2017 CU16 (không trong AG)</td><td>—</td></tr>
+    <tr><td>Windows Authentication</td><td class="warn">Cần cấu hình AD qua adutil / Kerberos</td><td>Đa số r_keeper dùng SQL auth (mixed mode)</td></tr>
+    <tr><td>Kết nối OLE DB qua TCP/IP</td><td class="ok">Hoạt động bình thường</td><td>Cách r_keeper 7 kết nối</td></tr>
+  </table></div>
+
+  <div class="sec-title">Yêu cầu phía r_keeper / UCS</div>
+  <div class="card">
+    <ul>
+      <li><span class="tag tag-fact">Fact</span> Tài liệu r_keeper yêu cầu "MS SQL Server 2012 hoặc mới hơn" (một số trang ghi 2014+). Trang r_k Delivery ghi SQL 2012 chỉ được hỗ trợ đến 01/07/2025 → chính UCS đã ngừng xem 2012 là nền tảng hỗ trợ.</li>
+      <li><span class="tag tag-fact">Fact</span> r_keeper 7 hỗ trợ PostgreSQL từ 7.06.05.412; từ 7.06.05.459 dùng được ở các điểm không có StoreHouse 5 và Interactive Reports.</li>
+      <li><span class="tag tag-inf">Inference</span> Máy chủ StoreHouse 5 (sdbserv) là ứng dụng Windows, vẫn cần Windows hoặc Wine, bất kể SQL Server chạy ở đâu.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ TAB 5: NEXT ============ -->
+<div class="tab-content" id="tab-next">
+  <div class="sec-title">Khuyến nghị theo workload</div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Workload</th><th>Khuyến nghị</th><th>Ghi chú</th></tr>
+    <tr><td>SQL 2019+ (mới)</td><td>SQL 2022 (CU mới nhất) trên Ubuntu 22.04 LTS, XFS</td><td>Có thể dùng Ubuntu Pro kéo dài vòng đời bản vá. SQL 2025 + Ubuntu 24.04 nếu UCS đã kiểm thử với 2025</td></tr>
+    <tr><td>Bắt buộc host Astra</td><td>VM KVM guest Ubuntu, hoặc container chính thức trên Astra 1.8</td><td>Không cài gói Ubuntu trực tiếp cho production</td></tr>
+    <tr><td>Legacy SQL 2012</td><td>Migrate backup/restore lên SQL 2022, level 110 → kiểm thử → nâng level</td><td>Tạm thời: VM Windows Server (mới hơn 2012 R2) trên KVM, cô lập mạng, chỉ mở 1433, đặt hạn chót chuyển đổi</td></tr>
+    <tr><td>Khách hàng tại Nga / dự án bắt buộc Astra</td><td>Đánh giá song song r_keeper 7 + PostgreSQL</td><td>Tránh rủi ro license Microsoft và rủi ro distro không hỗ trợ; lưu ý giới hạn với SH5 &amp; Interactive Reports</td></tr>
+    <tr><td>Mọi trường hợp</td><td class="no">Không dùng WINE cho SQL Server</td><td>—</td></tr>
+  </table></div>
+
+  <div class="sec-title">Việc tiếp theo</div>
+  <div class="plan-item"><div class="plan-num">1</div><div><div class="plan-text">Gửi câu hỏi xác nhận cho UCS</div><div class="plan-sub">r_keeper 7 / StoreHouse 5 hiện tại đã test với SQL 2019/2022/2025 chưa? Có hỗ trợ SQL Server trên Linux không? SH5 có chạy với PostgreSQL / Linux không?</div></div></div>
+  <div class="plan-item"><div class="plan-num">2</div><div><div class="plan-text">Dựng lab trên Astra SE 1.8</div><div class="plan-sub">(a) cài native mssql-server 2022/2025 từ repo Ubuntu, ghi lại phụ thuộc thiếu · (b) chạy container chính thức · (c) VM KVM guest Ubuntu</div></div></div>
+  <div class="plan-item"><div class="plan-num">3</div><div><div class="plan-text">Thử với chế độ bảo mật Astra</div><div class="plan-sub">Bật ЗПС, МКЦ, kernel hardened; Docker rootless — kiểm tra I/O, quyền volume, khởi động dịch vụ</div></div></div>
+  <div class="plan-item"><div class="plan-num">4</div><div><div class="plan-text">Rà script / job phụ thuộc tính năng Windows</div><div class="plan-sub">xp_cmdshell, CmdExec/PowerShell job, đường dẫn <code>C:\</code>, linked server, SSRS, Windows auth</div></div></div>
+  <div class="plan-item"><div class="plan-num">5</div><div><div class="plan-text">Kiểm tra license với đại lý Microsoft tại Việt Nam</div><div class="plan-sub">Per-core hoặc Server+CAL; VM/container vẫn tính theo core ảo. Express giới hạn 10 GB/CSDL, 1410 MB buffer pool</div></div></div>
+  <div class="plan-item"><div class="plan-num">6</div><div><div class="plan-text">Kiểm tra lại ma trận distro/CU ngay trước khi triển khai</div><div class="plan-sub">Microsoft Learn – Release notes for SQL Server on Linux</div></div></div>
+
+  <div class="sec-title">Câu hỏi mở / chưa xác minh</div>
+  <div class="card"><ul>
+    <li>Mức đánh giá riêng của SQL Server 2012 trên WineHQ AppDB (AppDB chặn truy cập tự động).</li>
+    <li>Ngày cụ thể SQL 2025 hết mainstream (Microsoft Learn chỉ ghi năm 2031).</li>
+    <li>Kernel mặc định Ubuntu; kernel 6.12 và bản 1.8.4 của Astra.</li>
+    <li>Khuyến nghị "XFS thay ext4 trên kernel &lt; 5.6" (nguồn thứ cấp Aryasoft, chưa thấy trong tài liệu Microsoft).</li>
+    <li>Astra 1.8 dựa trên gói Debian 12 nhưng đã thay đổi đáng kể — hướng dẫn chạy được trên Debian 12 chưa chắc chạy nguyên trạng trên Astra.</li>
+  </ul></div>
+</div>
+
+<!-- ============ TAB 6: SOURCES ============ -->
+<div class="tab-content" id="tab-sources">
+  <div class="sec-title">Microsoft (chính thức)</div>
+  <div class="card src"><ul>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-release-notes?view=sql-server-ver17" target="_blank">Release information for SQL Server on Linux</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-release-notes-2025" target="_blank">SQL Server 2025 on Linux release notes</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-release-notes-2019?view=sql-server-ver17" target="_blank">SQL Server 2019 on Linux release notes</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/install-upgrade/setup?view=sql-server-ver17" target="_blank">Installation guidance / system requirements</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-faq?view=sql-server-ver17" target="_blank">SQL Server on Linux FAQ</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/troubleshoot/sql/general/support-policy-sql-server" target="_blank">Support policy (KB4047326)</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/t-sql/statements/alter-database-transact-sql-compatibility-level?view=sql-server-ver17" target="_blank">ALTER DATABASE compatibility level</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/database-engine/install-windows/supported-version-and-edition-upgrades-2025?view=sql-server-ver17" target="_blank">Supported version and edition upgrades – SQL Server 2025</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-editions-and-components-2022?view=sql-server-ver17" target="_blank">Editions and supported features – 2022 on Linux</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-editions-and-components-2025?view=sql-server-ver17" target="_blank">Editions and supported features – 2025 on Linux</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/sql/linux/configure/distributed-transactions?view=sql-server-ver17" target="_blank">Distributed transactions (MSDTC) on Linux</a></li>
+    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/linux/sql-server-linux-known-issues.md" target="_blank">Known issues – SQL Server on Linux</a></li>
+    <li><a href="https://techcommunity.microsoft.com/blog/sqlserver/announcing-ga-of-sql-server-2025-on-rhel-10-and-ubuntu-24-04-with-additional-enh/4486273" target="_blank">GA SQL Server 2025 on RHEL 10 &amp; Ubuntu 24.04</a></li>
+  </ul></div>
+  <div class="sec-title">Astra Linux</div>
+  <div class="card src"><ul>
+    <li><a href="https://wiki.astralinux.ru/pages/viewpage.action?pageId=323662314" target="_blank">Wiki Astra – SE 1.8</a></li>
+    <li><a href="https://docs.astralinux.ru/latest/guide/virtual/docker/" target="_blank">Docs Astra – Docker</a></li>
+    <li><a href="https://wiki.astralinux.ru/pages/viewpage.action?pageId=153486034" target="_blank">Wiki Astra – ЗПС</a></li>
+    <li><a href="https://wiki.astralinux.ru/kb/ustanovka-subd-mysql-263055800.html" target="_blank">Wiki Astra – Cài MySQL</a></li>
+    <li><a href="https://wiki.astralinux.ru/tandocs/plan-migratsii-bazy-1s-s-microsoft-sql-server-na-postgresql-tantor-294406223.html" target="_blank">Wiki Astra – Migrate 1С từ MSSQL sang PostgreSQL (Tantor)</a></li>
+    <li><a href="https://forum.astralinux.ru/threads/2434/" target="_blank">Forum Astra – Hỏi về cài MS SQL</a></li>
+    <li><a href="https://lab50.net/blog/astra-linux-special-edition-1-8-composition/" target="_blank">Lab50 – Thành phần Astra SE 1.8</a></li>
+    <li><a href="https://edu.eureca.ru/about/articles/28/" target="_blank">Eureca – Cài SQL Server 2017 trên Astra</a></li>
+  </ul></div>
+  <div class="sec-title">r_keeper / UCS</div>
+  <div class="card src"><ul>
+    <li><a href="https://docs.rkeeper.ru/rk7/latest/ru/ustanovka-r_keeper-7-na-linux-74645906.html" target="_blank">Установка r_keeper 7 на Linux</a></li>
+    <li><a href="https://docs.rkeeper.ru/rk7/latest/ru/tehnicheskaya-dokumentatsiya/ustanovka-i-obnovlenie-r_keeper-7/nastrojka-servera-spravochnikov/podklyuchenie-postgresql" target="_blank">Подключение PostgreSQL</a></li>
+    <li><a href="https://docs.rkeeper.ru/rk7/7.7.0/ru/nastrojka-svyazi-s-ms-sql-17533366.html" target="_blank">Настройка связи с MS SQL</a></li>
+    <li><a href="https://docs.rkeeper.ru/delivery/trebovaniya-k-programmnomu-obespecheniyu-i-oborudovaniyu-4043820.html" target="_blank">r_k Delivery – Yêu cầu phần mềm</a></li>
+    <li><a href="https://docs.rkeeper.ru/sh5/store-house-29420108.html" target="_blank">StoreHouse 5</a></li>
+  </ul></div>
+  <div class="sec-title">Cộng đồng / thứ cấp</div>
+  <div class="card src"><ul>
+    <li><a href="https://learn.microsoft.com/en-us/answers/questions/849599/unable-to-install-microsoft-sql-on-ubuntu-22-04" target="_blank">Microsoft Q&amp;A – SQL 2019 trên Ubuntu 22.04 (OpenSSL)</a></li>
+    <li><a href="https://github.com/NathanaelSantos/mssql-server-libldap-fix" target="_blank">GitHub – libldap fix</a></li>
+    <li><a href="https://github.com/microsoft/mssql-docker/issues/862" target="_blank">GitHub mssql-docker #862</a></li>
+    <li><a href="https://forum.winehq.org/viewtopic.php?t=18317" target="_blank">WineHQ forum – SQL Server qua Wine</a></li>
+    <li><a href="https://wiki.winehq.org/AppDB_Rating_Definitions" target="_blank">WineHQ – AppDB rating definitions</a></li>
+    <li><a href="https://severalnines.com/blog/overview-sql-server-requirements-linux-and-comparison-windows-sql-server/" target="_blank">Severalnines – SQL Agent trên Linux</a></li>
+    <li><a href="https://dtf.ru/life/2023762-microsoft-predupredila-rossiiskie-kompanii-chto-ne-budet-prodlevat-licenzii-na-po-posle-30-sentyabrya" target="_blank">DTF – Microsoft không gia hạn license tại Nga</a></li>
+    <li><a href="https://www.ixbt.com/news/2022/03/04/microsoft-priostanavlivaet-predostavlenie-uslug-i-prodazhi-produktov-v-rossii.html" target="_blank">iXBT – Microsoft dừng bán tại Nga (03/2022)</a></li>
+  </ul></div>
+</div>
+
+<div class="footer">
+  <div><strong>Phạm Minh Hải</strong> · Core Technology · Dcorp Technology Corporation · Platform. Empowering Growth.</div>
+  <div class="mono">mssql_linux_os_eval v1 · Generated 04/11/2026</div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
