@@ -1,0 +1,542 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Mô phỏng Fine Dining Dcorp</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: big headline, then a figure card (isometric 45° branch model with numbered stations, callouts and live data flow) beside a control panel; step detail card under the figure. Light mode primary per DCORP_BRAND (Dcorp red accent), dark mode mirrored. */
+:root{
+  --bg:#EFEFF3; --card:#FFFFFF; --card-2:#F7F7FA; --tx:#0C0C14; --tx-body:#3C3C50; --tx-mute:#6C6C80;
+  --bd:rgba(12,12,20,.12); --bd-strong:rgba(12,12,20,.22);
+  --accent:#C01A1F; --accent-tx:#961418; --accent-soft:rgba(192,26,31,.08); --accent-bd:rgba(192,26,31,.35);
+  --amber:#B06F08; --ok:#0A6E2E; --track:#E2E2E9; --edge:rgba(20,20,32,.30); --shade-l:.07; --shade-r:.17;
+  --m-floor:#E9E9EF; --m-wall:#FBFBFD; --m-wood:#C8BDAF; --m-cloth:#FFFFFF; --m-steel:#DDE1E7; --m-dark:#45454F;
+  --m-hw:#2E2E38; --m-plat:#FFFFFF; --m-shelf:#D3CCC1; --m-mat:#C01A1F; --m-hq:#E4E4EB; --m-wh:#D9D9E1; --m-truck:#F6F6F9; --m-store:#FFFFFF;
+  --p-guest:#6C6C80; --p-staff:#1C1C1E; --p-chef:#FFFFFF; --p-head:#D6C8B9;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#09090B; --card:#111116; --card-2:#18181F; --tx:#EEEEF4; --tx-body:#A0A0B2; --tx-mute:#6C6C7E;
+  --bd:rgba(255,255,255,.09); --bd-strong:rgba(255,255,255,.18);
+  --accent:#E31E24; --accent-tx:#F05458; --accent-soft:rgba(227,30,36,.13); --accent-bd:rgba(227,30,36,.40);
+  --amber:#F5A623; --ok:#3ACA6A; --track:#26262F; --edge:rgba(0,0,0,.65); --shade-l:.22; --shade-r:.38;
+  --m-floor:#25252E; --m-wall:#34343F; --m-wood:#7A6E61; --m-cloth:#D9D9E0; --m-steel:#565B65; --m-dark:#101014;
+  --m-hw:#0E0E12; --m-plat:#22222B; --m-shelf:#6A6258; --m-mat:#E31E24; --m-hq:#3A3A46; --m-wh:#30303A; --m-truck:#4A4A56; --m-store:#3A3A46;
+  --p-guest:#8E8EA2; --p-staff:#E5E5EC; --p-chef:#FFFFFF; --p-head:#B9AB9C; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#09090B; --card:#111116; --card-2:#18181F; --tx:#EEEEF4; --tx-body:#A0A0B2; --tx-mute:#6C6C7E;
+  --bd:rgba(255,255,255,.09); --bd-strong:rgba(255,255,255,.18);
+  --accent:#E31E24; --accent-tx:#F05458; --accent-soft:rgba(227,30,36,.13); --accent-bd:rgba(227,30,36,.40);
+  --amber:#F5A623; --ok:#3ACA6A; --track:#26262F; --edge:rgba(0,0,0,.65); --shade-l:.22; --shade-r:.38;
+  --m-floor:#25252E; --m-wall:#34343F; --m-wood:#7A6E61; --m-cloth:#D9D9E0; --m-steel:#565B65; --m-dark:#101014;
+  --m-hw:#0E0E12; --m-plat:#22222B; --m-shelf:#6A6258; --m-mat:#E31E24; --m-hq:#3A3A46; --m-wh:#30303A; --m-truck:#4A4A56; --m-store:#3A3A46;
+  --p-guest:#8E8EA2; --p-staff:#E5E5EC; --p-chef:#FFFFFF; --p-head:#B9AB9C; color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:var(--f-body);font-size:14px;line-height:1.5;margin:0}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:26px 34px;max-width:1440px;margin:0 auto}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent-tx);outline-offset:2px}
+
+.top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:18px}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(38px,5.6vw,76px);line-height:.92;margin:0;letter-spacing:-.005em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.top p{margin:0;color:var(--tx-body);font-size:14.5px;max-width:52ch;justify-self:end}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px}
+.fig{padding:16px 16px 0;display:flex;flex-direction:column;min-width:0}
+.fig-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.fig-h .cap{font-size:13px;color:var(--tx-body)}
+.fig-h .cap b{font-family:var(--f-display);font-size:17px;color:var(--accent-tx);letter-spacing:.02em}
+.live{font-family:var(--f-mono);font-size:11px;color:var(--tx-mute);display:flex;gap:8px;align-items:center}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.stage{overflow-x:auto;margin:6px -6px 0}
+#scene{display:block;width:100%;min-width:640px;height:auto;user-select:none}
+
+/* SVG */
+#scene polygon{stroke:var(--edge);stroke-width:.6;stroke-linejoin:round}
+#scene .t,#scene .l,#scene .r{fill:var(--c)}
+#scene .sl{fill:#000;opacity:var(--shade-l);stroke:none}
+#scene .sr{fill:#000;opacity:var(--shade-r);stroke:none}
+.m-floor{--c:var(--m-floor)} .m-wall{--c:var(--m-wall)} .m-wood{--c:var(--m-wood)} .m-cloth{--c:var(--m-cloth)}
+.m-steel{--c:var(--m-steel)} .m-dark{--c:var(--m-dark)} .m-hw,.m-hwp,.m-srv,.m-srvp{--c:var(--m-hw)}
+.m-plat{--c:var(--m-plat)} .m-shelf{--c:var(--m-shelf)} .m-mat{--c:var(--m-mat)} .m-hq{--c:var(--m-hq)}
+.m-wh{--c:var(--m-wh)} .m-truck{--c:var(--m-truck)} .m-store{--c:var(--m-store)}
+.cov .m-hw,.cov .m-srv{--c:var(--accent)}
+.cov .m-hwp,.cov .m-srvp{--c:var(--card)}
+.cov .m-hwp polygon.t,.cov .m-hwp polygon.l,.cov .m-hwp polygon.r,.cov .m-srvp polygon.t,.cov .m-srvp polygon.l,.cov .m-srvp polygon.r{stroke:var(--tx-mute);stroke-dasharray:2.5 2;stroke-width:.9}
+#scene .grid{stroke:var(--edge);stroke-width:.4;opacity:.35}
+#scene .ft{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;fill:var(--tx-mute)}
+#scene .ft.big{font-size:11px;font-weight:500}
+#scene .sv{font-family:var(--f-mono);font-size:8.5px;fill:var(--tx-body)}
+#scene .sv.p{fill:var(--tx-mute)}
+.cov #scene .sv.d,#scene.cov .sv.d{fill:var(--accent-tx)}
+#scene .slot{stroke:rgba(255,255,255,.35);stroke-width:.8}
+#scene .person .b{fill:var(--pc)} #scene .person .h{fill:var(--p-head)}
+#scene .person .b,#scene .person .h{stroke:var(--edge);stroke-width:.6}
+.pg{--pc:var(--p-guest)} .ps{--pc:var(--p-staff)} .pc{--pc:var(--p-chef)} .pr{--pc:var(--amber)}
+#scene .net{fill:none;stroke:var(--tx-mute);stroke-width:.8;stroke-dasharray:2 3;opacity:.55}
+#scene .trail{fill:none;stroke:var(--accent);stroke-width:2;opacity:.85}
+#scene .pin{stroke:var(--tx-mute);stroke-width:.8;stroke-dasharray:3 3;opacity:.6}
+#scene .lead{fill:none;stroke:var(--tx-mute);stroke-width:.9}
+#scene .lb rect{fill:var(--card);stroke:var(--tx);stroke-width:1.1}
+#scene .lb text{font-family:var(--f-body);font-size:12px;font-weight:600;fill:var(--tx)}
+#scene .lb .nb{fill:var(--accent)} #scene .lb .nt{fill:#fff;font-size:11px;font-weight:700}
+#scene .lb{cursor:pointer}
+#scene .lb.cur rect{fill:var(--accent);stroke:var(--accent)} #scene .lb.cur text{fill:#fff} #scene .lb.cur .nb{fill:#fff} #scene .lb.cur .nt{fill:var(--accent)}
+#scene .lb.cur .lead{stroke:var(--accent);stroke-width:1.4}
+#scene .mk{cursor:pointer}
+#scene .mk circle.c{fill:var(--card);stroke:var(--accent);stroke-width:1.6}
+#scene .mk text{font-family:var(--f-body);font-size:10px;font-weight:700;fill:var(--accent-tx)}
+#scene .mk.done circle.c,#scene .mk.cur circle.c{fill:var(--accent)} #scene .mk.done text,#scene .mk.cur text{fill:#fff}
+#scene .ping{fill:none;stroke:var(--accent);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ping 1.4s ease-out infinite}
+@keyframes ping{from{transform:scale(1);opacity:.8}to{transform:scale(2.3);opacity:0}}
+#scene .tok{fill:var(--accent)} #scene .tokh{fill:var(--accent);opacity:.22}
+#scene .pa{stroke:none}
+
+.detail{margin:10px 0 0;border:1.5px solid var(--accent);border-radius:10px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start}
+.detail .no{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:24px}
+.detail h3{margin:0;font-family:var(--f-display);font-size:24px;line-height:1.1;letter-spacing:.01em}
+.detail p{margin:4px 0 8px;color:var(--tx-body);max-width:78ch}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.tg{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:4px;background:var(--card-2);border:1px solid var(--bd);color:var(--tx-body)}
+.tg.d{background:var(--accent-soft);border-color:var(--accent-bd);color:var(--accent-tx)}
+.tg.ok{color:var(--ok);border-color:currentColor;background:transparent}
+.capbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 2px;border-top:1px solid var(--bd);margin-top:12px;font-size:12px;color:var(--tx-mute)}
+.capbar b{font-family:var(--f-display);font-size:15px;color:var(--accent-tx);letter-spacing:.02em}
+
+.panel{padding:18px;display:flex;flex-direction:column;gap:16px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ph h2{margin:0;font-size:15px;font-weight:600}
+.ph span{font-size:12px;color:var(--tx-mute)}
+.chipset{display:flex;flex-wrap:wrap;gap:8px}
+.ch{border:1px solid var(--bd-strong);background:var(--card);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer}
+.ch:hover{border-color:var(--tx-mute)}
+.ch[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sep{border-top:1px solid var(--bd)}
+.path .k{font-size:12px;color:var(--tx-mute);margin-bottom:4px}
+.path .seq{font-size:13.5px;font-weight:600;line-height:1.6;color:var(--ok)}
+.path .seq span{cursor:pointer;border-radius:3px}
+.path .seq span.cur{color:#fff;background:var(--accent);padding:0 4px}
+.path .seq span.todo{color:var(--tx-mute)}
+.path p{margin:6px 0 0;font-size:12.5px;color:var(--tx-body)}
+.sl{display:flex;flex-direction:column;gap:6px}
+.sl .row{display:flex;justify-content:space-between;align-items:baseline}
+.sl label{font-weight:600;font-size:14px}
+.sl output{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--accent-tx);line-height:1}
+.sl small{font-size:12.5px;color:var(--tx-body)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(to right,var(--accent) var(--pct,50%),var(--track) var(--pct,50%));margin:6px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--card);box-shadow:0 0 0 1px var(--accent-bd);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--card);cursor:pointer}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.bt{border:1.5px solid var(--tx);background:var(--card);border-radius:999px;padding:9px 16px;font-weight:600;font-size:13.5px;cursor:pointer}
+.bt.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.bt[aria-pressed="true"]{background:var(--tx);color:var(--card)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{background:var(--card-2);border-radius:8px;padding:10px 12px;min-width:0}
+.tile span{display:block;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-mute);line-height:1.3}
+.tile b{font-family:var(--f-display);font-weight:800;font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile b small{font-size:17px;color:var(--tx-mute)}
+.note{background:var(--accent-soft);border:1px solid var(--accent-bd);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--tx-body)}
+.hint{font-size:12px;color:var(--tx-mute)}
+.legend{display:none;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--tx-body)}
+.legend.on{display:flex}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:5px}
+.legend .d{background:var(--accent)} .legend .p{border:1px dashed var(--tx-mute);background:var(--card)}
+footer{margin-top:18px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--tx-mute)}
+footer b{color:var(--tx)}
+
+@media (max-width:1060px){.layout{grid-template-columns:minmax(0,1fr)}.top{grid-template-columns:minmax(0,1fr)}.top p{justify-self:start}}
+@media (max-width:480px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.detail{flex-direction:column}}
+@media (prefers-reduced-motion:reduce){.live i,#scene .ping{animation:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Một tối ở nhà hàng <em>fine dining</em></h1>
+    <p>Cùng một hệ sinh thái Dcorp, từ lúc khách đặt bàn tới khi số liệu về HQ. Chọn kịch bản rồi bấm chạy để xem đơn hàng đi qua từng trạm.</p>
+  </header>
+
+  <div class="layout">
+    <section class="card fig" aria-label="Mô hình chi nhánh">
+      <div class="fig-h">
+        <span class="cap"><b>Hình 1</b> · chi nhánh fine dining, nhìn từ góc 45°</span>
+        <span class="live"><i></i><span id="live"></span></span>
+      </div>
+      <div class="stage">
+        <svg id="scene" viewBox="-305 -300 730 760" role="img" aria-label="Mô hình isometric chi nhánh fine dining với các trạm hệ thống Dcorp">
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2"/></filter>
+          </defs>
+          <g id="gPlat"></g>
+          <g id="gFloor"></g>
+          <g id="gHQ"></g>
+          <g id="gNet"></g>
+          <g id="gTrail"></g>
+          <g id="gDyn"></g>
+          <g id="gLab"></g>
+          <g id="gTok"></g>
+        </svg>
+      </div>
+      <div class="detail" id="detail" aria-live="polite">
+        <div class="no" id="dNo">1</div>
+        <div>
+          <h3 id="dT"></h3>
+          <p id="dP"></p>
+          <div class="chips" id="dC"></div>
+        </div>
+      </div>
+      <div class="capbar">
+        <span>Chọn kịch bản · kéo thanh · chạy kịch bản · tách lớp hệ thống</span>
+        <b id="capR"></b>
+      </div>
+    </section>
+
+    <aside class="card panel">
+      <div>
+        <div class="ph"><h2>Chọn kịch bản</h2><span>4 luồng vận hành</span></div>
+        <div class="chipset" id="scs" style="margin-top:10px"></div>
+      </div>
+      <div class="sep"></div>
+      <div class="path">
+        <div class="k">Đường đi · theo số trạm</div>
+        <div class="seq" id="seq"></div>
+        <p id="scDesc"></p>
+      </div>
+      <div class="sep"></div>
+      <div class="sl">
+        <div class="row"><label for="rT">Bàn đang phục vụ</label><output id="oT"></output></div>
+        <input type="range" id="rT" min="1" max="9" value="6">
+        <small>Kéo để thêm khách vào sảnh. Order từ SkyTab và SkyMenu QR chạy lên POS Server rồi xuống KDS_Pro.</small>
+      </div>
+      <div class="sl">
+        <div class="row"><label for="rO">Đơn online mỗi giờ</label><output id="oO"></output></div>
+        <input type="range" id="rO" min="0" max="30" value="12">
+        <small>Đơn GrabFood, ShopeeFood và SkyMenu online đi qua SkyOrder vào thẳng POS, không nhập tay.</small>
+      </div>
+      <div class="sl">
+        <div class="row"><label for="rS">Chi nhánh trong chuỗi</label><output id="oS"></output></div>
+        <input type="range" id="rS" min="1" max="30" value="8">
+        <small>Mọi chi nhánh đồng bộ về một dashboard HQ, dùng chung Bếp trung tâm và Kho tổng.</small>
+      </div>
+      <div class="btns">
+        <button class="bt pri" id="bRun" type="button">Chạy kịch bản</button>
+        <button class="bt" id="bExp" type="button" aria-pressed="false">Tách lớp hệ thống</button>
+        <button class="bt" id="bCov" type="button" aria-pressed="false">Độ bao phủ</button>
+      </div>
+      <div class="legend" id="legend"><span><i class="d"></i>Sản phẩm Dcorp</span><span><i class="p"></i>Đối tác đã tích hợp</span></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="note" id="note"></div>
+      <div class="hint">Bấm vào số trạm hoặc nhãn trên hình để đọc chi tiết. Chấm chạy trên hình là luồng dữ liệu mô phỏng.</div>
+    </aside>
+  </div>
+
+  <footer>
+    <span><b>Dcorp Technology Corporation</b> · Platform. Empowering Growth.</span>
+    <span>Mô hình minh họa, không theo tỉ lệ. Kịch bản và thanh kéo dùng số liệu giả định.</span>
+  </footer>
+</div>
+
+<script>
+/* ---------- iso helpers ---------- */
+const U=15, CX=U*Math.cos(Math.PI/6), CY=U/2;
+const P=(x,y,z=0)=>[(x-y)*CX,(x+y)*CY-z*U];
+const f=n=>n.toFixed(1);
+const pts=a=>a.map(p=>{const q=P(...p);return f(q[0])+','+f(q[1])}).join(' ');
+function box(x,y,z,w,d,h,m,extra=''){
+  const t=[[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]];
+  const r=[[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]];
+  const l=[[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]];
+  return {k:x+w/2+y+d/2+z*.05,s:`<g class="m-${m}"${extra}><polygon class="l" points="${pts(l)}"/><polygon class="sl" points="${pts(l)}"/><polygon class="r" points="${pts(r)}"/><polygon class="sr" points="${pts(r)}"/><polygon class="t" points="${pts(t)}"/></g>`};
+}
+function person(x,y,z,c){const [sx,sy]=P(x,y,z);return {k:x+y+.2,s:`<g class="person ${c}"><rect class="b" x="${f(sx-4)}" y="${f(sy-17)}" width="8" height="15" rx="4"/><circle class="h" cx="${f(sx)}" cy="${f(sy-21)}" r="4"/></g>`}}
+function ftext(x,y,z,str,cls='ft'){const [sx,sy]=P(x,y,z);return `<text class="${cls}" transform="matrix(0.866 0.5 -0.866 0.5 ${f(sx)} ${f(sy)})">${str}</text>`}
+function slots(x,y,z,w,d,n){let s='';for(let k=0;k<n;k++){const a=P(x+.3,y+d,z+.35+k*.33),b=P(x+w-.3,y+d,z+.35+k*.33);s+=`<line class="slot" x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"/>`}return {k:x+w/2+y+d/2+z*.05+.01,s}}
+function vtext(x,y,z,str,cls){const [sx,sy]=P(x,y,z);return {k:999,s:`<text class="sv ${cls||''}" x="${f(sx)}" y="${f(sy-5)}" text-anchor="middle">${str}</text>`}}
+const draw=items=>items.sort((a,b)=>a.k-b.k).map(i=>i.s).join('');
+
+/* ---------- stations ---------- */
+const PLATZ=4, PT=4.4+1.4+.1;
+const PLAT=[ // id,label,x,y,owner
+ ['posserver','POS Server',4,-10.2,'d'],['skyorder','SkyOrder',7,-10.2,'d'],['crm','SkyCRM',10,-10.2,'d'],['dwh','Data WH',13,-10.2,'d'],
+ ['napas','NAPAS',5.5,-7.2,'p'],['gotit','Got It',8.5,-7.2,'p'],['skyinvoice','SkyInvoice',11.5,-7.2,'d']];
+const TABLES=[[8,6.8],[5,6.8],[11,6.8],[5,10],[8,10],[11,10],[5,3.6],[8,3.6],[11,3.6]];
+const ST={
+ booking:{a:[-2.15,15.65,3.25],t:'Khách · App Member',p:['SkyBooking','SkyCRM'],o:'d'},
+ loyalty:{a:[-3.95,13.45,3.25],t:'Sau bữa ăn · App Member',p:['SkyCRM'],o:'d'},
+ host:{a:[2.55,11.75,1.4],t:'Host stand',p:['SkyBooking'],o:'d'},
+ skytab:{a:[10.45,6.95,1.45],t:'Server · SkyTab',p:['SkyTab'],o:'d'},
+ skymenu:{a:[12.3,10.25,1.25],t:'QR tại bàn · SkyMenu',p:['SkyMenu'],o:'d'},
+ bill:{a:[11.85,4.45,0.9],t:'Thanh toán tại bàn',p:['r_keeper 7','SkyCRM'],o:'d'},
+ pos:{a:[2.5,1.95,1.6],t:'POS quầy bar',p:['r_keeper 7'],o:'d'},
+ kds:{a:[15.5,0.2,1.95],t:'KDS_Pro',p:['KDS_Pro'],o:'d'},
+ expo:{a:[13.6,5.6,1.05],t:'Expo',p:['KDS_Pro'],o:'d'},
+ storehouse:{a:[19,12.9,1.85],t:'Kho chi nhánh',p:['SkyStoreHouse'],o:'d'},
+ purchase:{a:[16.3,12,0.85],t:'Bàn quản lý',p:['SkyStoreHouse'],o:'d'},
+ dash:{a:[16.25,11.55,1.7],t:'Dashboard chi nhánh',p:['Dashboard Dcorp'],o:'d'},
+ grab:{a:[-5.75,7.35,3.05],t:'Kênh online',p:['GrabFood','ShopeeFood','SkyMenu online'],o:'p'},
+ rider:{a:[-3.1,1.4,1.5],t:'Tài xế giao hàng',p:['GrabFood','ShopeeFood'],o:'p'},
+ hq:{a:[24.8,4.6,3.7],t:'HQ',p:['Dashboard Dcorp','r_keeper 7','SkyCRM'],o:'d'},
+ ck:{a:[29.4,4.5,2.1],t:'Bếp trung tâm',p:['SkyStoreHouse'],o:'d'},
+ dc:{a:[25.4,9.6,2.5],t:'Kho tổng (DC)',p:['SkyStoreHouse'],o:'d'},
+ truck:{a:[29.7,9,1.4],t:'Xe giao hàng',p:['SkyStoreHouse'],o:'d'},
+ stores:{a:[24.15,14.55,1.2],t:'Chi nhánh khác',p:['SkyStoreHouse'],o:'d'}
+};
+PLAT.forEach(([id,t,x,y,o])=>ST[id]={a:[x+.9,y+.9,PT],t,plat:1,o,p:{posserver:['r_keeper 7'],skyorder:['SkyOrder'],crm:['SkyCRM'],dwh:['Data warehouse Dcorp'],napas:['NAPAS'],gotit:['Got It'],skyinvoice:['SkyInvoice']}[id]});
+
+/* ---------- scenarios ---------- */
+const SC={
+ dine:{n:'Dùng bữa tại bàn',desc:'Khách đi hết 6 bước hành trình: đặt bàn, đón khách, gọi món, chế biến, thanh toán, sau bữa ăn.',
+  note:'Cả 6 bước hành trình khách chạy trên sản phẩm Dcorp. Thanh toán QR đi qua kết nối trực tiếp với NAPAS, không qua trung gian.',
+  s:[['booking','Đặt bàn · SkyBooking','Khách đặt bàn 19:00 cho 4 người trên App Member, ghi chú dị ứng hải sản. SkyBooking giữ bàn và báo về host stand.'],
+   ['host','Đón khách · Host stand','Host thấy danh sách đặt bàn và sơ đồ bàn realtime, xếp khách vào bàn. Mở bàn chuyển thẳng sang POS.'],
+   ['crm','Hồ sơ khách · SkyCRM','Server xem hạng thành viên, món yêu thích và ghi chú dị ứng trước khi chào bàn.'],
+   ['skytab','Order tại bàn · SkyTab','Order nhập ngay tại bàn, chia ghế, giữ món theo course. Khách gọi thêm đồ uống qua SkyMenu QR trên bàn.'],
+   ['posserver','POS Server · r_keeper 7','Order về POS Server chi nhánh, chia phiếu theo station: bếp nóng, bếp lạnh, pastry, bar.'],
+   ['kds','Bếp · KDS_Pro','Bếp thấy món theo course và thời gian chờ. Bếp trưởng fire từng course theo nhịp bàn.'],
+   ['expo','Ra món · Expo','Expo gom món cả bàn ra cùng lúc. SkyTab của server nhận báo món sẵn sàng.'],
+   ['bill','Tách bill · r_keeper 7','Tách bill theo ghế, cộng service charge, áp ưu đãi thành viên từ SkyCRM.'],
+   ['napas','QR · NAPAS trực tiếp','Khách quét QR. Giao dịch đi qua kết nối trực tiếp với NAPAS, trạng thái thanh toán trả về POS ngay.'],
+   ['skyinvoice','Hóa đơn · SkyInvoice','SkyInvoice xuất hóa đơn điện tử ngay khi thanh toán và gửi cho khách.'],
+   ['loyalty','Tích điểm · App Member','Điểm cộng vào App Member. Khách nhận khảo sát sau bữa ăn và ưu đãi cho lần sau.'],
+   ['storehouse','Trừ kho · SkyStoreHouse','Nguyên liệu trừ theo công thức món. Quản lý so sánh định mức lý thuyết với thực tế.']]},
+ online:{n:'Đơn Grab · Shopee',desc:'Đơn giao hàng từ kênh đối tác và kênh riêng đi chung một luồng với đơn tại bàn.',
+  note:'Đơn từ GrabFood, ShopeeFood và SkyMenu online vào thẳng POS qua SkyOrder. Bếp xem chung một màn hình KDS_Pro.',
+  s:[['grab','Đơn online đến','Đơn từ GrabFood, ShopeeFood và SkyMenu online đến cùng lúc trong giờ cao điểm.'],
+   ['skyorder','Gom đơn · SkyOrder','SkyOrder nhận đơn, khớp mã món với menu POS, đồng bộ trạng thái món hết.'],
+   ['posserver','Vào POS · r_keeper 7','Đơn vào thẳng POS. Nhân viên không nhập tay, không lệch giá giữa các kênh.'],
+   ['kds','Bếp · KDS_Pro','Bếp thấy đơn giao hàng tách riêng với đơn tại bàn, kèm giờ tài xế đến lấy.'],
+   ['expo','Đóng gói · Expo','Expo kiểm món, đóng gói, xác nhận đơn sẵn sàng.'],
+   ['rider','Giao tài xế','Tài xế nhận hàng. Trạng thái đơn cập nhật ngược về kênh bán.'],
+   ['storehouse','Trừ kho · SkyStoreHouse','Nguyên liệu trừ theo công thức, giống đơn tại bàn.'],
+   ['dash','Báo cáo theo kênh','Doanh thu tách theo kênh: tại bàn, SkyMenu, GrabFood, ShopeeFood.']]},
+ supply:{n:'Chuỗi cung ứng',desc:'Từ cảnh báo tồn thấp tới khi hàng về kho chi nhánh, có cả điều chuyển gấp.',
+  note:'Chi nhánh, Bếp trung tâm, Kho tổng và các chi nhánh khác dùng chung SkyStoreHouse, nên đặt hàng và điều chuyển không phải nhập lại.',
+  s:[['storehouse','Tồn thấp · SkyStoreHouse','Một nguyên liệu xuống dưới mức tồn tối thiểu. SkyStoreHouse báo cho quản lý.'],
+   ['purchase','Đề xuất đặt hàng','Hệ thống đề xuất số lượng theo định mức và lượng bán. Quản lý duyệt và gửi đơn.'],
+   ['ck','Bếp trung tâm','Bếp trung tâm nhận đơn bán thành phẩm như sốt, nước dùng, bột bánh và lên lịch sản xuất.'],
+   ['dc','Kho tổng · DC','Kho tổng xuất nguyên liệu tươi và khô theo đơn của chi nhánh.'],
+   ['truck','Giao về chi nhánh','Xe giao hàng. Chi nhánh nhận, đối chiếu và nhập kho trên SkyStoreHouse.'],
+   ['stores','Điều chuyển gấp','Thiếu gấp trước giờ phục vụ: tạo phiếu điều chuyển, chi nhánh gần nhất chuyển hàng sang.'],
+   ['dwh','Đồng bộ tồn kho','Tồn kho, hao hụt và giá vốn về data warehouse.'],
+   ['hq','HQ theo dõi','HQ thấy tồn kho và giá vốn toàn chuỗi trên một dashboard.']]},
+ data:{n:'Số liệu về HQ',desc:'Số liệu đi từ từng bill tại chi nhánh lên dashboard chi nhánh và dashboard toàn chuỗi.',
+  note:'POS, kho và khách hàng gom về một nơi. Quản lý ca xem realtime, HQ so sánh toàn chuỗi và đẩy menu, giá, khuyến mãi xuống một lần.',
+  s:[['pos','Bán hàng · r_keeper 7','Mỗi bill tại quầy bar, tại bàn hay online đều ghi nhận trên POS.'],
+   ['posserver','POS Server','POS Server chi nhánh tổng hợp doanh thu, giảm giá, hủy món.'],
+   ['crm','Khách hàng · SkyCRM','SkyCRM ghi nhận lượt ghé, chi tiêu và điểm theo từng khách.'],
+   ['storehouse','Kho · SkyStoreHouse','Tồn kho, hao hụt và giá vốn theo món.'],
+   ['dwh','Data warehouse','Số liệu POS, kho, CRM gom về một nơi.'],
+   ['dash','Dashboard chi nhánh','Quản lý ca thấy doanh thu theo giờ, bàn đang mở, average check, thời gian ra món.'],
+   ['hq','Dashboard HQ','HQ so sánh các chi nhánh, cập nhật menu, giá, khuyến mãi một lần và đồng bộ xuống toàn chuỗi.']]}
+};
+const NET=[['host','posserver'],['skytab','posserver'],['pos','posserver'],['skymenu','posserver'],['posserver','kds'],['skyorder','posserver'],['grab','skyorder'],['bill','napas'],['bill','gotit'],['bill','skyinvoice'],['booking','crm'],['crm','loyalty'],['posserver','dwh'],['storehouse','dwh'],['dwh','dash'],['dwh','hq'],['purchase','dc'],['dc','storehouse']];
+
+/* ---------- state ---------- */
+const $=s=>document.querySelector(s);
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S={sc:'dine',step:0,running:false,phase:'dwell',ph:0,tables:6,online:12,stores:8,dz:0,dzT:0,cov:false,parts:[],acc:{t:0,o:0,d:0,s:0}};
+const A=id=>{const s=ST[id];const p=P(...s.a);if(s.plat)p[1]-=S.dz;return p};
+function tableAnchor(i){const [tx,ty]=TABLES[i];return P(tx+.85,ty+.85,.85)}
+
+/* ---------- static scene ---------- */
+function renderPlat(){
+  const it=[box(3,-10.8,PLATZ,13,6.6,.4,'plat')];
+  PLAT.forEach(([id,t,x,y,o])=>{it.push(box(x,y,PLATZ+.4,1.8,1.8,1.4,o==='d'?'srv':'srvp'));it.push(slots(x,y,PLATZ+.4,1.8,1.8,3))});
+  let s=draw(it);
+  s+=ftext(3.4,-4.55,PLATZ+.4,'TẦNG TÍCH HỢP &amp; DỮ LIỆU','ft big');
+  PLAT.forEach(([id,t,x,y,o])=>{const [sx,sy]=P(x+.9,y+.9,PT);s+=`<text class="sv ${o}" x="${f(sx)}" y="${f(sy-7)}" text-anchor="middle">${t}</text>`});
+  $('#gPlat').innerHTML=s; $('#gPlat').setAttribute('transform',`translate(0 ${f(-S.dz)})`);
+}
+function renderFloor(){
+  const it=[];
+  // walls
+  const walls=draw([box(-.3,-.3,0,20.3,.3,2.4,'wall'),box(-.3,0,0,.3,11.8,2.4,'wall')]);
+  // bar
+  it.push(box(2,.6,0,1.1,5.2,1.1,'wood'),box(2.15,1.7,1.1,.7,.55,.45,'hw'),person(1.1,2.9,0,'ps'),person(1.1,4.8,0,'ps'));
+  for(let k=0;k<4;k++) it.push(box(.25,.6+k*1.1,1.5,.25,.25,.5,'dark'));
+  // host
+  it.push(box(2,11.2,0,1.1,1.1,1.2,'wood'),box(2.15,11.35,1.2,.8,.7,.12,'hw'),person(.9,12,0,'ps'),box(.05,12.2,0,1.2,1.6,.04,'mat'));
+  // tables
+  TABLES.forEach(([tx,ty],i)=>{
+    it.push(box(tx,ty,0,1.7,1.7,.8,'wood'),box(tx-.05,ty-.05,.8,1.8,1.8,.05,'cloth'),box(tx+1.25,ty+.2,.85,.25,.12,.35,'hw'));
+    if(i<S.tables){it.push(person(tx-.5,ty+.6,0,'pg'),person(tx+.75,ty+2.25,0,'pg'));if(i%3===0)it.push(person(tx+2.2,ty+1,0,'pg'))}
+  });
+  it.push(person(9.95,6.5,0,'ps'),box(10.2,6.85,.95,.5,.1,.38,'hw'));
+  // kitchen
+  it.push(box(13.2,1,0,.8,8,1,'steel'),box(14.4,.1,0,5.5,1.1,1,'steel'),box(14.8,.15,1,1.4,.12,.9,'hw'),box(17.4,.15,1,1.4,.12,.9,'hw'),
+    box(15,4.2,0,4.5,1.2,1,'steel'),box(15.4,4.4,1,1.4,.8,.08,'dark'),box(17.6,4.4,1,1.4,.8,.08,'dark'),box(13.25,5.2,1,.7,.12,.6,'hw'),
+    person(15.4,2.4,0,'pc'),person(18,2.4,0,'pc'),person(16.6,6.3,0,'pc'),person(14.6,7.4,0,'ps'));
+  // back office
+  it.push(box(14,9.6,0,6,.25,1.3,'wall'),box(13.75,9.85,0,.25,4.15,.5,'wall'),box(15,11.4,0,2.6,1.1,.8,'wood'),box(15.6,11.5,.8,1.3,.1,.85,'hw'),
+    person(16.2,13.1,0,'ps'),box(19,10.1,0,.85,.85,2,'dark'),slots(19,10.1,0,.85,.85,4),box(18.2,12.1,0,1.6,1.6,1.8,'shelf'));
+  // online channels
+  [['GrabFood',5.2,'hwp'],['ShopeeFood',7.2,'hwp'],['SkyMenu online',9.2,'hw']].forEach(([n,y,m])=>it.push(box(-6.2,y,1.4,.9,.15,1.6,m)));
+  const riders=S.online>0?Math.min(3,Math.ceil(S.online/10)):0;
+  for(let i=0;i<riders;i++){const y=.4+i*1.9;it.push(box(-3.9,y,0,1.6,.6,.5,'dark'),box(-4.05,y+.05,.5,.65,.5,.6,'hwp'),person(-3.1,y+.35,.4,'pr'))}
+  // guest phones
+  it.push(box(-2.6,15.6,1.6,.9,.15,1.6,'hw'),box(-4.4,13.4,1.6,.9,.15,1.6,'hw'));
+  // floor slab + grid + painted text
+  let s=draw([box(0,0,-.4,20,14,.4,'floor')]);
+  for(let i=1;i<20;i++){const a=P(i,0),b=P(i,14);s+=`<line class="grid" x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"/>`}
+  for(let j=1;j<14;j++){const a=P(0,j),b=P(20,j);s+=`<line class="grid" x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}"/>`}
+  s+=ftext(3.6,.55,0,'QUẦY BAR')+ftext(5,2.4,0,'KHU ĂN')+ftext(14.4,8.9,0,'BẾP')+ftext(14.3,13.75,0,'VĂN PHÒNG')+ftext(.2,13.95,0,'LỐI VÀO');
+  s+=walls+draw(it);
+  // labels for channels and phones
+  [['GrabFood',5.2],['ShopeeFood',7.2],['SkyMenu online',9.2]].forEach(([n,y])=>{const [sx,sy]=P(-6.2,y+.15,2.3);s+=`<text class="sv ${n.startsWith('Sky')?'d':'p'}" x="${f(sx-8)}" y="${f(sy+3)}" text-anchor="end">${n}</text>`});
+  $('#gFloor').innerHTML=s;
+}
+function renderHQ(){
+  const it=[box(23.2,3,0,3.2,3.2,3.6,'hq'),box(23.7,6.2,1.6,2.2,.06,1.2,'hw'),box(27.6,3,0,3.6,3,2,'steel'),box(30.2,3.3,2,.6,.6,.9,'dark'),
+    box(23.2,7.8,0,4.4,3.6,2.4,'wh'),box(24.4,11.4,0,2,.06,1.6,'dark'),box(28.4,8.4,0,2.6,1.2,1.3,'truck'),box(31,8.4,0,.9,1.2,1,'hw'),box(28.6,11,0,1.3,1.3,1.3,'srvp')];
+  const n=Math.min(S.stores-1,5);
+  for(let i=0;i<n;i++){const x=23.3+i*1.9;it.push(box(x,13.9,0,1.3,1.3,1.1,'store'),box(x-.05,13.85,1.1,1.4,1.4,.12,'hw'))}
+  let s=draw([box(22.5,2.5,-.4,10,10.5,.4,'floor')])+ftext(22.8,12.75,0,'HQ · BẾP TRUNG TÂM · KHO TỔNG')+draw(it);
+  const [ex,ey]=P(29.25,11.65,1.3);s+=`<text class="sv p" x="${f(ex)}" y="${f(ey-6)}" text-anchor="middle">ERP</text>`;
+  if(S.stores-1>5){const [qx,qy]=P(33.3,14.5,0);s+=`<text class="sv" x="${f(qx+6)}" y="${f(qy)}">+${S.stores-6} chi nhánh</text>`}
+  if(S.stores===1){const [qx,qy]=P(24,14.5,0);s+=`<text class="sv p" x="${f(qx)}" y="${f(qy)}">chưa có chi nhánh khác</text>`}
+  $('#gHQ').innerHTML=s;
+}
+
+/* ---------- overlay ---------- */
+function arc(a,b){const dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy),lift=16+d*.16;return [(a[0]+b[0])/2,(a[1]+b[1])/2-lift]}
+const arcD=(a,b)=>{const c=arc(a,b);return `M${f(a[0])},${f(a[1])} Q${f(c[0])},${f(c[1])} ${f(b[0])},${f(b[1])}`};
+function qp(a,b,t){const c=arc(a,b),u=1-t;return [u*u*a[0]+2*u*t*c[0]+t*t*b[0],u*u*a[1]+2*u*t*c[1]+t*t*b[1]]}
+const ctx=document.createElement('canvas').getContext('2d');
+const tw=s=>{ctx.font='600 12px Inter, system-ui, sans-serif';return ctx.measureText(s).width};
+function renderOverlay(){
+  $('#gPlat').setAttribute('transform',`translate(0 ${f(-S.dz)})`);
+  let net='';NET.forEach(([a,b])=>net+=`<path class="net" d="${arcD(A(a),A(b))}"/>`);
+  if(S.dz>2){[[3,-4.2],[16,-4.2],[3,-10.8]].forEach(([x,y])=>{const a=P(x,y,PLATZ);a[1]-=S.dz;net+=`<line class="pin" x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(a[0])}" y2="${f(a[1]+S.dz)}"/>`})}
+  $('#gNet').innerHTML=net;
+  const steps=SC[S.sc].s;
+  let tr='';for(let i=1;i<=S.step;i++)tr+=`<path class="trail" d="${arcD(A(steps[i-1][0]),A(steps[i][0]))}"/>`;
+  $('#gTrail').innerHTML=tr;
+  // callout layout: top band for anchors high on screen, bottom band otherwise
+  const items=steps.map((s,i)=>({i,a:A(s[0]),txt:`${s[1]}`}));
+  const byY=[...items].sort((p,q)=>p.a[1]-q.a[1]), half=Math.ceil(items.length/2);
+  const top=byY.slice(0,half).sort((p,q)=>p.a[0]-q.a[0]);
+  const bot=byY.slice(half).sort((p,q)=>p.a[0]-q.a[0]);
+  const colX=[-298,-54,190], out=[];
+  const place=(arr,isTop)=>{
+    const rows=Math.ceil(arr.length/3);
+    arr.forEach((o,k)=>{const col=k%3,row=Math.floor(k/3);
+      const y=isTop?(-292+row*34):(388+(rows-1-row)*0+row*34);
+      o.lx=colX[col];o.ly=y;o.top=isTop;out.push(o)});
+  };
+  // spread columns by x order: assign rows so that each row fills left->right
+  place(top,true);place(bot,false);
+  let lab='';
+  out.forEach(o=>{
+    const w=Math.min(232,tw(o.txt)+40), h=24, st=o.i===S.step?'cur':(o.i<S.step?'done':'todo');
+    const ax=o.a[0], ay=o.a[1];
+    const sx=o.lx+w/2, sy=o.top?o.ly+h:o.ly;
+    const ey=o.top?sy+10:sy-10;
+    lab+=`<g class="lb ${st}" data-step="${o.i}"><polyline class="lead" points="${f(sx)},${f(sy)} ${f(sx)},${f(ey)} ${f(ax)},${f(ay+(o.top?-9:9))}"/>`+
+      `<rect x="${f(o.lx)}" y="${f(o.ly)}" width="${f(w)}" height="${h}" rx="7"/>`+
+      `<circle class="nb" cx="${f(o.lx+13)}" cy="${f(o.ly+12)}" r="8"/><text class="nt" x="${f(o.lx+13)}" y="${f(o.ly+16)}" text-anchor="middle">${o.i+1}</text>`+
+      `<text x="${f(o.lx+27)}" y="${f(o.ly+16.5)}">${esc(o.txt)}</text></g>`;
+  });
+  // markers (first occurrence per station)
+  const seen={};
+  steps.forEach((s,i)=>{if(seen[s[0]]!==undefined)return;seen[s[0]]=i;});
+  Object.entries(seen).forEach(([id,i])=>{const [x,y]=A(id);const st=i===S.step?'cur':(i<S.step?'done':'todo');
+    lab+=`<g class="mk ${st}" data-step="${i}">${st==='cur'&&!reduced?`<circle class="ping" cx="${f(x)}" cy="${f(y)}" r="9"/>`:''}<circle class="c" cx="${f(x)}" cy="${f(y)}" r="9"/><text x="${f(x)}" y="${f(y+3.5)}" text-anchor="middle">${i+1}</text></g>`});
+  $('#gLab').innerHTML=lab;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- panel / detail ---------- */
+function renderPanel(){
+  $('#scs').innerHTML=Object.entries(SC).map(([k,v])=>`<button type="button" class="ch" data-sc="${k}" aria-pressed="${k===S.sc}">${v.n}</button>`).join('');
+  const sc=SC[S.sc];
+  $('#seq').innerHTML=sc.s.map((s,i)=>`<span data-step="${i}" class="${i===S.step?'cur':(i>S.step&&S.running?'todo':'')}">${i+1} · ${esc(s[1].split(' · ')[0])}</span>`).join(' → ');
+  $('#scDesc').textContent=sc.desc; $('#note').textContent=sc.note;
+  $('#capR').textContent=`${sc.n} · ${sc.s.length} bước`;
+  $('#bRun').textContent=S.running?'Dừng':'Chạy kịch bản';
+}
+function renderDetail(){
+  const s=SC[S.sc].s[S.step], st=ST[s[0]], next=SC[S.sc].s[S.step+1];
+  $('#dNo').textContent=S.step+1; $('#dT').textContent=s[1]; $('#dP').textContent=s[2];
+  let c=st.p.map(p=>`<span class="tg ${st.o==='d'&&!/Grab|Shopee/.test(p)?'d':''}">${esc(p)}</span>`).join('');
+  c+=`<span class="tg">${st.o==='d'?'Sản phẩm Dcorp':'Đối tác đã tích hợp'}</span>`;
+  if(s[0]==='napas')c+=`<span class="tg ok">Kết nối trực tiếp</span>`;
+  if(next)c+=`<span class="tg">Tiếp theo → ${esc(next[1])}</span>`;
+  $('#dC').innerHTML=c;
+}
+function renderStats(){
+  const dP=new Set(['r_keeper 7','SkyTab','SkyMenu','SkyBooking','SkyCRM','KDS_Pro','SkyOrder','SkyInvoice','SkyStoreHouse']);
+  const pP=new Set(['NAPAS','Got It','GrabFood','ShopeeFood','Kế toán / ERP']);
+  $('#tiles').innerHTML=`<div class="tile"><span>Sản phẩm Dcorp</span><b>${dP.size}</b></div><div class="tile"><span>Đối tác tích hợp</span><b>${pP.size}</b></div><div class="tile"><span>Bước hành trình được phủ</span><b>6<small>/6</small></b></div>`;
+  $('#live').textContent=`Mô phỏng · ${S.tables} bàn · ${S.online} đơn online/giờ · ${S.stores} chi nhánh`;
+}
+function setRange(id,out,val,fmt){const el=$(id);el.value=val;el.style.setProperty('--pct',((val-el.min)/(el.max-el.min)*100)+'%');$(out).textContent=fmt(val)}
+function syncRanges(){setRange('#rT','#oT',S.tables,v=>v+' bàn');setRange('#rO','#oO',S.online,v=>v+' đơn');setRange('#rS','#oS',S.stores,v=>v+' CN')}
+function refresh(){renderOverlay();renderPanel();renderDetail()}
+
+/* ---------- animation loop ---------- */
+const COL={t:'var(--accent)',o:'var(--amber)',d:'var(--tx-body)',s:'var(--ok)'};
+function spawn(kind){
+  let chain;
+  if(kind==='t'){const i=Math.floor(Math.random()*S.tables);chain=[{tb:i},'posserver','kds']}
+  else if(kind==='o')chain=['grab','skyorder','posserver','kds'];
+  else if(kind==='d')chain=[Math.random()<.5?'posserver':'storehouse','dwh',Math.random()<.5?'hq':'dash'];
+  else chain=['dc','storehouse'];
+  S.parts.push({chain,seg:0,t:0,kind,sp:.0011+Math.random()*.0004});
+}
+const pt=n=>typeof n==='string'?A(n):tableAnchor(n.tb);
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(64,now-last);last=now;
+  // explode tween
+  if(Math.abs(S.dzT-S.dz)>.3){S.dz+=(S.dzT-S.dz)*Math.min(1,dt/110);renderOverlay()}
+  else if(S.dz!==S.dzT){S.dz=S.dzT;renderOverlay()}
+  // scenario run
+  if(S.running){
+    const steps=SC[S.sc].s;
+    if(S.phase==='hop'){S.ph+=dt/(reduced?1:950);if(S.ph>=1){S.step++;S.phase='dwell';S.ph=0;refresh()}}
+    else{S.ph+=dt;if(S.ph>1500){if(S.step<steps.length-1){S.phase='hop';S.ph=0}else{S.running=false;renderPanel()}}}
+  }
+  // token
+  let tk='';
+  if(S.running&&S.phase==='hop'){const steps=SC[S.sc].s;const a=A(steps[S.step][0]),b=A(steps[S.step+1][0]);const p=qp(a,b,Math.min(1,S.ph));
+    tk=`<circle class="tokh" cx="${f(p[0])}" cy="${f(p[1])}" r="13"/><circle class="tok" cx="${f(p[0])}" cy="${f(p[1])}" r="6"/>`}
+  $('#gTok').innerHTML=tk;
+  // ambient particles
+  if(!reduced&&!document.hidden){
+    const rates={t:S.tables*.32,o:S.online/11,d:.35+S.stores*.03,s:.18};
+    for(const k in rates){S.acc[k]+=rates[k]*dt/1000;while(S.acc[k]>=1){S.acc[k]-=1;if(S.parts.length<90)spawn(k)}}
+    let s='';
+    S.parts=S.parts.filter(p=>{p.t+=p.sp*dt;if(p.t>=1){p.t=0;p.seg++;if(p.seg>=p.chain.length-1)return false}
+      const a=pt(p.chain[p.seg]),b=pt(p.chain[p.seg+1]),q=qp(a,b,p.t);
+      s+=`<circle class="pa" cx="${f(q[0])}" cy="${f(q[1])}" r="2.6" style="fill:${COL[p.kind]}"/>`;return true});
+    $('#gDyn').innerHTML=s;
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- events ---------- */
+function goStep(i){S.running=false;S.step=i;S.phase='dwell';S.ph=0;refresh()}
+document.addEventListener('click',e=>{
+  const sc=e.target.closest('[data-sc]');if(sc){S.sc=sc.dataset.sc;S.running=false;S.step=0;refresh();return}
+  const st=e.target.closest('[data-step]');if(st){goStep(+st.dataset.step);return}
+});
+$('#bRun').onclick=()=>{if(S.running){S.running=false;renderPanel();return}
+  S.step=0;S.phase='dwell';S.ph=700;S.running=true;refresh()};
+$('#bExp').onclick=e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',on);S.dzT=on?75:0};
+$('#bCov').onclick=e=>{S.cov=!S.cov;e.currentTarget.setAttribute('aria-pressed',S.cov);$('#scene').classList.toggle('cov',S.cov);$('#legend').classList.toggle('on',S.cov)};
+$('#rT').oninput=e=>{S.tables=+e.target.value;S.parts=S.parts.filter(p=>!(p.chain[0]&&p.chain[0].tb>=S.tables&&p.seg===0));syncRanges();renderFloor();renderStats()};
+$('#rO').oninput=e=>{S.online=+e.target.value;syncRanges();renderFloor();renderStats()};
+$('#rS').oninput=e=>{S.stores=+e.target.value;syncRanges();renderHQ();renderStats()};
+
+renderPlat();renderFloor();renderHQ();syncRanges();renderStats();refresh();
+if(document.fonts)document.fonts.ready.then(renderOverlay);
+requestAnimationFrame(loop);
+</script>
+
+</body></html>
