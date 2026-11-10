@@ -145,7 +145,7 @@ function advanceStep(){
  else if(step===2){log('Summary opened: Cappuccino 1 · Cafe Latte 2 · Mango Juice 1.');step=3;setView('summary')}
  else if(step===3){bumpFIFO('Cafe Latte');step=4;setView('summary')}
  else if(step===4){addLatteA1();step=5;setView('summary')}
- else if(step===5){bumpFIFO('Cafe Latte');log('Expected result: A2's Cafe Latte is Bumped; A1's newly added Cafe Latte remains Pending.');step=5;setView('summary')}
+ else if(step===5){bumpFIFO('Cafe Latte');log("Expected result: A2's Cafe Latte is Bumped; A1's newly added Cafe Latte remains Pending.");step=5;setView('summary')}
  render();
 }
 function resetDemo(){orders=initialOrders();nextCreated=5;step=1;bumpedCount=0;logs=[];log('Scenario reset to its initial state.');setView('summary');render()}
