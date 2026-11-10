@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KDS PRO — Interactive Prototype</title>
+<style>
+:root{--bg:#11151b;--panel:#1b222b;--panel2:#242d38;--line:#394452;--text:#f3f6fa;--muted:#aab5c2;--orange:#ff8a18;--orange2:#d96b00;--green:#26c281;--red:#f06b65;--blue:#68a9ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,Segoe UI,Arial,sans-serif}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid var(--line);background:#171d25;position:sticky;top:0;z-index:5}
+.brand{font-size:24px;font-weight:850;letter-spacing:.3px}.brand b{color:var(--orange)}.header-right{display:flex;align-items:center;gap:18px;color:var(--muted)}
+main{max-width:1500px;margin:auto;padding:24px}.topline{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+h1{font-size:27px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#2a3440;color:var(--text);padding:10px 14px;border-radius:9px;font-weight:700;cursor:pointer}.btn:hover{filter:brightness(1.15)}.btn.primary{background:var(--orange);border-color:var(--orange);color:#201407}.btn.green{background:#176c4b;border-color:#23865f}.btn.ghost{background:transparent}.btn:disabled{opacity:.35;cursor:not-allowed}
+.scenario{background:linear-gradient(120deg,#202b49 0%,#27365a 100%);border:1px solid #536b9c;border-left:5px solid #8daeff;border-radius:14px;padding:16px 18px;margin-bottom:20px;box-shadow:0 8px 24px #050a1638}
+.sc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.sc-head strong{font-size:16px}.step-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.step{background:#1b2742;border:1px solid #45577e;border-radius:9px;padding:10px;min-height:65px;color:#b9c8e8;font-size:12px}.step b{display:block;color:var(--text);font-size:13px;margin-bottom:3px}.step.active{border-color:#ffca70;background:#57411f;box-shadow:inset 0 0 0 1px #ffca70}.step.done{border-color:#55c99a;background:#173e3a}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}.metric span{display:block;color:var(--muted);font-size:12px}.metric strong{font-size:27px}
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:16px}.tab{padding:11px 17px;border:0;background:transparent;color:var(--muted);font-weight:750;cursor:pointer;border-bottom:3px solid transparent}.tab.active{color:var(--orange);border-color:var(--orange)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px}.content{min-width:0}.side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;height:max-content}
+.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.item-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between}.item-title{font-weight:800;font-size:17px}.qty{font-size:34px;font-weight:850;color:var(--orange)}.item-meta{color:var(--muted);font-size:12px}.item-card button{width:100%;margin-top:12px}
+.order-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.order{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}.order-head{padding:14px 16px;background:#293542;display:flex;justify-content:space-between;align-items:center}.table-name{font-size:23px;font-weight:900}.order-no{font-size:12px;color:var(--muted)}.order-body{padding:8px 15px}.order-item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #303a46}.order-item:last-child{border:0}.order-item small{color:var(--muted);display:block}.status{font-size:10px;font-weight:800;letter-spacing:.4px;padding:4px 7px;border-radius:20px;background:#49351e;color:#ffbd70}.status.ready{background:#164b38;color:#7ce2b6}.status.progress{background:#1e4166;color:#9ac8ff}.tiny{padding:6px 9px;font-size:11px}
+.log{display:flex;flex-direction:column;gap:10px;margin-top:10px}.log-entry{border-left:2px solid var(--orange);padding-left:10px;color:var(--muted);font-size:12px}.log-entry b{color:var(--text);display:block}
+.notice{padding:11px 12px;background:#33291e;border:1px solid #6d4a24;border-radius:9px;color:#ffd29b;font-size:12px;margin:12px 0}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:12px}
+footer{padding:22px;color:#778391;text-align:center;font-size:11px}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.side{order:2}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){main{padding:14px}.topline{display:block}.actions{margin-top:12px}.metrics{grid-template-columns:repeat(2,1fr)}.step-row{grid-template-columns:1fr}.order-grid,.summary-grid{grid-template-columns:1fr}header{padding:0 14px}.header-right{font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>◉</b> KDS PRO <span style="font-weight:400;color:#8e9aa8">/ INTERACTIVE LAB</span></div>
+  <div class="header-right"><span>BAR STATION</span><span>● ONLINE</span><strong id="clock">--:--:--</strong></div>
+</header>
+<main>
+  <div class="topline">
+    <div><h1>Order Summary & FIFO Bump</h1><div class="sub">Prototype simulating POS → KDS Summary → Item Bump → source Order update</div></div>
+    <div class="actions">
+      <button class="btn ghost" onclick="resetDemo()">↺ Reset Scenario</button>
+      <button class="btn" onclick="advanceStep()">Next Scenario Step →</button>
+    </div>
+  </div>
+
+  <section class="scenario"><div style="font-size:10px;font-weight:850;letter-spacing:1.5px;color:#b9caff;margin-bottom:8px">SCENARIO CONTROL AREA</div>
+    <div class="sc-head"><strong>Scenario: FIFO by Item Creation Time</strong><span id="stepLabel" class="status">STEP 1 / 5</span></div>
+    <div class="step-row" id="steps">
+      <div class="step active"><b>01 · POS Order</b>A1 and A2 submit orders</div>
+      <div class="step"><b>02 · Summary</b>Aggregate by item</div>
+      <div class="step"><b>03 · Bump 1 Latte</b>Bump A1's earlier Latte</div>
+      <div class="step"><b>04 · Add Item</b>A1 adds one more Latte</div>
+      <div class="step"><b>05 · Bump 1 Latte</b>Bump A2's earlier Latte</div>
+    </div>
+  </section>
+
+  <section class="metrics">
+    <div class="metric"><span>Pending Items</span><strong id="pendingTotal">4</strong></div>
+    <div class="metric"><span>Items Bumped</span><strong id="bumpedTotal">0</strong></div>
+    <div class="metric"><span>Active Tables</span><strong id="tableTotal">2</strong></div>
+    <div class="metric"><span>Pending Cafe Latte</span><strong id="latteTotal">2</strong></div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" id="summaryTab" onclick="setView('summary')">▦ Summary</button>
+    <button class="tab" id="ordersTab" onclick="setView('orders')">▤ Orders by Table</button>
+  </div>
+
+  <div style="font-size:10px;font-weight:850;letter-spacing:1.5px;color:#aab5c2;margin:0 0 9px">KDS EXAMPLE SCREEN</div><div class="layout">
+    <section class="content">
+      <div id="summaryView">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:0 0 12px"><div><b style="font-size:18px">Item Summary</b><div class="sub">Not grouped by table · shows pending item quantities only</div></div><span class="status">PENDING</span></div>
+        <div class="summary-grid" id="summaryGrid"></div>
+        <div class="legend"><span>● Pending = chưa Bump</span><span style="color:#7ce2b6">● Bumped = đã hoàn thành</span><span>FIFO = món được tạo sớm nhất được Bump trước</span></div>
+      </div>
+      <div id="ordersView" hidden>
+        <div style="margin:0 0 12px"><b style="font-size:18px">Orders by Table</b><div class="sub">Bumping here updates the same data used by Summary</div></div>
+        <div class="order-grid" id="orderGrid"></div>
+      </div>
+    </section>
+    <aside class="side">
+      <b>Scenario controls</b>
+      <p class="sub">Run the scenario step by step or interact directly with the Summary.</p>
+      <button class="btn primary" style="width:100%" onclick="advanceStep()">Run Next Step</button>
+      <button class="btn" style="width:100%;margin-top:8px" onclick="addLatteA1()">+ Add 1 Cafe Latte to A1</button>
+      <div class="notice"><b>FIFO rule</b><br>Summary requests a Bump by product. The engine selects the oldest pending item by creation time, then updates the correct source Order and Item.</div>
+      <div style="margin-top:16px"><b>Activity timeline</b><div class="log" id="log"></div></div>
+    </aside>
+  </div>
+</main>
+<footer>KDS PRO · Interactive business-flow prototype · Demo data is held in browser memory. No live POS or backend connection.</footer>
+<script>
+const initialOrders = () => [
+ {id:'1001',table:'A1',items:[
+  {id:'i1001-1',name:'Cafe Cappuccino',createdAt:1,status:'PENDING'},
+  {id:'i1001-2',name:'Cafe Latte',createdAt:2,status:'PENDING'}]},
+ {id:'1002',table:'A2',items:[
+  {id:'i1002-1',name:'Mango Juice',createdAt:3,status:'PENDING'},
+  {id:'i1002-2',name:'Cafe Latte',createdAt:4,status:'PENDING'}]}
+];
+let orders=initialOrders(), nextCreated=5, step=1, view='summary', bumpedCount=0, logs=[];
+const $=id=>document.getElementById(id);
+function log(msg){logs.unshift({time:new Date().toLocaleTimeString('vi-VN'),msg});renderLog()}
+function renderLog(){$('log').innerHTML=logs.map(x=>`<div class="log-entry"><b>${x.time}</b>${x.msg}</div>`).join('')||'<div class="sub">No activity yet.</div>'}
+function allItems(){return orders.flatMap(o=>o.items.map(i=>({...i,orderId:o.id,table:o.table})))}
+function pendingItems(){return allItems().filter(i=>i.status==='PENDING')}
+function bumpFIFO(name){
+ const candidates=orders.flatMap(o=>o.items.filter(i=>i.name===name&&i.status==='PENDING').map(i=>({o,i}))).sort((a,b)=>a.i.createdAt-b.i.createdAt);
+ if(!candidates.length){log(`No pending ${name} item is available to bump.`);return null}
+ const {o,i}=candidates[0];i.status='READY';i.bumpedAt=Date.now();bumpedCount++;
+ log(`Bumped 1 × ${name} → Table ${o.table}, Order #${o.id} (FIFO: Item ${i.id}).`);
+ render();return {order:o,item:i};
+}
+function renderSummary(){
+ const pending=pendingItems(), groups={};
+ pending.forEach(i=>groups[i.name]=(groups[i.name]||0)+1);
+ $('summaryGrid').innerHTML=Object.entries(groups).map(([name,qty])=>`<article class="item-card"><div><div class="item-title">${name}</div><div class="item-meta">Pending quantity · all tables</div></div><div class="qty">${qty}</div><button class="btn primary" onclick="bumpFIFO('${name.replace(/'/g,"\\'")}')">BUMP 1 UNIT →</button></article>`).join('')||'<div class="empty" style="grid-column:1/-1">No pending items.</div>';
+}
+function renderOrders(){
+ $('orderGrid').innerHTML=orders.map(o=>{
+  const pending=o.items.filter(i=>i.status==='PENDING'), ready=o.items.filter(i=>i.status==='READY');
+  return `<article class="order"><div class="order-head"><div><div class="table-name">TABLE ${o.table}</div><div class="order-no">ORDER #${o.id}</div></div><span class="status ${pending.length?'':'ready'}">${pending.length?'IN PROGRESS':'COMPLETED'}</span></div><div class="order-body">
+  ${o.items.map(i=>`<div class="order-item"><div><b>${i.name}</b><small>Item ${i.id} · created #${i.createdAt}</small></div><span class="status ${i.status==='READY'?'ready':''}">${i.status}</span>${i.status==='PENDING'?`<button class="btn tiny" onclick="bumpSpecific('${i.id}')">BUMP</button>`:'<span class="sub">✓</span>'}</div>`).join('')}
+  ${!o.items.length?'<div class="empty">No items</div>':''}</div></article>`;
+ }).join('');
+}
+function bumpSpecific(id){for(const o of orders){const i=o.items.find(x=>x.id===id);if(i&&i.status==='PENDING'){i.status='READY';bumpedCount++;log(`Bumped ${i.name} directly from Order #${o.id} – Table ${o.table}.`);render();return}}}
+function render(){
+ const pending=pendingItems();$('pendingTotal').textContent=pending.length;$('bumpedTotal').textContent=bumpedCount;
+ $('tableTotal').textContent=orders.filter(o=>o.items.some(i=>i.status==='PENDING')).length;
+ $('latteTotal').textContent=pending.filter(i=>i.name==='Cafe Latte').length;
+ renderSummary();renderOrders();renderLog();
+ $('stepLabel').textContent=`STEP ${step} / 5`;
+ [...$('steps').children].forEach((el,i)=>{el.className='step'+(i+1<step?' done':i+1===step?' active':'')});
+}
+function setView(v){view=v;$('summaryView').hidden=v!=='summary';$('ordersView').hidden=v!=='orders';$('summaryTab').classList.toggle('active',v==='summary');$('ordersTab').classList.toggle('active',v==='orders')}
+function addLatteA1(){
+ const o=orders.find(x=>x.table==='A1');if(!o)return;
+ const i={id:'i1001-'+nextCreated,name:'Cafe Latte',createdAt:nextCreated++,status:'PENDING'};o.items.push(i);
+ log(`POS added 1 × Cafe Latte to Table A1 (Order #${o.id}), new Item ${i.id}.`);
+ render();
+}
+function advanceStep(){
+ if(step===1){log('POS submitted Order #1001 for Table A1 and Order #1002 for Table A2.');step=2;setView('summary')}
+ else if(step===2){log('Summary opened: Cappuccino 1 · Cafe Latte 2 · Mango Juice 1.');step=3;setView('summary')}
+ else if(step===3){bumpFIFO('Cafe Latte');step=4;setView('summary')}
+ else if(step===4){addLatteA1();step=5;setView('summary')}
+ else if(step===5){bumpFIFO('Cafe Latte');log('Expected result: A2's Cafe Latte is Bumped; A1's newly added Cafe Latte remains Pending.');step=5;setView('summary')}
+ render();
+}
+function resetDemo(){orders=initialOrders();nextCreated=5;step=1;bumpedCount=0;logs=[];log('Scenario reset to its initial state.');setView('summary');render()}
+setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString('vi-VN'),1000);
+log('Prototype ready. Starting with 2 POS orders.');render();
+</script>
+</body>
+</html>
