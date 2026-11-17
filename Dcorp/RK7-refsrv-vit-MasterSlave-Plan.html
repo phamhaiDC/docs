@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RK7 | Kế hoạch chuyển đổi refsrv.vit và mô hình Master-Slave</title>
+<style>
+  :root{
+    --ink:#1f2933; --muted:#5f6b7a; --line:#d9dee5; --bg:#f6f7f9; --card:#ffffff;
+    --blue:#1f5fa8; --blue-l:#e8f0fa; --green:#1e7a46; --green-l:#e6f4ec;
+    --amber:#9a6200; --amber-l:#fdf3e1; --red:#b3261e; --red-l:#fbe9e8; --gray-l:#eef0f3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
+  header{border-bottom:3px solid var(--blue);padding-bottom:16px;margin-bottom:24px}
+  header h1{margin:0 0 6px;font-size:24px}
+  header .meta{color:var(--muted);font-size:13px}
+  nav{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:14px}
+  nav a{color:var(--blue);text-decoration:none;margin-right:14px;white-space:nowrap}
+  section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px 24px;margin-bottom:20px}
+  h2{margin:0 0 14px;font-size:19px;color:var(--blue)}
+  h3{margin:18px 0 8px;font-size:16px}
+  table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--gray-l);font-weight:600}
+  code{font-family:Consolas,"Courier New",monospace;background:var(--gray-l);padding:1px 5px;border-radius:3px;font-size:13px}
+  pre{background:#1f2933;color:#e6e9ee;padding:12px 14px;border-radius:6px;overflow-x:auto;font-size:13px;margin:8px 0}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:6px}
+  .kpi div{border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--bg)}
+  .kpi b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600}
+  .ok{background:var(--green-l);color:var(--green)}
+  .wait{background:var(--amber-l);color:var(--amber)}
+  .todo{background:var(--blue-l);color:var(--blue)}
+  .risk{background:var(--red-l);color:var(--red)}
+  .note{border-left:4px solid var(--amber);background:var(--amber-l);padding:10px 14px;border-radius:4px;margin:12px 0;font-size:14px}
+  .crit{border-left:4px solid var(--red);background:var(--red-l);padding:10px 14px;border-radius:4px;margin:12px 0;font-size:14px}
+  .phase{border:1px solid var(--line);border-radius:6px;margin:12px 0;overflow:hidden}
+  .phase .ph{background:var(--blue-l);padding:10px 14px;font-weight:600;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .phase .pb{padding:10px 14px}
+  .phase ol{margin:6px 0 6px 18px;padding:0}
+  .phase li{margin:4px 0}
+  .diagram{overflow-x:auto;text-align:center;margin:8px 0}
+  footer{color:var(--muted);font-size:12px;text-align:center;margin-top:24px}
+  @media print{body{background:#fff}section,nav{break-inside:avoid}nav{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>RK7 | Kế hoạch chuyển đổi sang refsrv.vit và mô hình Master-Slave cho Reference Server</h1>
+  <div class="meta">Khách hàng: VTI (Highlands Coffee) · Enterprise Code: 60415 · Quy mô: hơn 1.000 restaurant objects · Đơn vị thực hiện: Dcorp · Phiên bản tài liệu: 17.11.2026</div>
+</header>
+
+<nav>
+  <a href="#s1">1. Tóm tắt</a>
+  <a href="#s2">2. Cơ chế license</a>
+  <a href="#s3">3. Kết quả kiểm chứng</a>
+  <a href="#s4">4. Mô hình Master-Slave</a>
+  <a href="#s5">5. Kế hoạch chuyển đổi</a>
+  <a href="#s6">6. Quy trình failover</a>
+  <a href="#s7">7. Rủi ro và điểm mở</a>
+  <a href="#s8">8. Việc cần làm</a>
+</nav>
+
+<!-- 1 -->
+<section id="s1">
+  <h2>1. Tóm tắt</h2>
+  <p><b>Vấn đề:</b> license của cash server và report server gắn với HardwareID của Reference Server. Với <code>refsrv.exe</code> chuẩn, HardwareID thay đổi theo phần cứng VM. Khi khởi động REF dự phòng trên VM khác, MID báo "License error" và ngắt kết nối. Muốn chạy được phải cấp lại license cho hơn 1.000 nhà hàng ngay trong lúc sự cố.</p>
+  <p><b>Giải pháp đã thống nhất với UCS:</b> chuyển toàn bộ prod sang build <code>refsrv.vit</code> + <code>rkReportsServer.vit</code>. Build này trả về HardwareID cố định <code>413466537</code> trên mọi VM. License được cấp lại một lần theo HardwareID này. Sau đó Master và Slave ở 2 VM khác nhau dùng chung một bộ license, failover không phải cấp lại license.</p>
+  <div class="kpi">
+    <div><b>HardwareID cố định (.vit)</b>413466537</div>
+    <div><b>Loại license của VTI</b>Network (lấy từ license server UCS)</div>
+    <div><b>Chu kỳ refresh license</b>Khi khởi động REF + mỗi 1–1,5 giờ</div>
+    <div><b>Phạm vi cấp lại license</b>Toàn bộ cash server + report server</div>
+  </div>
+  <div class="note">Tên gọi: UCS viết <code>refsrv.viet</code> / <code>rkReportsServer.viet</code>, Dcorp viết <code>refsrv.vit</code> / <code>rkReportsServer.vit</code>. Hai cách viết chỉ cùng một bản build. Tài liệu này dùng <code>.vit</code>.</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2>2. Cơ chế kiểm tra license (theo UCS)</h2>
+  <ol>
+    <li>Khi kết nối, MID gọi <code>RefDoUserLogin</code> qua chuỗi ReportLocal → rkReportsServer → Reference Server.</li>
+    <li>REF trả về cho MID: HardwareID của REF và chuỗi license của cash server.</li>
+    <li>MID tự kiểm tra license theo HardwareID nhận được. Không khớp thì ghi "License error ... for cash server" và ngắt kết nối.</li>
+  </ol>
+  <h3>Các điểm UCS đã xác nhận</h3>
+  <table>
+    <tr><th style="width:32%">Nội dung</th><th>Chi tiết</th></tr>
+    <tr><td>License gắn với gì</td><td>Gắn với HardwareID của <b>Reference Server</b>, không gắn với máy chạy MID.</td></tr>
+    <tr><td>LicHardInfo</td><td>REF tự ghi giá trị này theo phần cứng của nó mỗi lần khởi động, rồi đồng bộ xuống MID và Report Server. Không phải cơ chế riêng của Report Server.</td></tr>
+    <tr><td>Số HardwareID trên một license</td><td>Đúng một. Không có cơ chế một license dùng cho hai HardwareID.</td></tr>
+    <tr><td>Report Server</td><td>License của report server cũng kiểm tra theo HardwareID của REF, nên cũng phải cấp lại.</td></tr>
+    <tr><td>Khi license lỗi</td><td>MID ngắt kết nối, master-data không đồng bộ. Khi đóng ca tổng (common shift), MID không chuẩn bị dữ liệu ca để gửi lên REF.</td></tr>
+    <tr><td>Network license</td><td>REF lấy license từ license server khi khởi động và mỗi 1–1,5 giờ (tham số <code>RefreshLicenses</code>, mặc định bật). Nếu licensing cấp lại phía server thì không phải thao tác tại nhà hàng. <span class="tag wait">Chờ bộ phận licensing xác nhận</span></td></tr>
+    <tr><td>Thời điểm cấp lại license</td><td>Phải đồng thời với việc chuyển prod sang <code>.vit</code>. Sau khi cấp lại, <code>refsrv.exe</code> chuẩn sẽ không qua được kiểm tra license.</td></tr>
+  </table>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2>3. Kết quả kiểm chứng</h2>
+  <h3>3.1 Test ngày 26.08.2026: dùng rk7.udb prod trên REF mới, chưa cấp lại license</h3>
+  <table>
+    <tr><th>Scenario</th><th>Cách test</th><th>Kết quả</th></tr>
+    <tr><td>1</td><td>REF mới + MID mới (work.udb prod)</td><td><span class="tag risk">License error in MiddleServer</span></td></tr>
+    <tr><td>2</td><td>REF mới + MID prod kết nối lại vào REF mới</td><td><span class="tag risk">License error in MiddleServer</span></td></tr>
+    <tr><td>3</td><td>REF mới + rkReportServer mới + MID prod kết nối lại vào Report Server mới</td><td><span class="tag risk">License error in MiddleServer</span></td></tr>
+  </table>
+  <p>Nguyên nhân (UCS xác nhận): license trong rk7.udb prod được cấp theo HardwareID của REF prod đang chạy bản chuẩn.</p>
+
+  <h3>3.2 Test ngày 16.11.2026: so sánh HardwareID trên 2 VM</h3>
+  <table>
+    <tr><th>Build</th><th>VM 1</th><th>VM 2</th><th>Kết luận</th></tr>
+    <tr><td><code>refsrv.exe</code> (chuẩn)</td><td>-1699206272</td><td>1252785908</td><td><span class="tag risk">Thay đổi theo phần cứng</span></td></tr>
+    <tr><td><code>refsrv.vit.exe</code></td><td>413466537</td><td>413466537</td><td><span class="tag ok">Cố định</span></td></tr>
+  </table>
+<pre>refsrv.exe     VM1: 33:LicHardInfo=-1699206272, LicHardInfoNew=-1699206272
+refsrv.exe     VM2: 33:LicHardInfo=1252785908, LicHardInfoNew=1252785908
+refsrv.vit.exe VM1: 33:HW.LicHardInfo=413466537, LicHardInfoNew=413466537
+refsrv.vit.exe VM2: 33:HW.LicHardInfo=413466537, LicHardInfoNew=413466537</pre>
+  <p>UCS (17.11.2026) xác nhận kết quả và kế hoạch của Dcorp là đúng.</p>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2>4. Mô hình Master-Slave với license mới</h2>
+  <div class="diagram">
+  <svg viewBox="0 0 900 545" width="100%" style="max-width:900px" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif" font-size="13">
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f5fa8"/></marker>
+      <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a94a3"/></marker>
+    </defs>
+    <!-- License server -->
+    <rect x="330" y="10" width="240" height="56" rx="8" fill="#eef0f3" stroke="#8a94a3"/>
+    <text x="450" y="34" text-anchor="middle" font-weight="600">License Server UCS</text>
+    <text x="450" y="53" text-anchor="middle" fill="#5f6b7a">Network license · HW 413466537</text>
+    <!-- Master -->
+    <rect x="40" y="110" width="330" height="150" rx="8" fill="#e6f4ec" stroke="#1e7a46" stroke-width="1.5"/>
+    <text x="205" y="134" text-anchor="middle" font-weight="700" fill="#1e7a46">MASTER · VM1 · DC chính (ACTIVE)</text>
+    <rect x="60" y="148" width="290" height="40" rx="5" fill="#fff" stroke="#1e7a46"/>
+    <text x="205" y="173" text-anchor="middle">refsrv.vit.exe · HW.LicHardInfo=413466537</text>
+    <rect x="60" y="198" width="290" height="40" rx="5" fill="#fff" stroke="#1e7a46"/>
+    <text x="205" y="223" text-anchor="middle">rkReportsServer.vit.exe</text>
+    <!-- Slave -->
+    <rect x="530" y="110" width="330" height="150" rx="8" fill="#fdf3e1" stroke="#9a6200" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="695" y="134" text-anchor="middle" font-weight="700" fill="#9a6200">SLAVE · VM2 · DC khác (STANDBY)</text>
+    <rect x="550" y="148" width="290" height="40" rx="5" fill="#fff" stroke="#9a6200"/>
+    <text x="695" y="173" text-anchor="middle">refsrv.vit.exe · HW.LicHardInfo=413466537</text>
+    <rect x="550" y="198" width="290" height="40" rx="5" fill="#fff" stroke="#9a6200"/>
+    <text x="695" y="223" text-anchor="middle">rkReportsServer.vit.exe</text>
+    <!-- license links -->
+    <line x1="380" y1="66" x2="250" y2="108" stroke="#1f5fa8" stroke-width="1.5" marker-end="url(#a)"/>
+    <line x1="520" y1="66" x2="650" y2="108" stroke="#8a94a3" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#g)"/>
+    <!-- data copy -->
+    <line x1="372" y1="185" x2="526" y2="185" stroke="#8a94a3" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#g)"/>
+    <text x="450" y="176" text-anchor="middle" fill="#5f6b7a" font-size="12">rk7.udb (backup / đồng bộ)</text>
+    <!-- Location -->
+    <rect x="230" y="322" width="440" height="190" rx="10" fill="#f6f7f9" stroke="#1f5fa8" stroke-dasharray="5 4"/>
+    <text x="450" y="342" text-anchor="middle" font-weight="700" fill="#1f5fa8">Tại mỗi nhà hàng (hơn 1.000 location)</text>
+    <rect x="270" y="354" width="360" height="52" rx="6" fill="#e8f0fa" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="450" y="376" text-anchor="middle" font-weight="600">ReportLocal</text>
+    <text x="450" y="395" text-anchor="middle" fill="#5f6b7a" font-size="12">Kết nối lên rkReportsServer.vit ở trung tâm</text>
+    <rect x="270" y="446" width="360" height="52" rx="6" fill="#fff" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="450" y="468" text-anchor="middle" font-weight="600">MiddleServer</text>
+    <text x="450" y="487" text-anchor="middle" fill="#5f6b7a" font-size="12">Kết nối vào ReportLocal · kiểm tra license theo HW 413466537</text>
+    <line x1="450" y1="444" x2="450" y2="410" stroke="#1f5fa8" stroke-width="2" marker-end="url(#a)"/>
+    <!-- ReportLocal up -->
+    <line x1="380" y1="352" x2="230" y2="264" stroke="#1f5fa8" stroke-width="2" marker-end="url(#a)"/>
+    <text x="215" y="310" fill="#1f5fa8" font-size="12">Kết nối bình thường</text>
+    <line x1="520" y1="352" x2="670" y2="264" stroke="#8a94a3" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#g)"/>
+    <text x="610" y="310" fill="#5f6b7a" font-size="12">Chuyển hướng khi failover</text>
+    <text x="450" y="532" text-anchor="middle" fill="#5f6b7a" font-size="12">Cùng HardwareID nên một bộ license hợp lệ cho cả Master và Slave</text>
+  </svg>
+  </div>
+  <h3>Nguyên tắc vận hành</h3>
+  <table>
+    <tr><th style="width:30%">Thành phần</th><th>Quy định</th></tr>
+    <tr><td>Tại nhà hàng</td><td>MiddleServer kết nối vào ReportLocal tại chỗ, ReportLocal kết nối lên <code>rkReportsServer.vit</code> ở trung tâm. MiddleServer vẫn là thành phần tự kiểm tra license theo HardwareID mà REF trả về qua chuỗi kết nối này.</td></tr>
+    <tr><td>Master (VM1)</td><td>Chạy <code>refsrv.vit</code> + <code>rkReportsServer.vit</code>. Phục vụ toàn bộ ReportLocal trong vận hành bình thường.</td></tr>
+    <tr><td>Slave (VM2)</td><td>Cài sẵn cùng build <code>.vit</code>, cùng version với Master. Ở trạng thái standby (dừng dịch vụ), chỉ khởi động khi failover. <span class="tag wait">Chạy song song với Master: chờ UCS xác nhận</span></td></tr>
+    <tr><td>License</td><td>Một bộ license network, cấp theo HW 413466537. REF đang chạy sẽ lấy license từ license server khi khởi động.</td></tr>
+    <tr><td>Dữ liệu (rk7.udb)</td><td>License không giải quyết việc dữ liệu cũ hay mới. Slave cần được cập nhật rk7.udb định kỳ. Thay đổi master-data sau lần cập nhật gần nhất sẽ mất khi failover.</td></tr>
+    <tr><td>Version</td><td>Mỗi lần nâng cấp RK7, Master và Slave phải nâng cấp cùng lúc, và UCS phải cung cấp bản <code>.vit</code> tương ứng.</td></tr>
+  </table>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2>5. Kế hoạch chuyển đổi</h2>
+
+  <div class="phase">
+    <div class="ph"><span>Giai đoạn 0 · Chuẩn bị</span><span class="tag wait">Đang thực hiện</span></div>
+    <div class="pb">
+      <ol>
+        <li>Bộ phận licensing UCS xác nhận: cấp lại theo lô toàn bộ license cash server + report server theo HW 413466537, chỉ làm phía license server. Chốt thời gian thực hiện và người đầu mối. <span class="tag wait">Chờ UCS</span></li>
+        <li>Rà soát 42 cash server + 40 report server đang nhận mã 202 (license đã bị xóa), ví dụ <code>HLCHCM0013_MID</code>. Xác định object còn hoạt động hay cần dọn. Lỗi này không liên quan tới <code>.vit</code>. <span class="tag todo">Dcorp / VTI</span></li>
+        <li>Kiểm tra hậu tố HW trong dòng khởi động log của <code>rkReportsServer.vit</code>. Trước khi cấp lại license, báo License error là hành vi dự kiến. <span class="tag todo">Dcorp</span></li>
+        <li>Test HardwareID trên đúng VM sẽ làm Slave, nhất là khi Slave đặt ở DC hoặc hypervisor khác. <span class="tag todo">Dcorp</span></li>
+        <li>Nhận từ UCS bản <code>refsrv.vit</code> + <code>rkReportsServer.vit</code> cùng version với prod hiện tại. <span class="tag todo">Dcorp / UCS</span></li>
+        <li>Backup đầy đủ rk7.udb và cấu hình (INI) của REF và Report Server prod. <span class="tag todo">Dcorp</span></li>
+        <li>Chốt phương án rollback với UCS (xem mục 7). <span class="tag wait">Chờ UCS</span></li>
+        <li>Chốt khung giờ cutover với VTI và thông báo cho Command Center. <span class="tag todo">Dcorp / VTI</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span>Giai đoạn 1 · Cutover prod sang .vit</span><span class="tag todo">Chưa lên lịch</span></div>
+    <div class="pb">
+      <ol>
+        <li>Dừng <code>rkReportsServer.exe</code> và <code>refsrv.exe</code> trên Master.</li>
+        <li>Thay binary bằng bản <code>.vit</code>, giữ nguyên rk7.udb và INI.</li>
+        <li>Bộ phận licensing cấp lại license theo HW 413466537 (phối hợp trực tiếp với UCS, cùng thời điểm).</li>
+        <li>Khởi động <code>refsrv.vit</code>. Kiểm tra log có dòng <code>HW.LicHardInfo=413466537</code> và license được lấy về thành công.</li>
+        <li>Khởi động <code>rkReportsServer.vit</code>. Kiểm tra log không có License error.</li>
+        <li>Kiểm tra MID kết nối lại: theo dõi số MID online, không có "License error ... for cash server" trong log.</li>
+      </ol>
+      <div class="crit">Sau khi license được cấp lại, <code>refsrv.exe</code> chuẩn không còn chạy được với license mới. Không được thực hiện bước 3 trước khi Master sẵn sàng khởi động bằng bản <code>.vit</code>.</div>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span>Giai đoạn 2 · Theo dõi sau cutover</span><span class="tag todo">Sau giai đoạn 1</span></div>
+    <div class="pb">
+      <ol>
+        <li>Theo dõi ít nhất 24 giờ: không có License error trên MID và Report Server.</li>
+        <li>Xác nhận đóng ca tổng thành công và dữ liệu ca được gửi lên REF.</li>
+        <li>Xác nhận đồng bộ master-data xuống nhà hàng bình thường.</li>
+        <li>Đưa cảnh báo "License error" vào giám sát (Zabbix / Graylog).</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span>Giai đoạn 3 · Dựng Slave</span><span class="tag todo">Sau giai đoạn 2</span></div>
+    <div class="pb">
+      <ol>
+        <li>Cài <code>refsrv.vit</code> + <code>rkReportsServer.vit</code> trên VM2, cùng version với Master.</li>
+        <li>Sao chép rk7.udb và INI từ Master. Điều chỉnh tham số theo môi trường VM2 nếu cần.</li>
+        <li>Khởi động thử trong môi trường cách ly, xác nhận <code>HW.LicHardInfo=413466537</code>, sau đó dừng dịch vụ.</li>
+        <li>Thiết lập lịch cập nhật rk7.udb từ Master sang Slave.</li>
+        <li>Chốt phương thức chuyển hướng ReportLocal sang <code>rkReportsServer.vit</code> trên Slave: đổi IP/DNS hoặc đổi INI hàng loạt qua Zabbix. MiddleServer giữ nguyên kết nối vào ReportLocal.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="ph"><span>Giai đoạn 4 · Diễn tập failover</span><span class="tag todo">Sau giai đoạn 3</span></div>
+    <div class="pb">
+      <ol>
+        <li>Diễn tập trên nhóm nhỏ nhà hàng hoặc ngoài giờ bán hàng theo quy trình mục 6.</li>
+        <li>Đo thời gian từ lúc quyết định failover tới khi toàn bộ MID kết nối lại vào Slave.</li>
+        <li>Diễn tập failback về Master.</li>
+        <li>Cập nhật SOP theo kết quả diễn tập.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2>6. Quy trình failover (dự thảo)</h2>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:44%">Bước</th><th>Kiểm tra</th></tr>
+    <tr><td>1</td><td>Xác nhận Master không khả dụng và quyết định failover</td><td>Người có thẩm quyền phê duyệt</td></tr>
+    <tr><td>2</td><td>Đảm bảo dịch vụ REF và Report Server trên Master đã dừng</td><td>Tránh 2 REF cùng HardwareID chạy đồng thời khi UCS chưa xác nhận</td></tr>
+    <tr><td>3</td><td>Cập nhật rk7.udb mới nhất có được lên Slave</td><td>Ghi lại thời điểm của bản rk7.udb dùng cho Slave</td></tr>
+    <tr><td>4</td><td>Khởi động <code>refsrv.vit</code> rồi <code>rkReportsServer.vit</code> trên Slave</td><td>Log có <code>HW.LicHardInfo=413466537</code>, license lấy về thành công</td></tr>
+    <tr><td>5</td><td>Chuyển hướng ReportLocal tại các nhà hàng sang <code>rkReportsServer.vit</code> trên Slave (MiddleServer giữ nguyên kết nối vào ReportLocal)</td><td>Số ReportLocal và MiddleServer online, không có License error</td></tr>
+    <tr><td>6</td><td>Theo dõi vận hành trên Slave</td><td>Đồng bộ master-data, đóng ca tổng</td></tr>
+    <tr><td>7</td><td>Failback: khi Master đã sửa xong, chuyển dữ liệu từ Slave về Master và chuyển MID về</td><td>Các thay đổi master-data làm trên Slave phải được đưa về Master</td></tr>
+  </table>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2>7. Rủi ro và điểm còn mở</h2>
+  <table>
+    <tr><th style="width:5%">#</th><th style="width:38%">Nội dung</th><th style="width:15%">Mức độ</th><th>Hướng xử lý</th></tr>
+    <tr><td>1</td><td>Bộ phận licensing chưa xác nhận cấp lại theo lô phía server</td><td><span class="tag risk">Chặn cutover</span></td><td>Yêu cầu UCS xác nhận bằng văn bản, kèm thời gian thực hiện</td></tr>
+    <tr><td>2</td><td>Khoảng trống refresh license 1–1,5 giờ sau khi cấp lại</td><td><span class="tag risk">Cao</span></td><td>Hỏi UCS: restart REF ngay sau khi cấp lại có đủ không, MID có phải restart không</td></tr>
+    <tr><td>3</td><td>Rollback sau cutover: <code>refsrv.exe</code> chuẩn không chạy được với license mới</td><td><span class="tag risk">Cao</span></td><td>Chốt với UCS quy trình cấp lại license theo HardwareID cũ nếu phải quay lại</td></tr>
+    <tr><td>4</td><td>Phụ thuộc build đặc biệt <code>.vit</code> khi nâng cấp RK7</td><td><span class="tag wait">Trung bình</span></td><td>Yêu cầu UCS cam kết duy trì, hoặc đưa HardwareID cố định vào bản chuẩn</td></tr>
+    <tr><td>5</td><td>Master và Slave chạy đồng thời cùng HardwareID</td><td><span class="tag wait">Trung bình</span></td><td>Hỏi UCS về điều khoản license và xung đột kỹ thuật; tạm thời dùng cold standby</td></tr>
+    <tr><td>6</td><td>Slave dùng rk7.udb cũ, mất thay đổi master-data</td><td><span class="tag wait">Trung bình</span></td><td>Lịch cập nhật rk7.udb định kỳ; ghi nhận thời điểm bản dùng khi failover</td></tr>
+    <tr><td>7</td><td>Cửa hàng mở mới sau cutover</td><td><span class="tag wait">Trung bình</span></td><td>Xác nhận license mới cấp theo HW 413466537</td></tr>
+    <tr><td>8</td><td>82 object nhận mã 202 (license đã bị xóa)</td><td><span class="tag todo">Thấp</span></td><td>Rà soát, dọn trước cutover</td></tr>
+    <tr><td>9</td><td>Ảnh hưởng tới bán hàng trên CashStation khi license lỗi chưa được UCS nêu</td><td><span class="tag todo">Cần làm rõ</span></td><td>Hỏi UCS; dữ liệu ca chưa gửi có tự gửi lại không</td></tr>
+  </table>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+  <h2>8. Việc cần làm tiếp</h2>
+  <table>
+    <tr><th style="width:5%">#</th><th>Việc</th><th style="width:16%">Phụ trách</th><th style="width:16%">Trạng thái</th></tr>
+    <tr><td>1</td><td>Gửi UCS: xác nhận đi theo kế hoạch, yêu cầu bộ phận licensing xác nhận cấp lại theo lô</td><td>Dcorp</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>2</td><td>Hỏi UCS các điểm mở 2, 3, 4, 5, 9 ở mục 7</td><td>Dcorp</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>3</td><td>Rà soát 42 cash server + 40 report server mã 202</td><td>Dcorp / VTI</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>4</td><td>Kiểm tra hậu tố HW trong log <code>rkReportsServer.vit</code></td><td>Dcorp</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>5</td><td>Test HardwareID trên VM dự kiến làm Slave</td><td>Dcorp</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>6</td><td>Lập runbook cutover chi tiết và chốt khung giờ với VTI</td><td>Dcorp / VTI</td><td><span class="tag todo">Cần làm</span></td></tr>
+    <tr><td>7</td><td>Kiểm chứng HardwareID cố định của refsrv.vit trên 2 VM</td><td>Dcorp</td><td><span class="tag ok">Xong 16.11</span></td></tr>
+  </table>
+</section>
+
+<footer>Nguồn: trao đổi giữa Dcorp và UCS trên Service Desk (sd.rkeeper.ru), các vòng từ 26.08.2026 tới 17.11.2026; kết quả test của Dcorp ngày 26.08 và 16.11.2026.</footer>
+</div>
+</body>
+</html>
