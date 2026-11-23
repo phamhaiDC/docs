@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Báo cáo sự cố TransporterAgent – 4P's Hai Bà Trưng POS01 – 22–23/11/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+ --bg-page:#09090B;--surface-1:#111116;--surface-2:#18181F;--surface-3:#1E1E27;
+ --border-subtle:rgba(255,255,255,0.05);--border-default:rgba(255,255,255,0.09);--border-strong:rgba(255,255,255,0.16);
+ --text-primary:#EEEEF4;--text-body:#9898AA;--text-muted:#606070;
+ --accent:#E31E24;--accent-text:#F05458;--accent-soft:rgba(227,30,36,0.12);--accent-border:rgba(227,30,36,0.28);
+ --badge-red-bg:rgba(227,30,36,0.14);--badge-red-tx:#F05458;
+ --badge-amber-bg:rgba(245,158,11,0.12);--badge-amber-tx:#F5A623;
+ --badge-green-bg:rgba(34,197,94,0.10);--badge-green-tx:#3ACA6A;
+ --badge-blue-bg:rgba(96,165,250,0.10);--badge-blue-tx:#7DBEFA;
+ --badge-gray-bg:rgba(255,255,255,0.07);--badge-gray-tx:#9898AA;
+ --p1-color:#E31E24;--p2-color:#F59E0B;--p3-color:#22C55E;
+}
+[data-theme="light"]{
+ --bg-page:#F2F2F6;--surface-1:#FFFFFF;--surface-2:#F7F7FB;--surface-3:#EDEDF3;
+ --border-subtle:rgba(0,0,0,0.05);--border-default:rgba(0,0,0,0.09);--border-strong:rgba(0,0,0,0.18);
+ --text-primary:#0C0C14;--text-body:#3C3C50;--text-muted:#6C6C80;
+ --accent:#C01A1F;--accent-text:#961418;--accent-soft:rgba(192,26,31,0.08);--accent-border:rgba(192,26,31,0.22);
+ --badge-red-bg:rgba(192,26,31,0.09);--badge-red-tx:#961418;
+ --badge-amber-bg:rgba(160,90,0,0.09);--badge-amber-tx:#8A4F00;
+ --badge-green-bg:rgba(10,120,50,0.09);--badge-green-tx:#0A6E2E;
+ --badge-blue-bg:rgba(20,70,180,0.09);--badge-blue-tx:#1540A8;
+ --badge-gray-bg:rgba(0,0,0,0.06);--badge-gray-tx:#505060;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg-page);color:var(--text-body);font-family:'Outfit',system-ui,sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 60px}
+header{position:relative;background:var(--surface-1);border-bottom:1px solid var(--border-default);border-left:4px solid var(--accent);padding:30px 28px 24px;margin-bottom:28px}
+.logo{position:absolute;top:0;right:20px;width:70px;height:70px;background:#EC1F26;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.5);border:1px solid #D1D5DB;border-top:none;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;letter-spacing:.5px}
+.logo small{display:block;background:#fff;color:#EC1F26;font-size:8px;font-weight:700;padding:1px 4px;margin-top:2px;letter-spacing:.6px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent-text);letter-spacing:1px;text-transform:uppercase}
+h1{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--text-primary);font-size:34px;line-height:1.1;margin:6px 110px 10px 0}
+.meta{font-size:13px;color:var(--text-muted)}
+.meta b{color:var(--text-body);font-weight:500}
+.toggle{position:absolute;right:110px;top:18px;background:var(--surface-3);border:1px solid var(--border-default);color:var(--text-body);font-family:inherit;font-size:12px;padding:5px 10px;border-radius:4px;cursor:pointer}
+h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--text-primary);font-size:24px;margin:36px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border-default)}
+h2 .n{color:var(--accent-text);margin-right:8px}
+h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;color:var(--text-primary);font-size:19px;margin:22px 0 8px}
+p{margin:6px 0 10px}
+strong{color:var(--text-primary);font-weight:600}
+code,.mono{font-family:'JetBrains Mono',monospace;font-size:12.5px}
+code{background:var(--surface-3);padding:1px 5px;border-radius:3px;color:var(--text-primary)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:6px 0 8px}
+.kpi{background:var(--surface-1);border:1px solid var(--border-default);border-radius:6px;padding:14px 16px}
+.kpi .v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px;color:var(--text-primary);line-height:1}
+.kpi .v.red{color:var(--accent-text)}
+.kpi .l{font-size:12.5px;color:var(--text-muted);margin-top:6px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--surface-1);border:1px solid var(--border-default);border-radius:6px;padding:16px 18px}
+.card h4{margin:0 0 6px;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:var(--accent-text);font-weight:500}
+.card ul{margin:4px 0 0;padding-left:18px}
+.card li{margin:3px 0}
+table{width:100%;border-collapse:collapse;background:var(--surface-1);border:1px solid var(--border-default);border-radius:6px;overflow:hidden;font-size:13.5px;margin:6px 0 10px}
+th{background:var(--surface-2);color:var(--text-primary);text-align:left;font-weight:600;padding:9px 11px;border-bottom:1px solid var(--border-strong);font-size:12.5px}
+td{padding:8px 11px;border-bottom:1px solid var(--border-subtle);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.t{font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap;color:var(--text-primary)}
+tr.hl td{background:var(--accent-soft)}
+.b{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.b.red{background:var(--badge-red-bg);color:var(--badge-red-tx)}
+.b.amber{background:var(--badge-amber-bg);color:var(--badge-amber-tx)}
+.b.green{background:var(--badge-green-bg);color:var(--badge-green-tx)}
+.b.blue{background:var(--badge-blue-bg);color:var(--badge-blue-tx)}
+.b.gray{background:var(--badge-gray-bg);color:var(--badge-gray-tx)}
+.chain{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;margin:8px 0 6px}
+.step{flex:1 1 170px;background:var(--surface-1);border:1px solid var(--border-default);padding:12px 14px;position:relative;margin-right:18px;margin-bottom:10px;border-radius:6px}
+.step:not(:last-child)::after{content:"";position:absolute;right:-14px;top:50%;width:10px;height:2px;background:var(--accent)}
+.step .k{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text)}
+.step .s{color:var(--text-primary);font-weight:600;font-size:14px;margin:3px 0}
+.step .d{font-size:12.5px;color:var(--text-muted)}
+.note{border-left:3px solid var(--p2-color);background:var(--surface-1);padding:10px 14px;margin:10px 0;font-size:13.5px;border-radius:0 6px 6px 0}
+.note.red{border-left-color:var(--accent)}
+pre{background:var(--surface-2);border:1px solid var(--border-default);border-radius:6px;padding:10px 12px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:11.8px;color:var(--text-primary);line-height:1.5;margin:6px 0 12px}
+.legend{font-size:12px;color:var(--text-muted);margin:4px 0 0}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--border-default);font-size:12px;color:var(--text-muted)}
+@media print{.toggle{display:none}body{font-size:12px}h2{break-after:avoid}table,.card,.step{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="logo">D'CORP<small>R-KEEPER</small></div>
+ <button class="toggle" onclick="var h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark'">Đổi giao diện sáng/tối</button>
+ <div class="eyebrow">Core Technology · Incident report</div>
+ <h1>TransporterAgent mất kết nối SignalR – 4P's Hai Bà Trưng POS01</h1>
+ <div class="meta"><b>Store:</b> 641470005 · 4P's Hai Bà Trưng · máy POS01 (VIND10-KMS-APPE, chạy MidServ P4P005_MID, RepsServ REPP4P005, TransporterAgent 7.8.125.0)<br>
+ <b>Khoảng xét:</b> 22–23/11/2026, giờ VN (UTC+7) · <b>Lập ngày:</b> 23/11/2026 · <b>Người lập:</b> Core Technology, Dcorp</div>
+</header>
+
+<div class="kpis">
+ <div class="kpi"><div class="v red">6g38p</div><div class="l">Không nhận đơn đẩy từ cloud (OrderSync), 22/11 11:31 → 18:09</div></div>
+ <div class="kpi"><div class="v red">23 phút</div><div class="l">Không nhận OrderSync, 23/11 11:31 → 11:54</div></div>
+ <div class="kpi"><div class="v">506</div><div class="l">Lần log "SignalR connect failed" (365 ngày 22/11, 141 ngày 23/11)</div></div>
+ <div class="kpi"><div class="v">2</div><div class="l">Lần máy POS01 vào Sleep sáng 22/11 (tổng ~9 giờ)</div></div>
+ <div class="kpi"><div class="v">2</div><div class="l">Lần tắt đột ngột liên tiếp, 22/11 khoảng 11:25–11:30</div></div>
+ <div class="kpi"><div class="v">8</div><div class="l">Đơn vào dead-letter do "Order locked by other token"</div></div>
+</div>
+
+<h2><span class="n">01</span>Tóm tắt</h2>
+<div class="grid4">
+ <div class="card"><h4>Issue</h4>
+  <p>Sau mỗi lần POS01 khởi động lại, Wi-Fi khách "Pizza4Ps" tự kết nối, giành default route khỏi Ethernet, rồi ngắt sau vài phút. Lần đổi mạng này (11:31 cả hai ngày) kích hoạt lỗi reconnect SignalR trong TransporterAgent: agent báo đã kết nối nhưng không nhận tin nào, connect loop lặp lỗi <code>HubConnection cannot be started if it is not in the Disconnected state</code> tới khi chạm giới hạn 360 lần rồi dừng.</p></div>
+ <div class="card"><h4>Impact</h4>
+  <ul><li>22/11: không có đơn OrderSync nào từ 11:31 đến 18:09, đúng ca trưa và chiều. RK7 vẫn phát 370–510 event mỗi giờ, nghĩa là cửa hàng vẫn bán bình thường trên POS.</li>
+  <li>23/11: mất OrderSync 23 phút.</li>
+  <li>22/11 sáng: mid, report và agent cùng dừng khi máy Sleep (00:06–08:56 và 09:08–09:18).</li></ul></div>
+ <div class="card"><h4>Status</h4>
+  <ul><li>Agent đang chạy từ lần restart 11:54 ngày 23/11.</li>
+  <li>Tunnel cfman <code>PIZZA4PS_641470005_HaiBaTrung_POS01</code> healthy từ 23/11 11:41.</li>
+  <li>Lỗi SignalR chưa sửa. Wi-Fi profile và quyền Sleep trên POS01 chưa thay đổi, nên lỗi có thể lặp lại ở lần boot kế tiếp.</li></ul></div>
+ <div class="card"><h4>Next Action</h4>
+  <ul><li><b>P1</b> Support: tắt auto-connect Wi-Fi "Pizza4Ps" hoặc tăng InterfaceMetric của Wi-Fi; chặn Sleep/Hibernate trên POS01.</li>
+  <li><b>P1</b> Dev SkyTransporter: sửa luồng reconnect SignalR và thêm health check.</li>
+  <li><b>P2</b> Kiểm tra nguồn điện/UPS POS01; dừng việc chạy tay midserv/RepsServ.</li>
+  <li>Chi tiết ở mục 07.</li></ul></div>
+</div>
+
+<h2><span class="n">02</span>Chuỗi nguyên nhân</h2>
+<div class="chain">
+ <div class="step"><div class="k">Kích hoạt</div><div class="s">POS01 boot lại</div><div class="d">22/11: 2 lần tắt đột ngột. 23/11 11:25: shutdown sạch rồi boot lại.</div></div>
+ <div class="step"><div class="k">Hạ tầng</div><div class="s">Wi-Fi "Pizza4Ps" giành route</div><div class="d">Metric Wi-Fi 35, Ethernet 281. Khoảng 1–6 phút sau, Wi-Fi ngắt, route về Ethernet, kết nối đang mở bị reset.</div></div>
+ <div class="step"><div class="k">Ứng dụng</div><div class="s">SignalR đua reconnect</div><div class="d">Coordinator reconnect thành công; AgentService connect loop gọi Start trên hub chưa ở trạng thái Disconnected.</div></div>
+ <div class="step"><div class="k">Hệ quả</div><div class="s">Hub "Connected" nhưng câm</div><div class="d">360 lần thử × 10 giây ≈ 1 giờ, sau đó "retry limit reached". Không có OrderSync tới khi restart agent.</div></div>
+</div>
+<p class="legend">Hai bước đầu đã có bằng chứng từ Windows Event Log (đọc qua cfman). Bước 3 và 4 rút ra từ log agent; nguyên nhân bên trong code (handler hoặc group subscription chưa đăng ký lại trên kết nối mới) là suy luận, đội dev cần xác nhận.</p>
+
+<h2><span class="n">03</span>Dòng thời gian tổng hợp</h2>
+<p class="legend">Nguồn: <span class="b blue">AGENT</span> TransporterAgent log · <span class="b gray">MID</span> mid.stk / mid.fatal.stk · <span class="b gray">REP</span> REPP4P005.stk · <span class="b amber">WIN</span> Windows Event Log qua cfman · <span class="b green">CFMAN</span> trạng thái tunnel</p>
+<table>
+<tr><th style="width:150px">Thời điểm</th><th>Sự kiện</th><th style="width:110px">Nguồn</th></tr>
+<tr class="hl"><td class="t">22/11 00:06:40</td><td>Máy vào Sleep (Kernel-Power 187/42, Reason: Application API, gọi từ winlogon.exe). Agent ngừng ghi log lúc 00:06:41.</td><td><span class="b amber">WIN</span> <span class="b blue">AGENT</span></td></tr>
+<tr class="hl"><td class="t">22/11 08:56:58</td><td>Máy thức dậy. MID ghi <code>system time was changed from 12:06:42 SA to 8:56:57 SA</code>. REP lỗi <code>10053 connection aborted</code>, 08:57:17 DBSync lỗi <code>10054</code> tới 203.205.45.152. Agent nhận dồn event lúc 08:57:00.</td><td><span class="b amber">WIN</span> <span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+<tr class="hl"><td class="t">22/11 09:08:13 → 09:18:42</td><td>Sleep lần 2 (winlogon.exe), đúng lúc mở ca. Sau khi thức: REP <code>235 Server "P4P_TRS01_PROD" not found</code>, DBSync <code>10051 Network is unreachable</code>.</td><td><span class="b amber">WIN</span> <span class="b gray">REP</span></td></tr>
+<tr><td class="t">22/11 10:08 → 11:16</td><td>Nhiều lỗi <code>2219 Can not lock. Order locked by other token</code> trên POS1, POS2, POS4 (~25 lần liên tiếp 11:03–11:04 trên POS2). Agent chuyển đơn vào dead-letter.</td><td><span class="b gray">MID</span> <span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">22/11 11:22:17</td><td>Đơn OrderSync cuối cùng trước sự cố.</td><td><span class="b blue">AGENT</span></td></tr>
+<tr class="hl"><td class="t">22/11 ~11:25:32</td><td>Máy tắt đột ngột (dòng log agent cuối 11:25:32). Event 6008 ghi giờ tắt 11:01:58, lệch với log ứng dụng (xem mục 05).</td><td><span class="b amber">WIN</span> <span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">22/11 11:27:32 → 11:27:52</td><td>Boot lại (Kernel-Power 41, tắt không sạch). Agent 11:27:40, REP 11:27:45, MID 11:27:52 cùng khởi động. MID lỗi <code>235 Server "REPP4P005" not found</code> ở lần thử đầu.</td><td><span class="b amber">WIN</span> <span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+<tr><td class="t">22/11 11:27:41 → 11:28:33</td><td>Wi-Fi tự kết nối "Pizza4Ps", ngắt sau ~50 giây. Agent: <code>NetworkAddressChanged</code> 11:28:33, SignalR bắt đầu báo lỗi. Nhiều lần vào/ra connected standby, Reason: Power Button.</td><td><span class="b amber">WIN</span> <span class="b blue">AGENT</span></td></tr>
+<tr class="hl"><td class="t">22/11 11:29:08 → 11:29:56</td><td>REP <code>10051 Network is unreachable</code>; agent log bị chèn ~37 KB byte rỗng lúc 11:29:10 (process bị cắt khi đang ghi). Tắt không sạch lần 2, boot lại 11:29:56.</td><td><span class="b gray">REP</span> <span class="b blue">AGENT</span> <span class="b amber">WIN</span></td></tr>
+<tr><td class="t">22/11 11:30:03 → 11:30:18</td><td>Agent, REP, MID khởi động lại. SignalR kết nối thành công lần đầu.</td><td><span class="b blue">AGENT</span> <span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+<tr class="hl"><td class="t">22/11 11:31:19 → 11:31:20</td><td>Wi-Fi "Pizza4Ps" ngắt (WLAN 8003, NetworkProfile 10001). Agent: <code>NetworkAddressChanged</code>, coordinator reconnect "state=Connected", sau đó 359 lần <code>HubConnection cannot be started if it is not in the Disconnected state</code>.</td><td><span class="b amber">WIN</span> <span class="b blue">AGENT</span></td></tr>
+<tr class="hl"><td class="t">22/11 12:31</td><td><code>SignalR retry limit reached — waiting for network wake before next retry cycle</code>. Agent không thử lại nữa.</td><td><span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">22/11 18:09:16</td><td>Agent khởi động (không có event dừng trước đó trong SCM).</td><td><span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">22/11 18:10:58 / 18:11:20</td><td>RKeeper 7 Cash Server rồi SkyAgentLocal bị dừng đột ngột (SCM 7034). MID khởi động 18:11:17, agent 18:11:36. OrderSync có lại từ khung 18h.</td><td><span class="b amber">WIN</span> <span class="b gray">MID</span> <span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">22/11 22:05–22:06</td><td>Có người chạy tay <code>rkReportsServer.exe /desktop</code> 2 lần khi service đang chạy: lỗi <code>182 Name REPP4P005 found</code>, <code>2005 Network initialization error</code>. Bản chạy tay tự thoát, service không bị ảnh hưởng.</td><td><span class="b gray">REP</span></td></tr>
+<tr><td class="t">23/11 00:16:01</td><td>Event User32 1074: user COS HBT F1 power off. Log agent và mid vẫn chạy liên tục qua mốc này (xem mục 05).</td><td><span class="b amber">WIN</span></td></tr>
+<tr><td class="t">23/11 01:35:03</td><td>DBSync timeout <code>10060</code> tới 203.205.45.152:6201, lẻ tẻ.</td><td><span class="b gray">REP</span></td></tr>
+<tr><td class="t">23/11 11:07 → 11:23</td><td>Chạy tay thêm midserv (11:07, 11:22:46, 11:23:24) và RepsServ (11:12): lỗi 182/2005. MID service tự restart 11:22:15.</td><td><span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+<tr><td class="t">23/11 11:24:51 → 11:25:38</td><td>MID dừng sạch. Windows shutdown sạch 11:25:05, boot 11:25:20 (không có event 1074). Agent 11:25:27, REP 11:25:32, MID 11:25:38 khởi động. Lỗi SSL <code>10054</code> tới <code>127.0.0.1:7788</code> lúc agent khởi động, chỉ 1 lần.</td><td><span class="b amber">WIN</span> <span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+<tr class="hl"><td class="t">23/11 11:31:15</td><td>Wi-Fi "Pizza4Ps" ngắt. Agent lặp lại đúng mẫu của 22/11: 140 lần SignalR connect failed.</td><td><span class="b amber">WIN</span> <span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">23/11 11:39:53 → 11:41:14</td><td>Tạo tunnel, cài cloudflared 2026.7.2 và command agent cfman.</td><td><span class="b green">CFMAN</span></td></tr>
+<tr><td class="t">23/11 11:54:40</td><td>Agent khởi động lại, SignalR kết nối, OrderSync có lại từ 11:57.</td><td><span class="b blue">AGENT</span></td></tr>
+<tr><td class="t">23/11 12:22:08</td><td>DBSync tải backup mới (<code>4162</code>), đồng bộ chạy tiếp bình thường.</td><td><span class="b gray">MID</span> <span class="b gray">REP</span></td></tr>
+</table>
+
+<h2><span class="n">04</span>Phân tích chi tiết</h2>
+
+<h3>4.1 Lỗi reconnect SignalR trong TransporterAgent <span class="b red">Nguyên nhân chính</span></h3>
+<p>Có hai luồng cùng xử lý reconnect: <code>SignalRConnectCoordinator</code> (phản ứng với sự kiện mạng) và connect loop trong <code>AgentService</code> (limit=360, delay=10s). Khi Windows bắn 2 sự kiện <code>NetworkAddressChanged</code> cách nhau ~15 ms, coordinator đóng hub rồi kết nối lại thành công; cùng lúc connect loop vẫn gọi Start và nhận exception vì hub không ở trạng thái Disconnected. Loop đếm mỗi lần như một lần thất bại, hết 360 lần thì dừng hẳn.</p>
+<pre>11:31:19 WARN SignalRConnectCoordinator - SignalR hub closed — scheduling reconnect: Connection stopped during reconnect delay.
+11:31:2x INFO SignalRConnectCoordinator - SignalR connected after reconnect attempt (state=Connected)
+11:31:2x WARN AgentService - SignalR connect failed (1/360): The HubConnection cannot be started if it is not in the Disconnected state.
+...       (lặp 359 lần, mỗi 10 giây)
+12:31:xx INFO SignalRConnectCoordinator - SignalR retry limit reached — waiting for network wake before next retry cycle</pre>
+<p>Hub được báo Connected nhưng từ 11:31 tới khi restart không có message OrderSync nào vào. Cách đếm: dòng <code>QueueOrderSyncService - Starting validation for message</code> theo giờ.</p>
+<table>
+<tr><th>Ngày</th><th>OrderSync theo giờ (số lượt validate)</th><th>Khoảng trống</th></tr>
+<tr><td class="t">22/11</td><td>10h: 19 · 11h: 12 (cuối lúc 11:22) · 12h–17h: 0 · 18h: 14 · 19h: 19 · 20h: 35 · 21h: 10 · 22h: 6</td><td>11:31 → 18:09</td></tr>
+<tr><td class="t">23/11</td><td>09h–10h: 0 · 11h: 1 (11:57) · 12h: 12 · 13h: 2 (log tới 13:14)</td><td>11:31 → 11:54</td></tr>
+</table>
+<div class="note">Sáng 23/11 từ 09:00 tới 11:25 cũng không có OrderSync, trong khi sáng 22/11 có 19 lượt ở khung 10h. Chưa đủ dữ liệu để biết kết nối SignalR đã chết từ trước hay sáng đó chỉ là không có đơn. Cần đối chiếu số đơn phía SkyOrder Gateway cho khung 09:00–11:25 ngày 23/11.</div>
+
+<h3>4.2 Wi-Fi khách giành default route sau mỗi lần boot <span class="b red">Yếu tố kích hoạt</span></h3>
+<table>
+<tr><th>Interface</th><th>Card</th><th>IP / Gateway</th><th>Metric (route + interface)</th></tr>
+<tr><td>Ethernet</td><td>Intel I225-V</td><td class="t">172.16.8.248 tĩnh / 172.16.8.254</td><td class="t">256 + 25 = 281</td></tr>
+<tr><td>Wi-Fi</td><td>Intel AX210</td><td class="t">DHCP, gateway 192.168.3.254</td><td class="t">0 + 35 = 35 (ưu tiên hơn Ethernet)</td></tr>
+</table>
+<p>Máy có 3 Wi-Fi profile: Pizza4Ps, PZ_POS_1st, PZ-POS. Sau khi boot, Wi-Fi tự kết nối "Pizza4Ps" và traffic của POS đi qua mạng 192.168.3.x. Khoảng 1–6 phút sau Wi-Fi ngắt (event 8003 ghi là ngắt chủ động), route quay về Ethernet, các kết nối TCP/WebSocket đang mở bị reset. Mẫu này xuất hiện đủ 3 lần: 22/11 11:28:33, 22/11 11:31:20, 23/11 11:31:15.</p>
+
+<h3>4.3 POS01 vào Sleep <span class="b amber">Hạ tầng</span></h3>
+<p>Hai lần Sleep sáng 22/11 khớp tới từng giây với khoảng trống trong cả 3 log (agent, mid, report). Sleep do winlogon.exe gọi, tức là người dùng hoặc phiên logon chọn Sleep; power plan đang đặt sleep khi cắm điện = Never. Log mid cũng ghi đồng hồ nhảy các đêm trước (19/11 23:50 → 20/11 09:27; 20/11 23:56 → 21/11 00:37), nhiều khả năng cùng nguyên nhân (chưa đối chiếu Event Log cho các ngày này).</p>
+<p>POS01 chạy cả MidServ và RepsServ của store. Khi máy ngủ, các trạm POS khác mất cash server: mid ghi hàng loạt <code>177 TCP Socket: hangup ... reason=read error</code> ngay sau khi thức 08:57.</p>
+
+<h3>4.4 Tắt đột ngột hai lần ngày 22/11 <span class="b amber">Hạ tầng</span></h3>
+<p>Kernel-Power 41 và EventLog 6008 xác nhận hai lần tắt không sạch liên tiếp, kèm nhiều sự kiện Power Button lúc 11:27–11:29. Nguyên nhân có thể là mất điện, rút nguồn hoặc giữ nút nguồn. Chưa có thông tin về UPS tại quầy.</p>
+
+<h3>4.5 Restart MidServ và agent lúc 18:10–18:11 ngày 22/11 <span class="b gray">Thao tác vận hành</span></h3>
+<p>Cash Server và SkyAgentLocal bị dừng đột ngột cách nhau 22 giây (SCM 7034), không có sự kiện nguồn hay mạng. Agent còn khởi động một lần trước đó lúc 18:09:16. Kiểu dừng này giống thao tác End task bằng tay khi xử lý sự cố. Đây là lần restart đã làm OrderSync hoạt động trở lại.</p>
+
+<h3>4.6 Chạy tay instance thứ hai của MidServ / RepsServ <span class="b gray">Thao tác vận hành</span></h3>
+<p>22/11 22:05, 23/11 11:07, 11:12, 11:22, 11:23: mỗi lần đều lỗi <code>182 TCPSOC.dll: Name ... found</code> rồi tự thoát. Lần này không gây hại, nhưng ngày 18/11 bản <code>/desktop</code> và bản service từng chạy song song từ 00:09 tới 09:10, report lỗi <code>4163 ... HTTP/1.1 403 token alreay was sent</code> liên tục (1.073 dòng trong <code>Ten_Reportlocal.fatal.stk</code>).</p>
+
+<h3>4.7 Lỗi phụ, không gây mất kết nối</h3>
+<table>
+<tr><th>Lỗi</th><th>Chi tiết</th><th>Ưu tiên</th></tr>
+<tr><td><code>IKafkaMessageBus</code> chưa đăng ký</td><td>Lỗi DI ở <code>AgentService.UploadKafka()</code> (AgentService.cs:589), mỗi 5 giây, ~17.000 dòng/ngày. Cùng với việc log full XML payload ở mức DEBUG, file log ngày 22/11 nặng 387 MB.</td><td><span class="b green">P3</span></td></tr>
+<tr><td>Dead-letter "Order locked by other token"</td><td>8 đơn (16 lượt) bị RK7 từ chối SaveOrder vì nhân viên đang mở order trên POS. Agent ghi "after 0 attempts", tức không retry.</td><td><span class="b amber">P2</span></td></tr>
+<tr><td>DBSync timeout tới 203.205.45.152</td><td>Lẻ tẻ (<code>10060</code>, <code>10054</code>). Client luân phiên 2 port 6201 và 3021, đúng cơ chế dự phòng. 23/11 12:22 tự tải lại backup.</td><td><span class="b green">P3</span></td></tr>
+<tr><td><code>Item ... in collection Roles is not found</code></td><td>~80 dòng mỗi lần MidServ khởi động: tham chiếu tới role không còn trong danh mục.</td><td><span class="b green">P3</span></td></tr>
+<tr><td><code>Common shift ... was opened for too long</code></td><td>11 lần ngày 22–23/11.</td><td><span class="b green">P3</span></td></tr>
+<tr><td>SSL tới 127.0.0.1:7788</td><td>1 lần lúc 23/11 11:25:34, khi RK7 đang khởi động cùng lúc.</td><td><span class="b green">P3</span></td></tr>
+</table>
+
+<h2><span class="n">05</span>Điểm chưa khớp giữa các nguồn</h2>
+<table>
+<tr><th>Điểm</th><th>Dữ liệu</th><th>Cách hiểu đang dùng</th></tr>
+<tr><td>Giờ tắt máy lần 1 ngày 22/11</td><td>Event 6008 ghi 11:01:58. Log agent chạy đều tới 11:25:32 và mid vẫn ghi tới 11:22.</td><td>Máy thực sự tắt khoảng 11:25:32. Giờ trong 6008 lấy từ mốc heartbeat cuối Windows lưu, có thể bị cũ.</td></tr>
+<tr><td>Event 1074 "power off" lúc 23/11 00:16:01</td><td>Agent ghi đều 12 dòng/phút qua mốc 00:15–00:25; mid có backup 00:21.</td><td>Máy không tắt ở mốc này. Có thể lệnh shutdown bị hủy hoặc không hoàn tất. Cần xem thêm Kernel-Power quanh 00:16.</td></tr>
+<tr><td>Agent khởi động 18:09:16 ngày 22/11</td><td>SCM chỉ ghi SkyAgentLocal dừng lúc 18:11:20.</td><td>Lần dừng trước 18:09 không có trong SCM; có thể agent tự thoát hoặc bị dừng theo cách không sinh event 7034.</td></tr>
+<tr><td>Lịch sử tunnel</td><td>Tunnel tạo lúc 23/11 11:39; cfman không lưu lịch sử connect, origin IP, connector ID.</td><td>Không dùng được tunnel để đối chiếu các mốc trước 11:39 ngày 23/11.</td></tr>
+</table>
+
+<h2><span class="n">06</span>Dữ liệu và phương pháp</h2>
+<table>
+<tr><th>Nguồn</th><th>File / công cụ</th><th>Phạm vi</th></tr>
+<tr><td>TransporterAgent</td><td class="mono">2026-11-22.log (387 MB), 2026-11-23.log (37,7 MB)</td><td>22/11 00:00 → 23/11 13:14</td></tr>
+<tr><td>MidServ P4P005_MID</td><td class="mono">mid.stk, mid.fatal.stk</td><td>18/11 → 23/11 14:04</td></tr>
+<tr><td>RepsServ REPP4P005</td><td class="mono">REPP4P005.stk, REPP4P005.fatal.stk, Ten_Reportlocal.stk/.fatal.stk</td><td>18/11 → 23/11 14:06</td></tr>
+<tr><td>Windows Event Log, route, power, Scheduled Task</td><td class="mono">POS_641470005_HaiBaTrung_tunnel_eventlog_22-23-11-2026.html</td><td>Đọc qua cfman bằng script PowerShell chỉ đọc</td></tr>
+</table>
+<p class="legend">Số liệu trong báo cáo được đếm trực tiếp từ log bằng grep/awk. Phần có nhãn "suy luận" chưa được đội dev hoặc người tại store xác nhận.</p>
+
+<h2><span class="n">07</span>Việc cần làm</h2>
+<table>
+<tr><th style="width:60px">Ưu tiên</th><th>Việc</th><th style="width:170px">Người làm</th></tr>
+<tr><td><span class="b red">P1</span></td><td>Trên POS01: xóa Wi-Fi profile "Pizza4Ps" hoặc tắt auto-connect. Nếu cần giữ Wi-Fi, đặt InterfaceMetric của Wi-Fi cao hơn Ethernet (ví dụ &gt; 281). Rà 2 profile còn lại PZ_POS_1st, PZ-POS.</td><td>Support (qua cfman, cần xác nhận trước khi đổi)</td></tr>
+<tr><td><span class="b red">P1</span></td><td>Chặn Sleep/Hibernate cho tài khoản COS HBT F1 trên POS01 (ẩn Sleep trong Start menu qua Local Group Policy), cân nhắc tắt Fast Startup.</td><td>Support</td></tr>
+<tr><td><span class="b red">P1</span></td><td>Sửa reconnect SignalR: chỉ một luồng được gọi Start; kiểm tra <code>HubConnection.State</code> trước khi Start; đăng ký lại handler/group sau reconnect; reset retry counter khi đã Connected thay vì dừng hẳn.</td><td>Dev SkyTransporter</td></tr>
+<tr><td><span class="b red">P1</span></td><td>Thêm health check: nếu hub báo Connected mà N phút không nhận ping/message thì dựng lại kết nối. Đẩy alert Telegram khi log có <code>not in the Disconnected state</code> hoặc <code>retry limit reached</code>.</td><td>Dev + Support</td></tr>
+<tr><td><span class="b amber">P2</span></td><td>Kiểm tra nguồn điện, UPS của POS01 và hỏi nhân viên về sự cố 11:25–11:30 ngày 22/11.</td><td>Support store</td></tr>
+<tr><td><span class="b amber">P2</span></td><td>Quy định restart chỉ dùng <code>net stop</code> / <code>net start</code>; không chạy tay <code>midserv.exe</code> hay <code>rkReportsServer.exe /desktop</code> khi service đang chạy.</td><td>Support lead</td></tr>
+<tr><td><span class="b amber">P2</span></td><td>Đối chiếu số đơn SkyOrder Gateway cho 23/11 09:00–11:25 để biết SignalR có chết từ đêm trước không.</td><td>Dev SkyOrder</td></tr>
+<tr><td><span class="b amber">P2</span></td><td>Xem lại retry khi RK7 trả <code>Order locked by other token</code> (hiện vào dead-letter sau 0 lần thử).</td><td>Dev SkyTransporter</td></tr>
+<tr><td><span class="b green">P3</span></td><td>Sửa đăng ký <code>IKafkaMessageBus</code> hoặc tắt UploadKafka; hạ log XML payload xuống Trace.</td><td>Dev SkyTransporter</td></tr>
+<tr><td><span class="b green">P3</span></td><td>Dọn tham chiếu Roles không tồn tại; xử lý cảnh báo ca mở quá lâu.</td><td>Dcorp RK7</td></tr>
+<tr><td><span class="b green">P3</span></td><td>Bật log TaskScheduler/Operational trên POS01 để lần sau có dữ liệu đối chiếu.</td><td>Support</td></tr>
+</table>
+
+<footer>Dcorp Technology Corporation · Core Technology · Báo cáo nội bộ, lập từ log thu thập ngày 23/11/2026. Không có thay đổi cấu hình nào được thực hiện trên máy POS trong quá trình phân tích.</footer>
+</div>
+</body>
+</html>
