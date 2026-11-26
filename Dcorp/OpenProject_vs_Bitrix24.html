@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenProject và Bitrix24</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: báo cáo so sánh nội bộ, bình tĩnh, bám dữ kiện
+IDEA: tờ bản đồ khảo sát: chú giải bên lề, hai tuyến đường là hai sản phẩm
+PICTURE: lưới "bản đồ phạm vi" cho 12 nhóm chức năng, mỗi ô là mức đáp ứng của từng bên
+COLOUR and TYPE: nền đất #fbfbf2, biển #bfe3ee, nâu đường đồng mức, OpenProject xanh biển đậm, Bitrix24 magenta; Overpass
+LAYOUT: tiêu đề + kết luận trái, bản đồ phạm vi phải; dưới là điểm giống, bảng chi tiết, khi nào chọn, nguồn
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#fbfbf2,#0d1c24);--ink:light-dark(#13242e,#e6eef0);--mute:light-dark(#4f5f66,#9fb2b8);
+--sea:light-dark(#bfe3ee,#16323f);--line:light-dark(#d9d6c4,#24404d);--brown:light-dark(#a8551b,#d9874d);
+--op:light-dark(#1f6f8b,#5cc2e0);--bx:light-dark(#d6127e,#ff5fae);--card:light-dark(#ffffff,#112631)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Overpass,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+pre,.scroll{overflow-x:auto}html{scroll-padding-top:72px}
+h1{font-weight:800;font-size:clamp(30px,4.2vw,48px);line-height:1.05;text-wrap:balance;margin:0 0 18px}
+h2{font-weight:800;font-size:28px;line-height:1.1;margin:0 0 16px;text-wrap:balance}
+p{margin:0 0 12px;max-width:68ch}
+.hero{background:var(--sea);border-bottom:2px solid var(--brown)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,4vw,56px);align-items:start}
+.lede{font-size:17px}
+.key{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 0;font-size:14px}
+.key span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.map{background:var(--bg);border:1px solid var(--brown);border-radius:6px;padding:16px 18px;box-shadow:0 2px 0 var(--brown)}
+.map h3{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--brown)}
+.row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px dashed var(--line);font-size:14px}
+.row.head{border-top:0;font-weight:600;font-size:13px;color:var(--mute)}
+.lvl{height:12px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
+.lvl i{position:absolute;inset:0 auto 0 0;border-radius:6px}
+.lvl.op i{background:var(--op)}.lvl.bx i{background:var(--bx)}
+.mapnote{font-size:13px;color:var(--mute);margin-top:10px}
+.nav{display:flex;gap:18px;flex-wrap:wrap;padding:12px max(5vw,16px);border-bottom:1px solid var(--line);font-size:15px}
+.nav a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--brown)}
+@media(min-width:900px){.nav{position:sticky;top:0;background:var(--bg);z-index:2}}
+.same{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;list-style:none;padding:0;margin:0}
+.same li{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+.same b{display:block;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:15px;background:var(--card)}
+th,td{text-align:left;vertical-align:top;padding:11px 12px;border-bottom:1px solid var(--line)}
+thead th{font-weight:800;font-size:16px;border-bottom:2px solid var(--brown)}
+thead th:nth-child(2){color:var(--op)}thead th:nth-child(3){color:var(--bx)}
+td:first-child{font-weight:600;width:18%}
+td:nth-child(2),td:nth-child(3){width:41%}
+tr.grp td{background:var(--sea);font-weight:800;font-size:14px;color:var(--ink);padding:7px 12px}
+.nw{white-space:nowrap}
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
+.pick div{border-top:6px solid;padding:16px 18px;background:var(--card);border-radius:0 0 6px 6px}
+.pick .a{border-color:var(--op)}.pick .b{border-color:var(--bx)}
+.pick h3{margin:0 0 8px;font-size:19px}
+.pick ul{margin:0;padding-left:20px}
+.small{font-size:13px;color:var(--mute)}
+.src a{color:var(--op)}
+.src li{margin-bottom:4px}
+@media(max-width:600px){
+.hero .wrap{grid-template-columns:minmax(0,1fr)}
+td:first-child,td:nth-child(2),td:nth-child(3){width:auto}
+tr.grp{display:block}tr.grp td{display:block;padding-inline-start:8px}
+table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600}.stack td:empty{display:none}
+}
+@media(prefers-reduced-motion:no-preference){.lvl i{animation:grow .7s ease-out both}@keyframes grow{from{width:0}}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+
+<header class="band hero">
+<div class="wrap">
+<div>
+<h1>OpenProject quản lý dự án sâu, Bitrix24 phủ rộng cả CRM lẫn cộng tác</h1>
+<p class="lede">Hai bên chồng lấn ở phần task, Kanban, Gantt và chấm công. Khác biệt nằm ở phạm vi: OpenProject là công cụ quản lý dự án mã nguồn mở (GPL v3), tính phí theo người dùng. Bitrix24 là nền tảng làm việc chung gồm CRM, chat, video call, drive, website, tính giá cố định theo tổ chức kèm giới hạn số user.</p>
+<p class="small">Giá và tính năng tra cứu trên trang chính thức ngày 26/11/2026. Cả hai thường xuyên có khuyến mãi, cần kiểm tra lại khi báo giá.</p>
+<div class="key"><span><i class="sw" style="background:var(--op)"></i>OpenProject</span><span><i class="sw" style="background:var(--bx)"></i>Bitrix24</span></div>
+</div>
+<div class="map" aria-label="Bản đồ phạm vi chức năng">
+<h3>Bản đồ phạm vi chức năng (đánh giá định tính)</h3>
+<div class="row head"><span>Nhóm chức năng</span><span>OpenProject</span><span>Bitrix24</span></div>
+<div id="cov"></div>
+<p class="mapnote">Thanh đầy: chức năng cốt lõi, chuyên sâu. Thanh nửa: có ở mức cơ bản. Thanh trống: không có sẵn. Đây là nhận định của người lập bảng dựa trên tài liệu sản phẩm, không phải điểm benchmark.</p>
+</div>
+</div>
+</header>
+
+<nav class="nav scroll"><a href="#dcorp">Cách Dcorp đang dùng</a><a href="#giong">Điểm giống</a><a href="#bang">Bảng so sánh chi tiết</a><a href="#chon">Khi nào chọn bên nào</a><a href="#nguon">Nguồn</a></nav>
+
+<section class="band" id="dcorp">
+<div class="wrap">
+<h2>Đối chiếu theo cách Dcorp đang dùng</h2>
+<p>Dcorp hiện dùng ba thứ: workgroup cho từng khách hàng, task kèm subtask, và Feed để đưa thông báo. Bảng dưới cho thấy mỗi thứ nằm ở đâu trong từng hệ thống, và cái gì sẽ thiếu nếu chuyển sang OpenProject.</p>
+<table class="stack">
+<thead><tr><th>Cách dùng</th><th>OpenProject</th><th>Bitrix24</th></tr></thead>
+<tbody id="dc"></tbody>
+</table>
+<p class="small" style="margin-top:12px">Kết luận cho Dcorp: workgroup theo khách hàng và task/subtask đều chuyển được sang OpenProject (Project + work package cha/con). Feed thì không có bản tương đương: OpenProject chỉ có News theo từng dự án và trung tâm thông báo cá nhân, không có dòng tin chung toàn công ty, không có thăm dò ý kiến hay xác nhận đã đọc. Nếu chuyển, phải giữ một kênh khác để thông báo (Bitrix24 Feed, email nội bộ hoặc chat).</p>
+</div>
+</section>
+
+<section class="band" id="giong" style="padding-top:0">
+<div class="wrap">
+<h2>Điểm giống nhau</h2>
+<ul class="same" id="same"></ul>
+</div>
+</section>
+
+<section class="band" id="bang" style="padding-top:0">
+<div class="wrap">
+<h2>Bảng so sánh chi tiết</h2>
+<table class="stack">
+<thead><tr><th>Tiêu chí</th><th>OpenProject</th><th>Bitrix24</th></tr></thead>
+<tbody id="tb"></tbody>
+</table>
+</div>
+</section>
+
+<section class="band" id="chon" style="padding-top:0">
+<div class="wrap">
+<h2>Khi nào chọn bên nào</h2>
+<div class="pick">
+<div class="a"><h3>Chọn OpenProject khi</h3><ul>
+<li>Bài toán chính là quản lý dự án: WBS, Gantt có phụ thuộc, baseline, Scrum backlog, ngân sách và chi phí dự án.</li>
+<li>Cần mã nguồn mở, tự host trên hạ tầng riêng, không phát sinh phí license (bản Community).</li>
+<li>Đội kỹ thuật cần liên kết với GitHub, Nextcloud, hoặc ngành xây dựng cần BIM (BCF, Revit).</li>
+<li>Đã có CRM, chat và lưu trữ ở hệ thống khác, chỉ thiếu lớp quản lý dự án.</li>
+</ul></div>
+<div class="b"><h3>Chọn Bitrix24 khi</h3><ul>
+<li>Muốn gom CRM bán hàng, task, chat nội bộ, video call, drive và tài liệu vào một hệ thống.</li>
+<li>Số người dùng đông và muốn chi phí cố định theo bậc user thay vì nhân theo đầu người.</li>
+<li>Cần telephony, contact center, email marketing, form web, cửa hàng online đi kèm.</li>
+<li>Chấp nhận nhu cầu quản lý dự án ở mức task, Kanban, Gantt cơ bản là đủ.</li>
+</ul></div>
+</div>
+</div>
+</section>
+
+<section class="band src" id="nguon" style="padding-top:0">
+<div class="wrap">
+<h2>Nguồn</h2>
+<ul>
+<li><a href="https://www.openproject.org/pricing/">OpenProject – Pricing</a></li>
+<li><a href="https://www.openproject.org/collaboration-software-features/">OpenProject – Features</a></li>
+<li><a href="https://www.bitrix24.com/prices/">Bitrix24 – Cloud pricing</a> và <a href="https://www.bitrix24.com/prices/compare_cloud_plans.php">Plan comparison</a></li>
+<li><a href="https://bitrix24.com/prices/self-hosted.php">Bitrix24 – On-Premise pricing &amp; FAQ</a></li>
+<li><a href="https://helpdesk.bitrix24.com/open/25923379/">Bitrix24 Helpdesk – điều chỉnh giá tháng từ 20/04/2026</a></li>
+<li><a href="https://helpdesk.bitrix24.com/open/9162957">Bitrix24 Helpdesk – yêu cầu kỹ thuật On-Premise</a></li>
+<li><a href="https://helpdesk.bitrix24.ru/open/5825131">Bitrix24 Helpdesk (RU) – hỗ trợ PostgreSQL ở license Enterprise</a></li>
+</ul>
+</div>
+</section>
+
+<script>
+{
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cov=[
+["Gantt, phụ thuộc, baseline",100,50],["Agile: Scrum, Kanban",100,50],["Chấm công, chi phí, ngân sách dự án",100,50],
+["Wiki, biên bản họp",100,50],["Danh mục dự án (portfolio)",100,20],["CRM, pipeline bán hàng",0,100],
+["Chat nội bộ, video call",0,100],["Drive, tài liệu online",50,100],["Telephony, contact center",0,100],
+["Marketing, website, cửa hàng",0,100],["HR, KPI nhân sự",0,50],["BIM xây dựng",100,0]];
+document.getElementById('cov').innerHTML=cov.map(([n,a,b])=>`<div class="row"><span>${esc(n)}</span><span class="lvl op" title="OpenProject"><i style="width:${a}%"></i></span><span class="lvl bx" title="Bitrix24"><i style="width:${b}%"></i></span></div>`).join('');
+
+const dc=[
+["g","Workgroup theo khách hàng"],
+["Đơn vị tổ chức","Mỗi khách hàng là một Project. Có thể lồng dự án con (ví dụ: Khách hàng A > Triển khai POS > Bảo trì) và dùng Project list/portfolio để xem tất cả khách hàng.","Mỗi khách hàng là một Workgroup hoặc Project. Không lồng nhóm nhiều cấp như OpenProject; muốn phân loại thì dùng tên hoặc tag."],
+["Thành viên, phân quyền","Thêm thành viên vào từng Project, mỗi người được gán role (Member, Reader, Project admin...). Quyền chỉnh được tới từng loại thao tác.","Thêm thành viên vào nhóm với vai trò owner, moderator, member. Mời được người ngoài (extranet) vào nhóm, phù hợp khi khách hàng cần cùng theo dõi."],
+["Thứ có sẵn trong nhóm","Work package, Gantt, board, wiki, họp, news, file đính kèm, chấm công.","Task, Gantt, Kanban, chat nhóm, Feed riêng của nhóm, drive, lịch, video call."],
+["g","Task và subtask"],
+["Cấu trúc cha/con","Work package cha/con nhiều cấp (Epic > Feature > Task...). Ngày và thời lượng của task cha có thể tổng hợp tự động từ các task con.","Task có subtask, kèm checklist trong từng task. Chọn được để task cha tự tính deadline theo subtask."],
+["Phụ thuộc, lịch","Quan hệ follows/precedes, blocks, relates. Gantt dời lịch theo phụ thuộc.","Liên kết phụ thuộc giữa các task trên Gantt (finish-to-start...)."],
+["Trạng thái, trường riêng","Type, status, workflow chuyển trạng thái theo role, custom fields cấu hình được.","Trạng thái cố định (chờ, đang làm, chờ kiểm tra, hoàn thành...). Có Kanban stage riêng cho từng nhóm. Tạo trường tùy chỉnh được."],
+["Mẫu task lặp lại","Copy project hoặc work package làm mẫu.","Task template, task lặp lại theo lịch."],
+["g","Feed để thông báo"],
+["Kênh thông báo chung","Không có Feed. Gần nhất là module News trong từng Project: đăng tin, có bình luận, chỉ người trong dự án thấy.","Feed (Activity Stream) toàn công ty: bài viết, thông báo, thăm dò, lời cảm ơn; chọn người nhận theo phòng ban, nhóm hoặc cá nhân."],
+["Thông báo quan trọng","Không có cơ chế yêu cầu xác nhận đã đọc.","Đánh dấu bài là quan trọng, theo dõi ai đã đọc."],
+["Thông báo theo khách hàng","News của Project khách hàng, cộng thông báo khi work package thay đổi (trung tâm thông báo trong app và email).","Feed riêng của từng Workgroup; mọi cập nhật task trong nhóm cũng hiện ở đó."]];
+document.getElementById('dc').innerHTML=dc.map(r=>r[0]==="g"?`<tr class="grp"><td colspan="3">${esc(r[1])}</td></tr>`:`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+
+const same=[
+["Hai mô hình triển khai","Cả hai có bản cloud do hãng vận hành và bản tự host trên server của khách hàng."],
+["Có bản miễn phí","OpenProject Community (tự host, không giới hạn user). Bitrix24 Free cloud (5 GB lưu trữ, CRM và task cơ bản)."],
+["Quản lý công việc","Task, Kanban board, Gantt, lịch, chấm công đều có ở cả hai."],
+["API và tích hợp","Cả hai có REST API. Bản tự host hỗ trợ LDAP/Active Directory và xác thực hai lớp."],
+["Có dùng thử","OpenProject Enterprise 14 ngày (cloud hoặc license on-prem). Bitrix24 cloud 15 ngày, On-Premise 30 ngày."],
+["Cần thời gian làm quen","Đánh giá người dùng trên Cloudwards và Capterra đều nhắc độ khó học ban đầu khá cao ở cả hai."]];
+document.getElementById('same').innerHTML=same.map(([t,d])=>`<li><b>${esc(t)}</b>${esc(d)}</li>`).join('');
+
+const rows=[
+["g","Định vị và giấy phép"],
+["Định vị","Phần mềm quản lý dự án: cổ điển, agile hoặc kết hợp.","Nền tảng làm việc tất cả trong một: CRM, task/dự án, chat, video call, drive, website, chữ ký điện tử, HR."],
+["Giấy phép","Mã nguồn mở GNU GPL v3. Được tự do chạy, sửa, phân phối.","Phần mềm thương mại. Bản On-Premise kèm mã nguồn, trừ mobile app và Bitrix24 Messenger."],
+["Tùy biến","Sửa mã nguồn, viết plugin (module dạng Ruby gem).","Cloud: tùy biến hạn chế, dùng app Market và REST API. On-Premise: sửa mã nguồn, đổi giao diện, branding."],
+["g","Chi phí"],
+["Mô hình tính giá","Theo người dùng/tháng, có số user tối thiểu.","Giá cố định theo tổ chức/tháng, mỗi gói có trần số user."],
+["Bản miễn phí","Community: miễn phí, không giới hạn user, tự host, hỗ trợ qua cộng đồng.","Free cloud: 5 GB, CRM cơ bản, task Kanban/Gantt, chat, video. Telephony và app Market chỉ có ở gói trả phí."],
+["Gói trả phí (cloud)","Basic €5.95, Professional €10.95 (tối thiểu 25 user); Premium €15.95 (tối thiểu 100 user); Corporate theo báo giá (tối thiểu 250 user). Đơn vị: user/tháng.","Basic US$49 (5 user), Standard US$99 (50 user), Professional US$199 (100 user), Enterprise từ 250 user. Giá tổ chức/tháng, trả năm. Trả tháng cao hơn; giá tháng tăng tới 16% từ 20/04/2026. Có thêm dòng Vibe+ (AI, app builder)."],
+["Tự host","Community miễn phí. Enterprise on-premises dùng license key theo các gói trên.","Mua license theo bậc user (Business 50/100/250/500, Enterprise 1.000+). Năm đầu trả đủ, gia hạn hằng năm bằng 50% giá gốc để nhận cập nhật và hỗ trợ."],
+["g","Chức năng quản lý dự án"],
+["Gantt, lập kế hoạch","Thế mạnh chính: Gantt có phụ thuộc, mốc, baseline comparison, team planner, WBS.","Có Gantt và Kanban trong Tasks & Projects, mức cơ bản."],
+["Agile","Scrum backlog, Kanban, version board, board theo dự án con.","Kanban board, dự án/nhóm làm việc. Dự án không giới hạn từ gói Standard."],
+["Thời gian, chi phí","Chấm công, ngân sách, báo cáo chi phí dự án ngay ở bản Community.","Time tracking, đánh giá hiệu quả task (KPI)."],
+["Tài liệu","Wiki, quản lý cuộc họp (agenda, biên bản), đính kèm file.","Drive, tài liệu online, knowledge base."],
+["g","Ngoài quản lý dự án"],
+["CRM, bán hàng","Không có.","Thế mạnh chính: lead, deal, pipeline, báo giá/hóa đơn, thanh toán online, call tracking, tự động hóa bán hàng."],
+["Giao tiếp nội bộ","Bình luận và thông báo trên work package. Không có chat hoặc video call riêng.","Chat, video call, feed nội bộ, lịch chung."],
+["Marketing, kênh bán","Không có.","Email marketing, form web, website builder, cửa hàng online, contact center, telephony."],
+["Ngành đặc thù","BIM cho xây dựng: BCF, tích hợp Revit (Enterprise add-on).","Không có module BIM."],
+["g","Kỹ thuật và tích hợp"],
+["Nền tảng tự host","Ruby on Rails, PostgreSQL. Cài bằng gói hoặc Docker.","PHP 8.x (yêu cầu tối thiểu 8.1 để cập nhật). MySQL 8 / Percona khuyến nghị; PostgreSQL chỉ có ở license cấp Enterprise. Không hỗ trợ MSSQL, Oracle."],
+["Tích hợp có sẵn","Nextcloud, OneDrive/SharePoint (Enterprise), GitHub/GitLab, API v3.","REST API, Bitrix24 Market, BI Builder đọc được MySQL/PostgreSQL bên ngoài, SSO NTLM, LDAP/AD (On-Premise)."],
+["Hỗ trợ","Community: forum, hướng dẫn. Trả phí: email (Basic), thêm điện thoại (Professional), remote hands (Premium), kỹ sư riêng (Corporate). Giờ làm việc CET/ET.","Hỗ trợ của hãng theo gói; triển khai, tùy biến thường qua mạng lưới partner địa phương."]];
+document.getElementById('tb').innerHTML=rows.map(r=>r[0]==="g"?`<tr class="grp"><td colspan="3">${esc(r[1])}</td></tr>`:`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+}
+</script>
+</body>
+</html>
